@@ -1,7 +1,7 @@
 package Bio::Tools::Evolver;
 
 use Moose;
-extends 'Moose::Object', 'Bio::Root::Root';
+use AI::Genetic::Pro;
 
 =head1 NAME
 
@@ -15,6 +15,44 @@ Version 0.01
 =cut
 
 our $VERSION = '0.01';
+
+has '_root' => (
+   is         => 'ro',
+   isa        => 'Bio::Root::Root',
+   lazy_build => 1,
+   handles    => [qw(throw)],
+);
+
+has '_ga' => (
+   is         => 'ro',
+   writer     => '_set_ga',
+   isa        => 'AI::Genetic::Pro',
+   builder    => '_build_ga',
+   handles    => [
+      qw(terminate population crossover mutation parents selection
+          strategy cache history preserve variable_length evolve 
+          chart)
+   ],
+);
+
+sub _build_ga {
+   my $self = shift;
+   # Initialize the Genetic Algorithm engine with sane defaults.
+   my $ga = AI::Genetic::Pro->new(
+      -type            => 'listvector',       # type of chromosomes
+      -population      => 300,               # population
+      -crossover       => 0.95,                # probab. of crossover
+      -mutation        => 0.01,               # probab. of mutation
+      -parents         => 2,                  # number  of parents
+      -selection       => ['Roulette'],       # selection strategy
+      -strategy        => [ 'Points', 2 ],    # crossover strategy
+      -cache           => 1,                  # cache results
+      -history         => 1,                  # remember best results
+      -preserve        => 5,                  # remember the bests
+      -variable_length => 0,                  # turn variable length ON
+   );
+   $self->_set_ga($ga);
+}
 
 
 =head1 SYNOPSIS
@@ -47,9 +85,6 @@ Bio::Tools::Evolver is an evolver...
    Accepts a hash with arguments.
 
 =cut
-
-sub function1 {
-}
 
 =head2 function2
 
@@ -114,4 +149,4 @@ under the same terms as Perl itself.
 
 =cut
 
-1; # End of Bio::Tools::Evolver
+1;    # End of Bio::Tools::Evolver
