@@ -1,12 +1,14 @@
 package Bio::Tools::Evolver::Profile;
 use strict;
 use warnings;
+
 use Moose::Role;
 use Moose::Util::TypeConstraints;
 
 use Bio::Seq;
 use Bio::AlignIO;
 use Bio::Tools::Run::Alignment::Clustalw;
+
 use File::Temp;
 
 =head1 NAME
@@ -44,41 +46,81 @@ perform an alignment and save it in a temporary file.
 
 has 'profile' => (
    is       => 'ro',
-   isa      => 'BTE.Profile',
+   isa      => 'BTE.Bio.SimpleAlign',
    required => 1,
    coerce   => 1,
 );
 
-# Coerce subtypes to BTE.Profile
-coerce 'BTE.Profile'
-    => from 'BTE.Bio.SeqIO'
-       => via { &_coerce( \&_BioSeqIO, $_[0] ) }
-    => from 'BTE.Bio.Seq.ArrayRef'
-       => via { &_coerce( \&_BioSeqArrayRef, $_[0] ) }
-    => from 'BTE.Bio.AlignIO'
-       => via { &_coerce( \&_BioAlignIO, $_[0] ) }
-    => from 'BTE.Bio.SimpleAlign'
-       => via { &_coerce( \&_BioSimpleAlign, $_[0] ) };
+has '_profile_file' => (
+   is => 'ro',
+   init_arg => undef,
+   isa => 'BTE.ProfileFile',
+   lazy_build => 1,
+);
 
-sub _coerce {
-   my ( $coderef, $arg ) = @_;
-   my $tempfile = File::Temp->new->filename;
-   my $alignIO  = Bio::AlignIO->new(
-      -file   => ">$tempfile",
-      -format => "msf",
+sub _build__profile_file {
+   my $self = shift;
+
+   # To make things more homogenous, I convert the alignment from
+   # whatever format to phylip; I found that it gives little warnings,
+   # unlike using clustalw's .aln or gcg (something about the character
+   # used for gaps, I dunno).
+   my $tmpfile = File::Temp->new(
+      TEMPLATE => 'XXXXXX',
+      SUFFIX => '.phy',
+   )->filename;
+
+   my $alnO = Bio::AlignIO->new(
+      -file => ">$tmpfile",
+      -format => 'phylip',
    );
-   $alignIO->write_aln( $coderef->($arg) );
-   return $tempfile;
+   $alnO->write_aln($self->profile);
+
+   return $tmpfile;
 }
 
-sub _BioSimpleAlign {$_}
+# Coerce subtypes to BTE.Bio.SimpleAlign
+coerce 'BTE.Bio.SimpleAlign'
+    => from 'BTE.Bio.SeqIO'
+       => via { _BioSeqIO($_[0] )  }
+    => from 'BTE.Bio.Seq.ArrayRef'
+       => via { _BioSeqArrayRef( $_[0] ) }
+    => from 'BTE.Bio.AlignIO'
+       => via { _BioAlignIO($_[0] ) }
+    => from 'BTE.ProfileFile'
+       => via { _ProfileFile($_[0] ) };
+
+sub _ProfileFile {
+   my $file = shift;
+
+   my $alnI = Bio::AlignIO->new(-file => "<$file");
+   my $tmpfile = File::Temp->new(
+      TEMPLATE => 'XXXXXX',
+      SUFFIX => '.phy',
+   )->filename;
+   my $alnO = Bio::AlignIO->new(
+      -file => ">$tmpfile",
+      -format => 'phylip',
+   );
+   $alnO->write_aln($alnI->next_aln);
+   $alnI = Bio::AlignIO->new(
+      -file => "<$tmpfile",
+      -format => 'phylip',
+   );
+   
+   my $aln = $alnI->next_aln;
+   unlink $tmpfile;
+   return $aln;
+}
+
 
 sub _BioAlignIO { $_->next_aln }
 
 sub _BioSeqIO {
    my $seqI = shift;
-   my $factory = Bio::Tools::Run::Alignment::Clustalw->new( quiet => 1 );
 
+   my %params = ( quiet => 1, output => 'phylip' );
+   my $factory = Bio::Tools::Run::Alignment::Clustalw->new( %params );
    my $seqs;
    while ( my $seq = $seqI->next_seq ) { push @$seqs, $seq }
    my $aln = $factory->align($seqs);
@@ -88,7 +130,9 @@ sub _BioSeqIO {
 
 sub _BioSeqArrayRef {
    my $seqs = shift;
-   my $factory = Bio::Tools::Run::Alignment::Clustalw->new( quiet => 1 );
+
+   my %params = ( quiet => 1, output => 'phylip' );
+   my $factory = Bio::Tools::Run::Alignment::Clustalw->new( %params );
 
    my $aln = $factory->align($seqs);
 

@@ -3,7 +3,10 @@ package Bio::Tools::Evolver;
 use Moose;
 use AI::Genetic::Pro;
 
-with 'Bio::Tools::Evolver::Types', 'Bio::Tools::Evolver::Profile';
+with 'Bio::Tools::Evolver::Types', 'Bio::Tools::Evolver::Profile',
+     'Bio::Tools::Evolver::ProfileScore';
+
+my $prot_alph = 'ABCDEFGHIKLMNPQRSTVWXYZU';
 
 =head1 NAME
 
@@ -54,6 +57,7 @@ our $VERSION = '0.01';
 has '_root' => (
    is         => 'ro',
    isa        => 'Bio::Root::Root',
+   init_arg   => undef, 
    lazy_build => 1,
    handles    => [qw(throw)],
 );
@@ -62,6 +66,7 @@ has '_ga' => (
    is      => 'ro',
    writer  => '_set_ga',
    isa     => 'AI::Genetic::Pro',
+   init_arg => undef,
    builder => '_build_ga',
    handles => [
       qw(terminate population crossover mutation parents selection
@@ -69,6 +74,7 @@ has '_ga' => (
           chart)
    ],
 );
+
 
 sub _build_ga {
    my $self = shift;
@@ -96,6 +102,23 @@ has 'fitness' => (
    isa => 'CodeRef',
    required => 1,
 );
+
+sub BUILD {
+   my $self = shift;
+   my $fitness = sub {
+      my ($ga, $chromosome) = @_;
+      my $seq = $ga->as_string($chromosome);
+      $seq =~ s/_//g;
+      my $profile_score = $self->_fitness->($seq);
+      my $custom_score = $self->fitness->($seq);
+      return ($profile_score ** 2) * ( $custom_score );
+   };
+   $self->_ga->fitness($fitness);
+   my $st = [ map { [ $prot_alph ] } (1..$self->profile->length) ];
+   $self->_ga->init(
+      [ map { [ $prot_alph ] } (1..$self->profile->length) ]
+   );
+}
 
 =head2 getFittest
 
