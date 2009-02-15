@@ -3,6 +3,8 @@ package Bio::Tools::Evolver;
 use Moose;
 use AI::Genetic::Pro;
 
+with 'Bio::Tools::Evolver::Profile';
+
 =head1 NAME
 
 Bio::Tools::Evolver - Profile-constrained sequence optimization using
