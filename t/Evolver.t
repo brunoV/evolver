@@ -21,22 +21,42 @@ can_ok(
 my $ev;
 
 # 1. Passing an alignment file.
-lives_ok { $ev = Bio::Tools::Evolver->new( profile => $align_file ) };
+lives_ok { 
+   $ev = Bio::Tools::Evolver->new(
+      profile => $align_file,
+      fitness => sub {},
+   ) 
+};
 isa_ok( $ev, 'Bio::Tools::Evolver', "Constructor" );
 is( $ev->profile, 't/profile-test.gcg' );
 
 # 2. Passing an AlignIO object.
 my $alignI = Bio::AlignIO->new( -file => "<$align_file" );
-lives_ok { $ev = Bio::Tools::Evolver->new( profile => $alignI ) };
+lives_ok { 
+   $ev = Bio::Tools::Evolver->new( 
+      profile => $alignI,
+      fitness => sub {},
+   )
+};
 
 # 3. Passing a SimpleAlign object.
 $alignI = Bio::AlignIO->new( -file => "<$align_file" );
 my $aln = $alignI->next_aln;
-lives_ok { $ev = Bio::Tools::Evolver->new( profile => $aln ) };
+lives_ok {
+   $ev = Bio::Tools::Evolver->new(
+      profile => $aln,
+      fitness => sub {},
+   )
+};
 
 # 4. Passing a SeqIO object.
 my $seqI = Bio::SeqIO->new( -file => $seqs_file );
-lives_ok { $ev = Bio::Tools::Evolver->new( profile => $seqI ) };
+lives_ok {
+   $ev = Bio::Tools::Evolver->new(
+      profile => $seqI,
+      fitness => sub {}
+   )
+};
 
 # 5. Passing an arrayref of Bio::Seq objects.
 $seqI = Bio::SeqIO->new( -file => $seqs_file );
@@ -44,7 +64,12 @@ my @seqs;
 while ( my $seq = $seqI->next_seq ) { push @seqs, $seq };
 ok( @seqs > 1 );
 isa_ok( $seqs[1], 'Bio::Seq');
-lives_ok { $ev = Bio::Tools::Evolver->new( profile => [@seqs] ) };
+lives_ok {
+   $ev = Bio::Tools::Evolver->new(
+      profile => [@seqs],
+      fitness => sub {},
+   )
+};
 
 # Check for default values.
 is( $ev->population, 300 );

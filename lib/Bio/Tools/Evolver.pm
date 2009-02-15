@@ -91,6 +91,12 @@ sub _build_ga {
    $self->_set_ga($ga);
 }
 
+has 'fitness' => (
+   is => 'ro',
+   isa => 'CodeRef',
+   required => 1,
+);
+
 =head2 getFittest
 
     Get the best scoring sequence after the evolution run
