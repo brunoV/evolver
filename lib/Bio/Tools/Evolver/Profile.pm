@@ -42,21 +42,6 @@ perform an alignment and save it in a temporary file.
    $foo->profile; # get the filename of the alignment.
 =cut
 
-# BTE.Profile is a filename that exists.
-# I should also check that has a sane extension.
-subtype 'BTE.Profile'
-   => as 'Str'
-   => where { -e $_ }
-   => message {"Profile file doesn't exist"};
-
-# These are the types that the attr. profile is going to coerce
-# into BTE.Profile
-subtype 'BTE.Bio.SeqIO'        => as class_type('Bio::SeqIO');
-subtype 'BTE.Bio.Seq'          => as class_type('Bio::Seq');
-subtype 'BTE.Bio.Seq.ArrayRef' => as 'ArrayRef[BTE.Bio.Seq]';
-subtype 'BTE.Bio.AlignIO'      => as class_type('Bio::AlignIO');
-subtype 'BTE.Bio.SimpleAlign'  => as class_type('Bio::SimpleAlign');
-
 has 'profile' => (
    is       => 'ro',
    isa      => 'BTE.Profile',

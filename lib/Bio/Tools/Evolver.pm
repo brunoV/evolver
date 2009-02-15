@@ -3,7 +3,7 @@ package Bio::Tools::Evolver;
 use Moose;
 use AI::Genetic::Pro;
 
-with 'Bio::Tools::Evolver::Profile';
+with 'Bio::Tools::Evolver::Types', 'Bio::Tools::Evolver::Profile';
 
 =head1 NAME
 
