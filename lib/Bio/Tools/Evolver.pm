@@ -14,47 +14,6 @@ Version 0.01
 
 =cut
 
-our $VERSION = '0.01';
-
-has '_root' => (
-   is         => 'ro',
-   isa        => 'Bio::Root::Root',
-   lazy_build => 1,
-   handles    => [qw(throw)],
-);
-
-has '_ga' => (
-   is         => 'ro',
-   writer     => '_set_ga',
-   isa        => 'AI::Genetic::Pro',
-   builder    => '_build_ga',
-   handles    => [
-      qw(terminate population crossover mutation parents selection
-          strategy cache history preserve variable_length evolve 
-          chart)
-   ],
-);
-
-sub _build_ga {
-   my $self = shift;
-   # Initialize the Genetic Algorithm engine with sane defaults.
-   my $ga = AI::Genetic::Pro->new(
-      -type            => 'listvector',       # type of chromosomes
-      -population      => 300,               # population
-      -crossover       => 0.95,                # probab. of crossover
-      -mutation        => 0.01,               # probab. of mutation
-      -parents         => 2,                  # number  of parents
-      -selection       => ['Roulette'],       # selection strategy
-      -strategy        => [ 'Points', 2 ],    # crossover strategy
-      -cache           => 1,                  # cache results
-      -history         => 1,                  # remember best results
-      -preserve        => 5,                  # remember the bests
-      -variable_length => 0,                  # turn variable length ON
-   );
-   $self->_set_ga($ga);
-}
-
-
 =head1 SYNOPSIS
 
     use Bio::Tools::Evolver;
@@ -81,16 +40,82 @@ Bio::Tools::Evolver is an evolver...
 =head1 Methods
 
 =head2 Bio::Tools::Evolver->new(%args)
-   Constructor. Returns a Bio::Tools::Evolver object.
-   Accepts a hash with arguments.
+Constructor. Returns a Bio::Tools::Evolver object.
+Accepts a hash with arguments.
+
+    my $evolver = Bio::Tools::Evolver->new;
 
 =cut
 
-=head2 function2
+our $VERSION = '0.01';
+
+has '_root' => (
+   is         => 'ro',
+   isa        => 'Bio::Root::Root',
+   lazy_build => 1,
+   handles    => [qw(throw)],
+);
+
+has '_ga' => (
+   is      => 'ro',
+   writer  => '_set_ga',
+   isa     => 'AI::Genetic::Pro',
+   builder => '_build_ga',
+   handles => [
+      qw(terminate population crossover mutation parents selection
+          strategy cache history preserve variable_length evolve
+          chart)
+   ],
+);
+
+sub _build_ga {
+   my $self = shift;
+
+   # Initialize the Genetic Algorithm engine with sane defaults.
+   my $ga = AI::Genetic::Pro->new(
+      -type            => 'listvector',       # type of chromosomes
+      -population      => 300,                # population
+      -crossover       => 0.95,               # probab. of crossover
+      -mutation        => 0.01,               # probab. of mutation
+      -parents         => 2,                  # number  of parents
+      -selection       => ['Roulette'],       # selection strategy
+      -strategy        => [ 'Points', 2 ],    # crossover strategy
+      -cache           => 1,                  # cache results
+      -history         => 1,                  # remember best results
+      -preserve        => 5,                  # remember the bests
+      -variable_length => 0,                  # turn variable length ON
+   );
+
+   $self->_set_ga($ga);
+}
+
+=head2 getFittest
+
+    Get the best scoring sequence after the evolution run
+    . Returns a Bio::Seq object
+    
+
+    my $seq = $evolver->getFittest;
+print $seq->seq;    # Print optimized sequence to screen.
 
 =cut
 
-sub function2 {
+sub getFittest {
+   my $self = shift;
+
+   # Get the fittest sequence as string, removing the artifacts that
+   # it comes with.
+   my $string = $self->_ga->as_string( $self->_ga->getFittest );
+   $string =~ s/_//g;
+
+   # Return a Bio::Seq object object with the optimized sequence.
+   # TODO Think about a more informative id.
+   my $fittest = Bio::Seq->new(
+      -id  => 'fittest',    # Improve this?
+      -seq => $string,
+   );
+
+   return $fittest;
 }
 
 =head1 AUTHOR
@@ -149,4 +174,6 @@ under the same terms as Perl itself.
 
 =cut
 
+no Moose;
+__PACKAGE__->meta->make_immutable;
 1;    # End of Bio::Tools::Evolver
