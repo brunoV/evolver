@@ -108,14 +108,14 @@ sub BUILD {
       my ($ga, $chromosome) = @_;
       my $seq = $ga->as_string($chromosome);
       $seq =~ s/_//g;
-      my $profile_score = $self->_fitness->($seq);
+      my $profile_score = $self->_my_fitness->($seq);
       my $custom_score = $self->fitness->($seq);
-      return ($profile_score ** 2) * ( $custom_score );
+      my $final_score = (($profile_score ** 1) * ( $custom_score ));
+      return $final_score;
    };
-   $self->_ga->fitness($fitness);
-   my $st = [ map { [ $prot_alph ] } (1..$self->profile->length) ];
+   $self->_ga->fitness($fitness) or die "Couldn't set fitness";
    $self->_ga->init(
-      [ map { [ $prot_alph ] } (1..$self->profile->length) ]
+      [ map { [ split '', $prot_alph ] } (1..$self->profile->length) ]
    );
 }
 

@@ -127,7 +127,7 @@ is( $ev->_ga->fitness->(), 5, "Set ga->fitness" );
 # Testing Bio::Tools::Evolver::ProfileScore;
 $ev = Bio::Tools::Evolver->new(
    profile => $align_file,
-   fitness => sub { },
+   fitness => sub { return 1 },
 );
 ok( $ev->_random_seq =~ m/^[ABCDEFGHIKLMNPQRSTVWXYZU]+$/, '_random_seq' );
 my $code = $ev->_fitness;

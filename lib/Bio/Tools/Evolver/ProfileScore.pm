@@ -23,13 +23,13 @@ sub _build__random_seq {
    return $random_seq;
 }
 
-has _fitness => (
+has _my_fitness => (
    is         => 'ro',
    lazy_build => 1,
    isa        => 'CodeRef',
 );
 
-sub _build__fitness {
+sub _build__my_fitness {
    my $self = shift;
 
    my $factory = Bio::Tools::Run::Alignment::Clustalw->new( quiet => 1 );
@@ -44,8 +44,11 @@ sub _build__fitness {
 
    return sub {
       my $string = shift;
-      my $score = _score_f_absolute( $string, $prof_file, $factory );
-      return ( ( $score - $min_score ) / ( $max_score - $min_score ) );
+      my $string_score 
+         = _score_f_absolute( $string, $prof_file, $factory );
+      my $score = ( ( $string_score - $min_score ) / ( $max_score - $min_score ) );
+      if ($score < 0) { $score = 0 };
+      return $score;
    };
 }
 
