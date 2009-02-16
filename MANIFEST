@@ -3,6 +3,12 @@ MANIFEST
 Makefile.PL
 README
 lib/Bio/Tools/Evolver.pm
+lib/Bio/Tools/Evolver/Profile.pm
+lib/Bio/Tools/Evolver/ProfileScore.pm
+lib/Bio/Tools/Evolver/Types.pm
+t/Evolver.t
 t/00-load.t
 t/pod-coverage.t
 t/pod.t
+t/profile-test.phy
+t/seqs-test.fasta
