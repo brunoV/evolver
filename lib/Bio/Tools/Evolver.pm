@@ -67,7 +67,7 @@ has '_ga' => (
    writer  => '_set_ga',
    isa     => 'AI::Genetic::Pro',
    init_arg => undef,
-   builder => '_build_ga',
+   lazy_build => 1,
    handles => [
       qw(terminate population crossover mutation parents selection
           strategy cache history preserve variable_length evolve
@@ -76,7 +76,7 @@ has '_ga' => (
 );
 
 
-sub _build_ga {
+sub _build__ga {
    my $self = shift;
 
    # Initialize the Genetic Algorithm engine with sane defaults.
@@ -93,8 +93,7 @@ sub _build_ga {
       -preserve        => 5,                  # remember the bests
       -variable_length => 0,                  # turn variable length ON
    );
-
-   $self->_set_ga($ga);
+   return $ga;
 }
 
 has 'fitness' => (
