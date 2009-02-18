@@ -102,7 +102,7 @@ has 'fitness' => (
    required => 1,
 );
 
-sub BUILD {
+before 'evolve' => sub {
    my $self = shift;
    my $fitness = sub {
       my ($ga, $chromosome) = @_;
@@ -117,7 +117,7 @@ sub BUILD {
    $self->_ga->init(
       [ map { [ split '', $prot_alph ] } (1..$self->profile->length) ]
    );
-}
+};
 
 =head2 getFittest
 

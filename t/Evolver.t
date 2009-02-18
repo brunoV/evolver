@@ -58,7 +58,7 @@ my $seqI = Bio::SeqIO->new( -file => $seqs_file );
 lives_ok {
    $ev = Bio::Tools::Evolver->new(
       profile => $seqI,
-      fitness => sub { return 1 }
+      fitness => sub { return 1 },
    );
 } 'Profile: SeqIO object';
 
