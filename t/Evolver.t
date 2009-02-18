@@ -129,11 +129,13 @@ $ev = Bio::Tools::Evolver->new(
    profile => $align_file,
    fitness => sub { return 1 },
 );
-ok( $ev->_random_seq =~ m/^[ABCDEFGHIKLMNPQRSTVWXYZU]+$/, '_random_seq' );
-my $code = $ev->_fitness;
+ok( $ev->_random_seq =~ m/^[ACDEFGHIKLMNPQRSTVWY]+$/, '_random_seq' );
+my $code = $ev->_my_fitness;
 isa_ok($code , 'CODE' );
 my $score;
 lives_ok { 
-   $score = $code->('ABCDEFGHIKLMNPQRSTVWXYZU' x 25 ),
+   $score = $code->('ACDEFGHIKLMNPQRSTVWY' x 25 ),
 } '_fitness return function';
 ok( $score =~ /^-?\d+[\.\d+]*$/, '_fitness returns a number' );
+
+lives_ok { $ev->evolve(1) };

@@ -19,7 +19,7 @@ has _random_seq => (
 sub _build__random_seq {
    my $self       = shift;
    my $random_seq = _shuffle_string(
-      'ABCDEFGHIKLMNPQRSTVWXYZU' x int( $self->profile->length / 20 ) );
+      'ACDEFGHIKLMNPQRSTVWY' x int( $self->profile->length / 20 ) );
    return $random_seq;
 }
 
