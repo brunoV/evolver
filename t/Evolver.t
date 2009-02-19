@@ -123,7 +123,7 @@ lives_ok {
 $ev = Bio::Tools::Evolver->new(
    profile => $align_file,
    fitness => sub { return 1 },
-   population => 100,
+   population => 1000,
    crossover => 0.9,
    mutation => 0.05,
    parents => 3,

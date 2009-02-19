@@ -4,7 +4,7 @@ use Moose;
 use AI::Genetic::Pro;
 
 with 'Bio::Tools::Evolver::Types', 'Bio::Tools::Evolver::Profile',
-     'Bio::Tools::Evolver::ProfileScore';
+    'Bio::Tools::Evolver::ProfileScore';
 
 my $prot_alph = 'ABCDEFGHIKLMNPQRSTVWXYZU';
 
@@ -57,65 +57,127 @@ our $VERSION = '0.01';
 has '_root' => (
    is         => 'ro',
    isa        => 'Bio::Root::Root',
-   init_arg   => undef, 
+   init_arg   => undef,
    lazy_build => 1,
    handles    => [qw(throw)],
 );
 
 has '_ga' => (
-   is      => 'ro',
-   writer  => '_set_ga',
-   isa     => 'AI::Genetic::Pro',
-   init_arg => undef,
+   is         => 'ro',
+   writer     => '_set_ga',
+   isa        => 'AI::Genetic::Pro',
+   init_arg   => undef,
    lazy_build => 1,
-   handles => [
-      qw(terminate population crossover mutation parents selection
-          strategy cache history preserve variable_length evolve
-          chart)
-   ],
+   handles    => [qw(terminate evolve chart)],
 );
 
+has 'variable_length' => (
+   is      => 'rw',
+   isa     => 'Bool',
+   default => 0,
+);
+
+has 'cache' => (
+   is      => 'rw',
+   isa     => 'Bool',
+   default => 1,
+);
+
+has 'mutation' => (
+   is      => 'rw',
+   isa     => 'BTE.Probability',
+   default => 0.01,
+);
+
+has 'crossover' => (
+   is      => 'rw',
+   isa     => 'BTE.Probability',
+   default => 0.95,
+);
+
+has 'population' => (
+   is      => 'rw',
+   isa     => 'Num',
+   default => 300,
+);
+
+has 'parents' => (
+   is      => 'rw',
+   isa     => 'Num',
+   default => 2,
+);
+
+has 'history' => (
+   is      => 'rw',
+   isa     => 'Bool',
+   default => 1,
+);
+
+has 'selection' => (
+   is      => 'rw',
+   isa     => 'ArrayRef',
+   default => sub { ['Roulette'] },
+);
+
+has 'strategy' => (
+   is      => 'rw',
+   isa     => 'ArrayRef',
+   default => sub { [ 'Points', 2 ] },
+);
+
+has 'preserve' => (
+   is      => 'rw',
+   isa     => 'Num',
+   default => '5',
+);
 
 sub _build__ga {
    my $self = shift;
 
    # Initialize the Genetic Algorithm engine with sane defaults.
    my $ga = AI::Genetic::Pro->new(
-      -type            => 'listvector',       # type of chromosomes
-      -population      => 300,                # population
-      -crossover       => 0.95,               # probab. of crossover
-      -mutation        => 0.01,               # probab. of mutation
-      -parents         => 2,                  # number  of parents
-      -selection       => ['Roulette'],       # selection strategy
-      -strategy        => [ 'Points', 2 ],    # crossover strategy
-      -cache           => 1,                  # cache results
-      -history         => 1,                  # remember best results
-      -preserve        => 5,                  # remember the bests
-      -variable_length => 0,                  # turn variable length ON
+      -type       => 'listvector',        # type of chromosomes
+      -population => $self->population,
+      -mutation   => $self->mutation,
+      -crossover  => $self->crossover,
+      -parents    => $self->parents,      # number  of parents
+      -selection  => $self->selection,    # selection strategy
+      -strategy   => $self->strategy,     # crossover strategy
+      -cache      => $self->cache,        # cache results
+      -history    => $self->history,      # remember best results
+      -preserve   => $self->preserve,     # remember the bests
+      -variable_length =>
+          $self->variable_length,         # turn variable length ON
    );
    return $ga;
 }
 
 has 'fitness' => (
-   is => 'ro',
-   isa => 'CodeRef',
+   is       => 'ro',
+   isa      => 'CodeRef',
    required => 1,
 );
 
 before 'evolve' => sub {
-   my $self = shift;
+   my $self    = shift;
+
+   # Create the fitness function, which is composed of the
+   # ProfileScore function and the user function.
    my $fitness = sub {
-      my ($ga, $chromosome) = @_;
+      my ( $ga, $chromosome ) = @_;
       my $seq = $ga->as_string($chromosome);
       $seq =~ s/_//g;
       my $profile_score = $self->_my_fitness->($seq);
-      my $custom_score = $self->fitness->($seq);
-      my $final_score = (($profile_score ** 1) * ( $custom_score ));
+      my $custom_score  = $self->fitness->($seq);
+      my $final_score   = ( ( $profile_score**1 ) * ($custom_score) );
       return $final_score;
    };
    $self->_ga->fitness($fitness) or die "Couldn't set fitness";
+
+   # Initialize the first generation.
    $self->_ga->init(
-      [ map { [ split '', $prot_alph ] } (1..$self->profile->length) ]
+      [  map { [ split '', $prot_alph ] } ( 1 .. $self->profile->length )
+      ]
    );
 };
 
