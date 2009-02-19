@@ -16,7 +16,8 @@ can_ok(
    'Bio::Tools::Evolver',
    qw(terminate population crossover mutation parents selection
        strategy cache history preserve variable_length throw
-       evolve chart getFittest)
+       evolve chart getFittest as_value getHistory getAvgFitness
+       generation)
 );
 
 # Test constructor and passing different profile types to

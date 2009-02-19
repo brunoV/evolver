@@ -68,8 +68,11 @@ has '_ga' => (
    isa        => 'AI::Genetic::Pro',
    init_arg   => undef,
    lazy_build => 1,
-   handles    => [qw(terminate evolve chart)],
+   handles    => [qw(terminate evolve chart as_value getHistory
+                     getAvgFitness generation)],
 );
+
+# TODO implement methods: people, as_value;
 
 has 'variable_length' => (
    is      => 'rw',
