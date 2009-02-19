@@ -146,6 +146,24 @@ is( $ev->cache,           0, 'changed cache' );
 is( $ev->history,         1, 'changed history' );
 is( $ev->preserve,        5, 'changed preserve' );
 is( $ev->variable_length, 1, 'changed variable_length' );
-is( $ev->terminate->(),   5, 'hitting terminate' );
 
-lives_ok { $ev->evolve(1) };
+$ev = Bio::Tools::Evolver->new(
+   profile => $align_file, 
+   population => 300,
+   fitness => \&count_hydroph,
+);
+
+sub count_hydroph {
+   my $string = shift;
+   my $count = scalar grep { $_ =~ /[VALI]/ } split '', $string;
+   return $count;
+}
+
+lives_ok { $ev->evolve(5) };
+my $fittest = $ev->getFittest->seq;
+ok( count_hydroph($fittest) > count_hydroph($seqs[0]->seq) );
+ok( count_hydroph($fittest) > count_hydroph($seqs[1]->seq) );
+print $fittest, "\n";
+print "fittest: ", count_hydroph($fittest), "\n";
+print $seqs[1]->seq, "\n";
+print "normal: ", count_hydroph($seqs[1]->seq), "\n";
