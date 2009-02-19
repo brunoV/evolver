@@ -117,24 +117,35 @@ dies_ok {
    $ev->fitness( sub { return 5 } );
 } 'fitness is ro';
 
-# But I can... (muahaha)
+# Initialize an object assigning attributes in the declaration.
+undef $ev;
 lives_ok {
-   $ev->_ga->fitness( sub { return 5 } );
-} 'private fitness';
-is( $ev->_ga->fitness->(), 5, "Set ga->fitness" );
-
-# Testing Bio::Tools::Evolver::ProfileScore;
 $ev = Bio::Tools::Evolver->new(
    profile => $align_file,
    fitness => sub { return 1 },
-);
-ok( $ev->_random_seq =~ m/^[ACDEFGHIKLMNPQRSTVWY]+$/, '_random_seq' );
-my $code = $ev->_my_fitness;
-isa_ok($code , 'CODE' );
-my $score;
-lives_ok { 
-   $score = $code->('ACDEFGHIKLMNPQRSTVWY' x 25 ),
-} '_fitness return function';
-ok( $score =~ /^-?\d+[\.\d+]*$/, '_fitness returns a number' );
+   population => 100,
+   crossover => 0.9,
+   mutation => 0.05,
+   parents => 3,
+   selection => ['RouletteBasic'],
+   strategy => ['Points', 5],
+   cache => '0',
+   history => 1,
+   preserve => 5,
+   variable_length => 1,
+   terminate => sub { return 5 },
+) } 'Initialization with non-default attributes';
+
+is( $ev->population, 1000, 'changed population' );
+is( $ev->crossover,  0.9, 'changed crossover' );
+is( $ev->mutation,   0.05, 'changed mutation' );
+is( $ev->parents,    3, 'changed parents' );
+is_deeply( $ev->selection, ['RouletteBasic'], 'changed selection' );
+is_deeply( $ev->strategy, [ 'Points', 5 ], 'changed strategy' );
+is( $ev->cache,           0, 'changed cache' );
+is( $ev->history,         1, 'changed history' );
+is( $ev->preserve,        5, 'changed preserve' );
+is( $ev->variable_length, 1, 'changed variable_length' );
+is( $ev->terminate->(),   5, 'hitting terminate' );
 
 lives_ok { $ev->evolve(1) };
