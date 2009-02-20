@@ -68,8 +68,10 @@ has '_ga' => (
    isa        => 'AI::Genetic::Pro',
    init_arg   => undef,
    lazy_build => 1,
-   handles    => [qw(terminate evolve chart as_value getHistory
-                     getAvgFitness generation)],
+   handles    => [
+      qw(terminate evolve chart as_value getHistory
+          getAvgFitness generation)
+   ],
 );
 
 # TODO implement methods: people, as_value;
@@ -162,7 +164,7 @@ has 'fitness' => (
 );
 
 before 'evolve' => sub {
-   my $self    = shift;
+   my $self = shift;
 
    # Create the fitness function, which is composed of the
    # ProfileScore function and the user function.
@@ -172,7 +174,7 @@ before 'evolve' => sub {
       $seq =~ s/_//g;
       my $profile_score = $self->_my_fitness->($seq);
       my $custom_score  = $self->fitness->($seq);
-      my $final_score   = ( ( $profile_score**1 ) * ($custom_score) );
+      my $final_score   = ( ( $profile_score**2 ) * ($custom_score) );
       return $final_score;
    };
    $self->_ga->fitness($fitness) or die "Couldn't set fitness";
@@ -196,21 +198,28 @@ print $seq->seq;    # Print optimized sequence to screen.
 =cut
 
 sub getFittest {
-   my $self = shift;
+   my ( $self, $amount, $is_unique ) = @_;
+   $amount ||= 1;
+   my @fittest;
+   for my $i ( 1 .. $amount ) {
 
-   # Get the fittest sequence as string, removing the artifacts that
-   # it comes with.
-   my $string = $self->_ga->as_string( $self->_ga->getFittest );
-   $string =~ s/_//g;
+      # Get the fittest sequence as string, removing the artifacts that
+      # it comes with.
+      my $string = $self->_ga->as_string(
+         $self->_ga->getFittest( $amount, $is_unique )
+      );
+      $string =~ s/_//g;
 
-   # Return a Bio::Seq object object with the optimized sequence.
-   # TODO Think about a more informative id.
-   my $fittest = Bio::Seq->new(
-      -id  => 'fittest',    # Improve this?
-      -seq => $string,
-   );
+      # Return a Bio::Seq object object with the optimized sequence.
+      my $id      = 'fittest-' . $i;
+      my $fittest = Bio::Seq->new(
+         -id  => 'fittest',    # Improve this?
+         -seq => $string,
+      );
+      push @fittest, $fittest;
+   }
 
-   return $fittest;
+   return @fittest;
 }
 
 =head1 AUTHOR
