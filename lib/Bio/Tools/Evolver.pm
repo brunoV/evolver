@@ -201,44 +201,26 @@ print $seq->seq;    # Print optimized sequence to screen.
 sub getFittest {
    my ( $self, $amount, $is_unique ) = @_;
    $amount ||= 1;
-   my @fittest;
-   for my $i ( 1 .. $amount ) {
+   my @fittest_ind = $self->_ga->getFittest( $amount, $is_unique );
+   my @strings = map { $self->_ga->as_string($_) } @fittest_ind;
+   my @scores  = map { $self->_ga->as_value ($_) } @fittest_ind;
+
+   my @fittest_seq;
+   foreach my $i ( 0 .. $#strings ) {
 
       # Get the fittest sequence as string, removing the artifacts that
       # it comes with.
-      my $string = $self->_ga->as_string(
-         $self->_ga->getFittest( $amount, $is_unique ) );
-      $string =~ s/_//g;
+      $strings[$i] =~ s/_//g;
 
       # Return a Bio::Seq object object with the optimized sequence.
-      my $id      = 'fittest-' . $i;
       my $fittest = Bio::Seq->new(
-         -id  => 'fittest',    # Improve this?
-         -seq => $string,
+         -id  => $scores[$i],
+         -seq => $strings[$i],
       );
-      push @fittest, $fittest;
+      push @fittest_seq, $fittest;
    }
 
-   return @fittest;
-}
-
-sub getFittest_as_arrayref {
-   my ( $self, $amount, $is_unique ) = @_;
-   my $arrayref
-       = $self->_ga->getFittest_as_arrayref( $amount, $is_unique );
-   my @fittest;
-
-   for my $i ( 0 .. $#$arrayref ) {
-      my $string = $self->_ga->as_string( $arrayref->[$i] );
-      $string =~ s/_//g;
-      push @fittest, $string;
-   }
-
-   @fittest = map {
-      Bio::Seq->new( -seq => $fittest[$_], -id => 'fittest' . $_ )
-   } ( 0 .. $#fittest );
-
-   return \@fittest;
+   return @fittest_seq;
 }
 
 =head1 AUTHOR
