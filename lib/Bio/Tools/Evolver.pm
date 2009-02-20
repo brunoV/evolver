@@ -220,7 +220,7 @@ sub getFittest {
       push @fittest_seq, $fittest;
    }
 
-   return @fittest_seq;
+   return wantarray ? @fittest_seq : $fittest_seq[0];
 }
 
 =head1 AUTHOR
