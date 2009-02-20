@@ -150,7 +150,7 @@ is( $ev->variable_length, 1, 'changed variable_length' );
 
 $ev = Bio::Tools::Evolver->new(
    profile => $align_file, 
-   population => 10,
+   population => 300,
    fitness => \&count_hydroph,
 );
 
@@ -160,7 +160,7 @@ sub count_hydroph {
    return ($count / length $string);
 }
 
-lives_ok { $ev->evolve(1) } 'Short evolution run';
+lives_ok { $ev->evolve(25) } 'Short evolution run';
 
 my @fittest = $ev->getFittest(3, 1);
 is( scalar @fittest, 3, 'getFittest with arguments');
@@ -176,7 +176,7 @@ isa_ok( $fittest, 'Bio::Seq' );
 ## ok( count_hydroph($fittest) > count_hydroph($seqs[1]->seq) );
 #my $history = $ev->getHistory;
 #use Data::Dumper;
-#$ev->chart(-width => 1042, -height => 768, -filename => 'evolution.png');
+$ev->chart(-width => 1042, -height => 768, -filename => 'evolution.png');
 #print Dumper($history);
 #print $ev->as_value($ev->_ga->getFittest), "<--\n";
 #print $fittest, "\n";
