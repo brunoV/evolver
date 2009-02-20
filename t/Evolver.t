@@ -150,21 +150,36 @@ is( $ev->variable_length, 1, 'changed variable_length' );
 
 $ev = Bio::Tools::Evolver->new(
    profile => $align_file, 
-   population => 300,
+   population => 100,
    fitness => \&count_hydroph,
 );
 
 sub count_hydroph {
    my $string = shift;
    my $count = scalar grep { $_ =~ /[VALI]/ } split '', $string;
-   return $count;
+   return ($count / length $string);
 }
 
-lives_ok { $ev->evolve(5) };
-my $fittest = $ev->getFittest->seq;
-ok( count_hydroph($fittest) > count_hydroph($seqs[0]->seq) );
-ok( count_hydroph($fittest) > count_hydroph($seqs[1]->seq) );
-print $fittest, "\n";
-print "fittest: ", count_hydroph($fittest), "\n";
-print $seqs[1]->seq, "\n";
-print "normal: ", count_hydroph($seqs[1]->seq), "\n";
+lives_ok { $ev->evolve(2) };
+
+my @fittest = $ev->getFittest(3,1);
+is( scalar @fittest, 3 );
+is( ref $fittest[0], 'Bio::Seq' );
+
+my $fittest = $ev->getFittest_as_arrayref(3, 1);
+
+is( scalar @$fittest, 3 );
+is( ref $fittest->[0], 'Bio::Seq' );
+
+#my $fittest = $ev->getFittest->seq;
+# ok( count_hydroph($fittest) > count_hydroph($seqs[0]->seq) );
+## ok( count_hydroph($fittest) > count_hydroph($seqs[1]->seq) );
+#my $history = $ev->getHistory;
+#use Data::Dumper;
+#$ev->chart(-width => 1042, -height => 768, -filename => 'evolution.png');
+#print Dumper($history);
+#print $ev->as_value($ev->_ga->getFittest), "<--\n";
+#print $fittest, "\n";
+#print "fittest: ", count_hydroph($fittest), "\n";
+#print $seqs[1]->seq, "\n";
+#print "normal: ", count_hydroph($seqs[1]->seq), "\n";
