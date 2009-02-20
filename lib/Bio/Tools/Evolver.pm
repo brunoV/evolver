@@ -52,6 +52,8 @@ Accepts a hash with arguments.
 
 =cut
 
+# TODO Inject the consensus sequence
+
 our $VERSION = '0.01';
 
 has '_root' => (
@@ -70,11 +72,10 @@ has '_ga' => (
    lazy_build => 1,
    handles    => [
       qw(terminate evolve chart as_value getHistory
-          getAvgFitness generation)
+          getAvgFitness generation getFittest_as_arrayref
+          people chromosomes)
    ],
 );
-
-# TODO implement methods: people, as_value;
 
 has 'variable_length' => (
    is      => 'rw',
@@ -136,6 +137,12 @@ has 'preserve' => (
    default => '5',
 );
 
+has 'fitness' => (
+   is       => 'ro',
+   isa      => 'CodeRef',
+   required => 1,
+);
+
 sub _build__ga {
    my $self = shift;
 
@@ -156,12 +163,6 @@ sub _build__ga {
    );
    return $ga;
 }
-
-has 'fitness' => (
-   is       => 'ro',
-   isa      => 'CodeRef',
-   required => 1,
-);
 
 before 'evolve' => sub {
    my $self = shift;

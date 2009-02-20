@@ -150,7 +150,7 @@ is( $ev->variable_length, 1, 'changed variable_length' );
 
 $ev = Bio::Tools::Evolver->new(
    profile => $align_file, 
-   population => 100,
+   population => 10,
    fitness => \&count_hydroph,
 );
 
@@ -160,16 +160,16 @@ sub count_hydroph {
    return ($count / length $string);
 }
 
-lives_ok { $ev->evolve(2) };
+lives_ok { $ev->evolve(1) } 'Short evolution run';
 
-my @fittest = $ev->getFittest(3,1);
-is( scalar @fittest, 3 );
-is( ref $fittest[0], 'Bio::Seq' );
+my @fittest = $ev->getFittest(3, 1);
+is( scalar @fittest, 3, 'getFittest with arguments');
+isa_ok( $fittest[0], 'Bio::Seq' );
 
-my $fittest = $ev->getFittest_as_arrayref(3, 1);
+my ($fittest) = $ev->getFittest;
+isa_ok( $fittest, 'Bio::Seq' );
 
-is( scalar @$fittest, 3 );
-is( ref $fittest->[0], 'Bio::Seq' );
+# TODO Write *the* test: a protein actually evolves.
 
 #my $fittest = $ev->getFittest->seq;
 # ok( count_hydroph($fittest) > count_hydroph($seqs[0]->seq) );
