@@ -1,29 +1,41 @@
 package Bio::Tools::Evolver::ProfileScore;
 use strict;
 use warnings;
+use lib qw(/home/bruno/lib/Bio-Tools-Evolver/lib);
 use Moose::Role;
 use Moose::Util::TypeConstraints;
 
-use List::MoreUtils qw(each_array);
 use Bio::Matrix::IO;
+use Bio::Tools::Evolver::Types;
+
+use File::Basename;
+use List::MoreUtils qw(each_array);
 
 has 'matrix' => (
    is      => 'ro',
-   isa     => 'BTE.Bio.Matrix.Score',
+   isa     => 'BTE.Bio.Matrix.Scoring',
    coerce  => 1,
    default => 'BLOSUM62',
 );
 
-coerce 'BTE.Bio.Matrix.Score'
+coerce 'BTE.Bio.Matrix.Scoring'
    => from 'BTE.MatrixFile' => via { _parse_matrixfile( $_[0] ) }
-   => from 'BTE.Matrix.IO' =>  via { return $_[0]->next_matrix };
-#   => from 'BTE.MatrixName' => via { _parse_matrixfile( '../../../../etc/' . $_[0] ) };
+   => from 'BTE.Bio.Matrix.IO' =>  via { return $_[0]->next_matrix }
+   => from 'BTE.MatrixName'  => via { _parse_matrixfile( _get_path( $_[0] ) ) };
 
 sub _parse_matrixfile {
    my $file = shift;
    my $parser = Bio::Matrix::IO->new( -file => $file )
        or die "Couldn't open scoring matrix $file : $!";
    return $parser->next_matrix;
+}
+
+sub _get_path {
+   my $matrix_name = shift;
+   my $full_path = __FILE__;
+   my ($module_file, $directories, $suffix) = fileparse($full_path);
+   if ($directories) { return $directories . $matrix_name };
+   return $matrix_name;
 }
 
 has _my_fitness => (
