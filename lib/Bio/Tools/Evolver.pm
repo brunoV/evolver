@@ -6,7 +6,7 @@ use AI::Genetic::Pro;
 with 'Bio::Tools::Evolver::Types', 'Bio::Tools::Evolver::Profile',
     'Bio::Tools::Evolver::ProfileScore';
 
-my $prot_alph = 'ABCDEFGHIKLMNPQRSTVWXYZU';
+my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
 
 =head1 NAME
 
