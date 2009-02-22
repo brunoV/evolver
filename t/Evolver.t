@@ -95,8 +95,8 @@ $ev->parents(3);
 $ev->selection( ['RouletteBasic'] );
 $ev->strategy( [ 'Points', 5 ] );
 $ev->cache(0);
-$ev->history(1);
-$ev->preserve(5);
+$ev->history(0);
+$ev->preserve(7);
 $ev->variable_length(1);
 $ev->terminate( sub { return 5 } );
 
@@ -107,8 +107,8 @@ is( $ev->parents,    3, 'changed parents' );
 is_deeply( $ev->selection, ['RouletteBasic'], 'changed selection' );
 is_deeply( $ev->strategy, [ 'Points', 5 ], 'changed strategy' );
 is( $ev->cache,           0, 'changed cache' );
-is( $ev->history,         1, 'changed history' );
-is( $ev->preserve,        5, 'changed preserve' );
+is( $ev->history,         0, 'changed history' );
+is( $ev->preserve,        7, 'changed preserve' );
 is( $ev->variable_length, 1, 'changed variable_length' );
 is( $ev->terminate->(),   5, 'hitting terminate' );
 dies_ok { $ev->throw('Test error message') } 'Throw';
@@ -131,8 +131,8 @@ $ev = Bio::Tools::Evolver->new(
    selection => ['RouletteBasic'],
    strategy => ['Points', 5],
    cache => '0',
-   history => 1,
-   preserve => 5,
+   history => 0,
+   preserve => 7,
    variable_length => 1,
    terminate => sub { return 5 },
 ) } 'Initialization with non-default attributes';
@@ -144,14 +144,18 @@ is( $ev->parents,    3, 'changed parents' );
 is_deeply( $ev->selection, ['RouletteBasic'], 'changed selection' );
 is_deeply( $ev->strategy, [ 'Points', 5 ], 'changed strategy' );
 is( $ev->cache,           0, 'changed cache' );
-is( $ev->history,         1, 'changed history' );
-is( $ev->preserve,        5, 'changed preserve' );
+is( $ev->history,         0, 'changed history' );
+is( $ev->preserve,        7, 'changed preserve' );
 is( $ev->variable_length, 1, 'changed variable_length' );
 
 $ev = Bio::Tools::Evolver->new(
    profile => $align_file, 
-   population => 300,
+   population => 5,
+   strategy => ['Points', 10],
    fitness => \&count_hydroph,
+   history => 1,
+   preserve => 1,
+   cache => 0,
 );
 
 sub count_hydroph {
@@ -160,7 +164,7 @@ sub count_hydroph {
    return ($count / length $string);
 }
 
-lives_ok { $ev->evolve(25) } 'Short evolution run';
+lives_ok { $ev->evolve(1) } 'Short evolution run';
 
 my @fittest = $ev->getFittest(3, 1);
 is( scalar @fittest, 3, 'getFittest with arguments');
@@ -171,15 +175,13 @@ isa_ok( $fittest, 'Bio::Seq' );
 
 # TODO Write *the* test: a protein actually evolves.
 
-#my $fittest = $ev->getFittest->seq;
 # ok( count_hydroph($fittest) > count_hydroph($seqs[0]->seq) );
 ## ok( count_hydroph($fittest) > count_hydroph($seqs[1]->seq) );
-#my $history = $ev->getHistory;
-#use Data::Dumper;
+my $history = $ev->getHistory;
+use Data::Dumper;
 $ev->chart(-width => 1042, -height => 768, -filename => 'evolution.png');
-#print Dumper($history);
-#print $ev->as_value($ev->_ga->getFittest), "<--\n";
-#print $fittest, "\n";
-#print "fittest: ", count_hydroph($fittest), "\n";
-#print $seqs[1]->seq, "\n";
-#print "normal: ", count_hydroph($seqs[1]->seq), "\n";
+print $ev->as_value($ev->_ga->getFittest), "<--\n";
+print $fittest->seq, "\n";
+print "fittest: ", count_hydroph($fittest->seq), "\n";
+print $seqs[1]->seq, "\n";
+print "normal: ", count_hydroph($seqs[1]->seq), "\n";

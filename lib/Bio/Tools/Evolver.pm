@@ -73,7 +73,7 @@ has '_ga' => (
    handles    => [
       qw(terminate evolve chart as_value getHistory
           getAvgFitness generation getFittest_as_arrayref
-          people chromosomes)
+          people chromosomes inject)
    ],
 );
 
