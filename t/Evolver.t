@@ -17,7 +17,7 @@ can_ok(
    qw(terminate population crossover mutation parents selection
        strategy cache history preserve variable_length throw
        evolve chart getFittest as_value getHistory getAvgFitness
-       generation)
+       generation inject)
 );
 
 # Test constructor and passing different profile types to
@@ -170,18 +170,39 @@ my @fittest = $ev->getFittest(3, 1);
 is( scalar @fittest, 3, 'getFittest with arguments');
 isa_ok( $fittest[0], 'Bio::Seq' );
 
-my ($fittest) = $ev->getFittest;
+my $fittest = $ev->getFittest;
 isa_ok( $fittest, 'Bio::Seq' );
+
+$ev = Bio::Tools::Evolver->new(
+   profile => $align_file,
+   population => 5,
+   fitness => sub { return 1 },
+);
+
+$alignI = Bio::AlignIO->new( -file => "<$align_file" );
+
+my ($string) = $alignI->next_aln->consensus_string;
+
+my $seq = Bio::Seq->new(-seq => $string, -id => 'cons' );
+my $short_seq = Bio::Seq->new(
+   -seq => 'PNYVIKPWLEP',
+   -id => 'shorty',
+);
+
+lives_ok { $ev->inject($seq) };
+
+dies_ok { $ev->inject('madre santa') };
+dies_ok { $ev->inject($short_seq) };
+
 
 # TODO Write *the* test: a protein actually evolves.
 
 # ok( count_hydroph($fittest) > count_hydroph($seqs[0]->seq) );
 ## ok( count_hydroph($fittest) > count_hydroph($seqs[1]->seq) );
-my $history = $ev->getHistory;
-use Data::Dumper;
-$ev->chart(-width => 1042, -height => 768, -filename => 'evolution.png');
-print $ev->as_value($ev->_ga->getFittest), "<--\n";
-print $fittest->seq, "\n";
-print "fittest: ", count_hydroph($fittest->seq), "\n";
-print $seqs[1]->seq, "\n";
-print "normal: ", count_hydroph($seqs[1]->seq), "\n";
+#my $history = $ev->getHistory;
+#$ev->chart(-width => 1042, -height => 768, -filename => 'evolution.png');
+#print $ev->as_value($ev->_ga->getFittest), "<--\n";
+#print $fittest->seq, "\n";
+#print "fittest: ", count_hydroph($fittest->seq), "\n";
+#print $seqs[1]->seq, "\n";
+#print "normal: ", count_hydroph($seqs[1]->seq), "\n";

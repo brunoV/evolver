@@ -52,8 +52,6 @@ Accepts a hash with arguments.
 
 =cut
 
-# TODO Inject the consensus sequence
-
 our $VERSION = '0.01';
 
 has '_root' => (
@@ -73,7 +71,7 @@ has '_ga' => (
    handles    => [
       qw(terminate evolve chart as_value getHistory
           getAvgFitness generation getFittest_as_arrayref
-          people chromosomes inject)
+          people chromosomes)
    ],
 );
 
@@ -164,7 +162,7 @@ sub _build__ga {
    return $ga;
 }
 
-before 'evolve' => sub {
+sub BUILD {
    my $self = shift;
 
    # Create the fitness function, which is composed of the
@@ -178,14 +176,53 @@ before 'evolve' => sub {
       my $final_score   = ( ( $profile_score**2 ) * ($custom_score) );
       return $final_score;
    };
-   $self->_ga->fitness($fitness) or die "Couldn't set fitness";
+   $self->_ga->fitness($fitness) or $self->throw("Couldn't set fitness");
+}
+
+before 'evolve' => sub {
+   my $self = shift;
+   unless ($self->_initialized) { $self->_init };
+};
+
+has _initialized => (
+   is      => 'rw',
+   isa     => 'Bool',
+   default => 0,
+);
+
+
+sub _init {
+   my $self = shift;
 
    # Initialize the first generation.
-   $self->_ga->init(
-      [  map { [ split '', $prot_alph ] } ( 1 .. $self->profile->length )
-      ]
-   );
-};
+   $self->_ga->init([
+      map { [ split '', $prot_alph ] } ( 1 .. $self->profile->length )
+   ]) and $self->_initialized(1);
+}
+
+sub inject {
+   my ($self, @seq_objs) = @_;
+   unless (@seq_objs) { warn "No arguments given, didn't inject anything" };
+
+   if (grep { !$_->can('seq') } @seq_objs) {
+      $self->throw("Can only inject Bio::Seq objects");
+   }
+
+   if (
+      grep { length $_ != $self->profile->length }
+      map { $_->seq } @seq_objs
+   )
+   {
+     $self->throw("Injected sequences must have
+        the length of the alignment");
+   }
+
+   $self->_init unless ($self->_initialized);
+
+   my @seqs = map { [ split '', $_->seq ] } @seq_objs;
+   $self->_ga->inject(\@seqs);
+
+}
 
 =head2 getFittest
 
