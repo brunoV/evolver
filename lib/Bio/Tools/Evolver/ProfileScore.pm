@@ -1,7 +1,6 @@
 package Bio::Tools::Evolver::ProfileScore;
 use strict;
 use warnings;
-use lib qw(/home/bruno/lib/Bio-Tools-Evolver/lib);
 use Moose::Role;
 use Moose::Util::TypeConstraints;
 
@@ -38,6 +37,21 @@ sub _get_path {
    return $matrix_name;
 }
 
+sub _calculate_lowest_score {
+   my $self = shift;
+   my $matrix = $self->matrix;
+   my @rows = $matrix->row_names;
+   my @cols = $matrix->column_names;
+   my $min = 0;
+   foreach my $row (@rows) {
+      foreach my $col (@cols) {
+         $min = $matrix->get_entry($row, $col) < $min ?
+                $matrix->get_entry($row, $col) : $min;
+      }
+   }
+   $self->matrix->lowest_score($min);
+}
+
 has _my_fitness => (
    is         => 'ro',
    lazy_build => 1,
@@ -51,14 +65,14 @@ sub _build__my_fitness {
    # Given a string, calculate the "family belongness score".
    my $max_score = $self->_score_f_absolute( $consensus,
       $consensus );
-   my $min_score = -4 * length $consensus;
+   if (!$self->matrix->lowest_score) { $self->_calculate_lowest_score };
+   my $min_score = $self->matrix->lowest_score * length $consensus;
 
    return sub {
       my $string = shift;
       my $string_score 
          = $self->_score_f_absolute( $string,  $consensus );
       my $score = ( ( $string_score - $min_score ) / ( $max_score - $min_score ) );
-      if ($score < 0) { $score = 0 };
       return $score;
    };
 }
