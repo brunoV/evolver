@@ -51,34 +51,6 @@ has 'profile' => (
    coerce   => 1,
 );
 
-has '_profile_file' => (
-   is => 'ro',
-   init_arg => undef,
-   isa => 'BTE.ProfileFile',
-   lazy_build => 1,
-);
-
-sub _build__profile_file {
-   my $self = shift;
-
-   # To make things more homogenous, I convert the alignment from
-   # whatever format to phylip; I found that it gives little warnings,
-   # unlike using clustalw's .aln or gcg (something about the character
-   # used for gaps, I dunno).
-   my $tmpfile = File::Temp->new(
-      TEMPLATE => 'XXXXXX',
-      SUFFIX => '.phy',
-   )->filename;
-
-   my $alnO = Bio::AlignIO->new(
-      -file => ">$tmpfile",
-      -format => 'phylip',
-   );
-   $alnO->write_aln($self->profile);
-
-   return $tmpfile;
-}
-
 # Coerce subtypes to BTE.Bio.SimpleAlign
 coerce 'BTE.Bio.SimpleAlign'
     => from 'BTE.Bio.SeqIO'
