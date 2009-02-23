@@ -17,7 +17,7 @@ can_ok(
    'Bio::Tools::Evolver',
    qw(terminate population crossover mutation parents selection
        strategy cache history preserve throw
-       evolve chart getFittest as_value getHistory getAvgFitness
+       evolve chart getFittest getHistory getAvgFitness
        generation inject)
 );
 
@@ -154,7 +154,7 @@ is( $ev->preserve,        7, 'changed preserve' );
 
 $ev = Bio::Tools::Evolver->new(
    profile    => $align_file,
-   population => 10,
+   population => 5,
    strategy   => [ 'Points', 10 ],
    fitness    => \&count_hydroph,
    history    => 1,
@@ -170,8 +170,8 @@ sub count_hydroph {
 
 lives_ok { $ev->evolve(1) } 'Short evolution run';
 
-my @fittest = $ev->getFittest( 3, 1 );
-is( scalar @fittest, 3, 'getFittest with arguments' );
+my @fittest = $ev->getFittest( 2, 1 );
+is( scalar @fittest, 2, 'getFittest with arguments' );
 isa_ok( $fittest[0], 'Bio::Seq' );
 
 my $fittest = $ev->getFittest;
@@ -197,7 +197,7 @@ dies_ok { $ev->inject('madre santa') } 'Injecting rubbish';
 dies_ok {
    $ev->inject($short_seq)
 } 'Injecting sequences with wrong length';
-warning_like { $ev->inject() } qr/No arguments/i, 'Injected nothing';
+warning_like { $ev->inject() } qr/No arguments/i, 'Injecting nothing';
 
 $ev->evolve(1);
 lives_ok { $ev->inject($seq) } 'Injecting after evolving';
@@ -217,6 +217,24 @@ lives_ok { $ev->inject($seq) } 'Injecting before evolving';
 lives_ok { $ev->evolve(1)    } 'Evolving after injecting';
 ($fittest) = $ev->getFittest;
 is( $fittest->seq, $string, 'Injection occured correctly' );
+
+# Test terminate function
+$ev = Bio::Tools::Evolver->new(
+   profile => $align_file,
+   population => 5,
+   fitness => sub { return 1 },
+   terminate => \&_has_F,
+);
+
+sub _has_F {
+   my $seq = shift;
+   my @res = (split '', $seq);
+   return 1 if grep { $_ eq 'F' } @res;
+   return 0;
+}
+$ev->inject($seq);
+$ev->evolve();
+is( $ev->generation, 0, 'Terminate function worked' );
 
 #($fittest) = $ev->getFittest;
 
