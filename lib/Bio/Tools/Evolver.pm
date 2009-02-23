@@ -74,64 +74,72 @@ has _ga => (
    ],
 );
 
-has 'cache' => (
+has cache => (
    is      => 'rw',
    isa     => 'Bool',
    default => 1,
 );
 
-has 'mutation' => (
+has mutation => (
    is      => 'rw',
    isa     => 'BTE.Probability',
    default => 0.01,
 );
 
-has 'crossover' => (
+has crossover => (
    is      => 'rw',
    isa     => 'BTE.Probability',
    default => 0.95,
 );
 
-has 'population' => (
+has population => (
    is      => 'rw',
    isa     => 'Num',
    default => 300,
 );
 
-has 'parents' => (
+has parents => (
    is      => 'rw',
    isa     => 'Num',
    default => 2,
 );
 
-has 'history' => (
+has history => (
    is      => 'rw',
    isa     => 'Bool',
    default => 1,
 );
 
-has 'selection' => (
+has selection => (
    is      => 'rw',
    isa     => 'ArrayRef',
    default => sub { ['Roulette'] },
 );
 
-has 'strategy' => (
+has strategy => (
    is      => 'rw',
    isa     => 'ArrayRef',
    default => sub { [ 'Points', 2 ] },
 );
 
-has 'preserve' => (
+has preserve => (
    is      => 'rw',
    isa     => 'Num',
    default => '5',
 );
 
-has 'fitness' => (
+has fitness => (
    is       => 'ro',
    isa      => 'CodeRef',
    required => 1,
+);
+
+has terminate => (
+   is      => 'rw',
+   isa     => 'CodeRef',
+   default => sub {
+      sub { return 0 }
+   },
 );
 
 sub _build__ga {
@@ -139,17 +147,18 @@ sub _build__ga {
 
    # Initialize the Genetic Algorithm engine with sane defaults.
    my $ga = AI::Genetic::Pro->new(
-      -type       => 'listvector',        # type of chromosomes
-      -population => $self->population,   # population size
-      -mutation   => $self->mutation,     # mutation rate
-      -crossover  => $self->crossover,    # crossover rate
-      -parents    => $self->parents,      # number  of parents
-      -selection  => $self->selection,    # selection strategy
-      -strategy   => $self->strategy,     # crossover strategy
-      -cache      => $self->cache,        # cache results
-      -history    => $self->history,      # remember best results
-      -preserve   => $self->preserve,     # remember the bests
-      -variable_length => 0,              # fixed length
+      -type            => 'listvector',         # type of chromosomes
+      -population      => $self->population,    # population size
+      -mutation        => $self->mutation,      # mutation rate
+      -crossover       => $self->crossover,     # crossover rate
+      -parents         => $self->parents,       # number  of parents
+      -selection       => $self->selection,     # selection strategy
+      -strategy        => $self->strategy,      # crossover strategy
+      -cache           => $self->cache,         # cache results
+      -history         => $self->history,       # remember best results
+      -preserve        => $self->preserve,      # remember the bests
+      -terminate       => $self->terminate,     # terminate function
+      -variable_length => 0,                    # fixed length
    );
    return $ga;
 }
@@ -171,9 +180,17 @@ sub BUILD {
    $self->_ga->fitness($fitness);
 }
 
-before 'evolve' => sub {
+=head2 evolve($n)
+
+This method evolves the population for the specified
+number of generations. If its argument is 0 or C<undef>, evolution will
+take place indefinitely or until the terminate function returns true.
+
+=cut
+
+before evolve => sub {
    my $self = shift;
-   unless ($self->_initialized) { $self->_init };
+   unless ( $self->_initialized ) { $self->_init }
 };
 
 has _initialized => (
@@ -182,49 +199,66 @@ has _initialized => (
    default => 0,
 );
 
-
 sub _init {
    my $self = shift;
 
    # Initialize the first generation.
-   $self->_ga->init([
-      map { [ split '', $prot_alph ] } ( 1 .. $self->profile->length )
-   ]);
+   $self->_ga->init(
+      [  map { [ split '', $prot_alph ] } ( 1 .. $self->profile->length )
+      ]
+   );
    $self->_initialized(1);
 }
 
-sub inject {
-   my ($self, @seq_objs) = @_;
-   unless (@seq_objs) { warn "No arguments given, didn't inject anything" };
+=head2 inject(@seqs)
 
-   if (grep { !$_->can('seq') } @seq_objs) {
+Inject user-defined sequences in the current population. Accepts a list
+of Bio::Seq objects.
+
+    my $seq = Bio::Seq->new(-seq => $consensus_string);
+    $ev->inject($seq);
+
+=cut
+
+sub inject {
+   my ( $self, @seq_objs ) = @_;
+   unless (@seq_objs) {
+      warn "No arguments given, didn't inject anything";
+   }
+
+   if ( grep { !$_->can('seq') } @seq_objs ) {
       $self->throw("Can only inject Bio::Seq objects");
    }
 
    if (
       grep { length $_ != $self->profile->length }
-      map { $_->seq } @seq_objs
-   )
+      map  { $_->seq } @seq_objs
+       )
    {
-     $self->throw("Injected sequences must have
-        the length of the alignment");
+      $self->throw(
+         "Injected sequences must have
+        the length of the alignment"
+      );
    }
 
-   $self->_init unless ($self->_initialized);
+   $self->_init unless ( $self->_initialized );
 
    my @seqs = map { [ split '', $_->seq ] } @seq_objs;
-   $self->_ga->inject(\@seqs);
+   $self->_ga->inject( \@seqs );
 
 }
 
-=head2 getFittest
+=head2 getFittest($n, $unique)
 
-    Get the best scoring sequence after the evolution run
-    . Returns a Bio::Seq object
+    Get the $n best scoring sequences after the evolution run.
+    In scalar context, returns a Bio::Seq object, corresponding
+    to the best sequence. In list context, returns a list of Bio::Seq
+    objects of a size equal to the first argument given.
     
 
-    my $seq = $evolver->getFittest;
-print $seq->seq;    # Print optimized sequence to screen.
+    my $seq  = $evolver->getFittest;      # get best sequence.
+    my @seqs = $evolver->getFittest(5)    # get the best 5 sequences.
+    my @seqs = $evolver->getFittest(5, 1) # Assure uniqueness
 
 =cut
 
@@ -233,7 +267,7 @@ sub getFittest {
    $amount ||= 1;
    my @fittest_ind = $self->_ga->getFittest( $amount, $is_unique );
    my @strings = map { $self->_ga->as_string($_) } @fittest_ind;
-   my @scores  = map { $self->_ga->as_value ($_) } @fittest_ind;
+   my @scores  = map { $self->_ga->as_value($_) } @fittest_ind;
 
    my @fittest_seq;
    foreach my $i ( 0 .. $#strings ) {

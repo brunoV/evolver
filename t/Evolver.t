@@ -16,7 +16,7 @@ use_ok('Bio::Tools::Evolver');
 can_ok(
    'Bio::Tools::Evolver',
    qw(terminate population crossover mutation parents selection
-       strategy cache history preserve variable_length throw
+       strategy cache history preserve throw
        evolve chart getFittest as_value getHistory getAvgFitness
        generation inject)
 );
@@ -91,7 +91,6 @@ is_deeply( $ev->strategy, [ 'Points', 2 ], 'default strategy' );
 is( $ev->cache,           1, 'default cache' );
 is( $ev->history,         1, 'default history' );
 is( $ev->preserve,        5, 'default preserve' );
-is( $ev->variable_length, 0, 'default variable_length' );
 
 # Check for correct delegation.
 $ev->population(1000);
@@ -103,7 +102,6 @@ $ev->strategy( [ 'Points', 5 ] );
 $ev->cache(0);
 $ev->history(0);
 $ev->preserve(7);
-$ev->variable_length(1);
 $ev->terminate( sub { return 5 } );
 
 is( $ev->population, 1000, 'changed population' );
@@ -115,7 +113,6 @@ is_deeply( $ev->strategy, [ 'Points', 5 ], 'changed strategy' );
 is( $ev->cache,           0, 'changed cache' );
 is( $ev->history,         0, 'changed history' );
 is( $ev->preserve,        7, 'changed preserve' );
-is( $ev->variable_length, 1, 'changed variable_length' );
 is( $ev->terminate->(),   5, 'hitting terminate' );
 dies_ok { $ev->throw('Test error message') } 'Throw';
 
@@ -140,7 +137,6 @@ lives_ok {
       cache           => '0',
       history         => 0,
       preserve        => 7,
-      variable_length => 1,
       terminate       => sub { return 5 },
    );
 }
@@ -155,7 +151,6 @@ is_deeply( $ev->strategy, [ 'Points', 5 ], 'changed strategy' );
 is( $ev->cache,           0, 'changed cache' );
 is( $ev->history,         0, 'changed history' );
 is( $ev->preserve,        7, 'changed preserve' );
-is( $ev->variable_length, 1, 'changed variable_length' );
 
 $ev = Bio::Tools::Evolver->new(
    profile    => $align_file,
