@@ -53,7 +53,7 @@ Accepts a hash with arguments.
 
 our $VERSION = '0.01';
 
-has '_root' => (
+has _root => (
    is         => 'ro',
    isa        => 'Bio::Root::Root',
    init_arg   => undef,
@@ -61,7 +61,7 @@ has '_root' => (
    handles    => [qw(throw)],
 );
 
-has '_ga' => (
+has _ga => (
    is         => 'ro',
    writer     => '_set_ga',
    isa        => 'AI::Genetic::Pro',
