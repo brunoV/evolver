@@ -176,7 +176,7 @@ sub BUILD {
       my $final_score   = ( ( $profile_score**2 ) * ($custom_score) );
       return $final_score;
    };
-   $self->_ga->fitness($fitness) or $self->throw("Couldn't set fitness");
+   $self->_ga->fitness($fitness);
 }
 
 before 'evolve' => sub {
@@ -197,7 +197,8 @@ sub _init {
    # Initialize the first generation.
    $self->_ga->init([
       map { [ split '', $prot_alph ] } ( 1 .. $self->profile->length )
-   ]) and $self->_initialized(1);
+   ]);
+   $self->_initialized(1);
 }
 
 sub inject {
