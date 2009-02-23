@@ -2,6 +2,7 @@ use strict;
 use warnings;
 use Test::More qw(no_plan);
 use Test::Exception;
+use Test::Warn;
 use Bio::AlignIO;
 use lib qw(/home/bruno/lib/Bio-Tools-Evolver/lib);
 
@@ -30,7 +31,8 @@ lives_ok {
       profile => $align_file,
       fitness => sub { return 1 },
    );
-} 'Profile: alignment file';
+}
+'Profile: alignment file';
 isa_ok( $ev, 'Bio::Tools::Evolver', "Constructor" );
 isa_ok( $ev->profile, 'Bio::SimpleAlign' );
 
@@ -41,7 +43,8 @@ lives_ok {
       profile => $alignI,
       fitness => sub { return 1 },
    );
-} 'Profile: AlignIO object';
+}
+'Profile: AlignIO object';
 
 # 3. Passing a SimpleAlign object.
 $alignI = Bio::AlignIO->new( -file => "<$align_file" );
@@ -51,7 +54,8 @@ lives_ok {
       profile => $aln,
       fitness => sub { return 1 },
    );
-} 'Profile: SimpleAlign object';
+}
+'Profile: SimpleAlign object';
 
 # 4. Passing a SeqIO object.
 my $seqI = Bio::SeqIO->new( -file => $seqs_file );
@@ -60,7 +64,8 @@ lives_ok {
       profile => $seqI,
       fitness => sub { return 1 },
    );
-} 'Profile: SeqIO object';
+}
+'Profile: SeqIO object';
 
 # 5. Passing an arrayref of Bio::Seq objects.
 $seqI = Bio::SeqIO->new( -file => $seqs_file );
@@ -73,13 +78,14 @@ lives_ok {
       profile => [@seqs],
       fitness => sub { return 1 },
    );
-} 'Profile: Seq object';
+}
+'Profile: Seq object';
 
 # Check for default values.
-is( $ev->population, 300, 'default population' );
+is( $ev->population, 300,  'default population' );
 is( $ev->crossover,  0.95, 'default crossover' );
 is( $ev->mutation,   0.01, 'default mutation rate' );
-is( $ev->parents,    2, 'default parents' );
+is( $ev->parents,    2,    'default parents' );
 is_deeply( $ev->selection, ['Roulette'], 'default selection' );
 is_deeply( $ev->strategy, [ 'Points', 2 ], 'default strategy' );
 is( $ev->cache,           1, 'default cache' );
@@ -101,9 +107,9 @@ $ev->variable_length(1);
 $ev->terminate( sub { return 5 } );
 
 is( $ev->population, 1000, 'changed population' );
-is( $ev->crossover,  0.9, 'changed crossover' );
+is( $ev->crossover,  0.9,  'changed crossover' );
 is( $ev->mutation,   0.05, 'changed mutation' );
-is( $ev->parents,    3, 'changed parents' );
+is( $ev->parents,    3,    'changed parents' );
 is_deeply( $ev->selection, ['RouletteBasic'], 'changed selection' );
 is_deeply( $ev->strategy, [ 'Points', 5 ], 'changed strategy' );
 is( $ev->cache,           0, 'changed cache' );
@@ -116,31 +122,34 @@ dies_ok { $ev->throw('Test error message') } 'Throw';
 # Users cannot access non-delegated methods
 dies_ok {
    $ev->fitness( sub { return 5 } );
-} 'fitness is ro';
+}
+'fitness is ro';
 
 # Initialize an object assigning attributes in the declaration.
 undef $ev;
 lives_ok {
-$ev = Bio::Tools::Evolver->new(
-   profile => $align_file,
-   fitness => sub { return 1 },
-   population => 1000,
-   crossover => 0.9,
-   mutation => 0.05,
-   parents => 3,
-   selection => ['RouletteBasic'],
-   strategy => ['Points', 5],
-   cache => '0',
-   history => 0,
-   preserve => 7,
-   variable_length => 1,
-   terminate => sub { return 5 },
-) } 'Initialization with non-default attributes';
+   $ev = Bio::Tools::Evolver->new(
+      profile         => $align_file,
+      fitness         => sub { return 1 },
+      population      => 1000,
+      crossover       => 0.9,
+      mutation        => 0.05,
+      parents         => 3,
+      selection       => ['RouletteBasic'],
+      strategy        => [ 'Points', 5 ],
+      cache           => '0',
+      history         => 0,
+      preserve        => 7,
+      variable_length => 1,
+      terminate       => sub { return 5 },
+   );
+}
+'Initialization with non-default attributes';
 
 is( $ev->population, 1000, 'changed population' );
-is( $ev->crossover,  0.9, 'changed crossover' );
+is( $ev->crossover,  0.9,  'changed crossover' );
 is( $ev->mutation,   0.05, 'changed mutation' );
-is( $ev->parents,    3, 'changed parents' );
+is( $ev->parents,    3,    'changed parents' );
 is_deeply( $ev->selection, ['RouletteBasic'], 'changed selection' );
 is_deeply( $ev->strategy, [ 'Points', 5 ], 'changed strategy' );
 is( $ev->cache,           0, 'changed cache' );
@@ -149,51 +158,72 @@ is( $ev->preserve,        7, 'changed preserve' );
 is( $ev->variable_length, 1, 'changed variable_length' );
 
 $ev = Bio::Tools::Evolver->new(
-   profile => $align_file, 
-   population => 5,
-   strategy => ['Points', 10],
-   fitness => \&count_hydroph,
-   history => 1,
-   preserve => 1,
-   cache => 0,
+   profile    => $align_file,
+   population => 10,
+   strategy   => [ 'Points', 10 ],
+   fitness    => \&count_hydroph,
+   history    => 1,
+   preserve   => 1,
+   cache      => 0,
 );
 
 sub count_hydroph {
    my $string = shift;
    my $count = scalar grep { $_ =~ /[VALI]/ } split '', $string;
-   return ($count / length $string);
+   return ( $count / length $string );
 }
 
 lives_ok { $ev->evolve(1) } 'Short evolution run';
 
-my @fittest = $ev->getFittest(3, 1);
-is( scalar @fittest, 3, 'getFittest with arguments');
+my @fittest = $ev->getFittest( 3, 1 );
+is( scalar @fittest, 3, 'getFittest with arguments' );
 isa_ok( $fittest[0], 'Bio::Seq' );
 
 my $fittest = $ev->getFittest;
 isa_ok( $fittest, 'Bio::Seq' );
 
+# Testing injection.
 $ev = Bio::Tools::Evolver->new(
-   profile => $align_file,
+   profile    => $align_file,
    population => 5,
-   fitness => sub { return 1 },
+   fitness    => sub { return 1 },
+   cache      => 1,
 );
-
 $alignI = Bio::AlignIO->new( -file => "<$align_file" );
-
 my ($string) = $alignI->next_aln->consensus_string;
 
-my $seq = Bio::Seq->new(-seq => $string, -id => 'cons' );
+my $seq = Bio::Seq->new( -seq => $string, -id => 'cons' );
 my $short_seq = Bio::Seq->new(
    -seq => 'PNYVIKPWLEP',
-   -id => 'shorty',
+   -id  => 'shorty',
 );
 
-lives_ok { $ev->inject($seq) };
+dies_ok { $ev->inject('madre santa') } 'Injecting rubbish';
+dies_ok {
+   $ev->inject($short_seq)
+} 'Injecting sequences with wrong length';
+warning_like { $ev->inject() } qr/No arguments/i, 'Injected nothing';
 
-dies_ok { $ev->inject('madre santa') };
-dies_ok { $ev->inject($short_seq) };
+$ev->evolve(1);
+lives_ok { $ev->inject($seq) } 'Injecting after evolving';
 
+($fittest) = $ev->getFittest;
+is( $fittest->seq, $string, 'Injection occured correctly' );
+
+# Doing it the other way around (inject->evolve)
+$ev = Bio::Tools::Evolver->new(
+   profile => $align_file,
+   population => 1,
+   preserve => 1,
+   fitness => sub { shift eq $seq and return 1000; return 0 },
+);
+
+lives_ok { $ev->inject($seq) } 'Injecting before evolving';
+lives_ok { $ev->evolve(1)    } 'Evolving after injecting';
+($fittest) = $ev->getFittest;
+is( $fittest->seq, $string, 'Injection occured correctly' );
+
+#($fittest) = $ev->getFittest;
 
 # TODO Write *the* test: a protein actually evolves.
 
