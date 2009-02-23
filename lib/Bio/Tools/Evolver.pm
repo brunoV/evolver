@@ -27,13 +27,12 @@ Version 0.01
       profile => 'family.aln', # Bio::SimpleAlign, Bio::SeqIO, Bio::Seq, A filename with a sequences to be aligned.
       fitness => \&fitness_function,
       terminate => \&terminate_function, #optional
-      alphabet => 'protein' #optional, should be able to be guessed
    );
 
    $evolver->evolver(10) # Evolve for ten generations.
    $evolver->graph('output.png')
 
-   my $seq = $evolver->getFitest. # Get a Bio::Seq object with the best fit.
+   my $seq = $evolver->getFittest. # Get a Bio::Seq object with the best fit.
    print $seq->seq;
 
    
@@ -73,12 +72,6 @@ has '_ga' => (
           getAvgFitness generation getFittest_as_arrayref
           people chromosomes)
    ],
-);
-
-has 'variable_length' => (
-   is      => 'rw',
-   isa     => 'Bool',
-   default => 0,
 );
 
 has 'cache' => (
@@ -147,17 +140,16 @@ sub _build__ga {
    # Initialize the Genetic Algorithm engine with sane defaults.
    my $ga = AI::Genetic::Pro->new(
       -type       => 'listvector',        # type of chromosomes
-      -population => $self->population,
-      -mutation   => $self->mutation,
-      -crossover  => $self->crossover,
+      -population => $self->population,   # population size
+      -mutation   => $self->mutation,     # mutation rate
+      -crossover  => $self->crossover,    # crossover rate
       -parents    => $self->parents,      # number  of parents
       -selection  => $self->selection,    # selection strategy
       -strategy   => $self->strategy,     # crossover strategy
       -cache      => $self->cache,        # cache results
       -history    => $self->history,      # remember best results
       -preserve   => $self->preserve,     # remember the bests
-      -variable_length =>
-          $self->variable_length,         # turn variable length ON
+      -variable_length => 0,              # fixed length
    );
    return $ga;
 }
