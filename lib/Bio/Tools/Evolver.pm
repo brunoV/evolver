@@ -37,13 +37,13 @@ has cache => (
 
 has mutation => (
    is      => 'rw',
-   isa     => 'BTE.Probability',
+   isa     => 'BTE::Probability',
    default => 0.01,
 );
 
 has crossover => (
    is      => 'rw',
-   isa     => 'BTE.Probability',
+   isa     => 'BTE::Probability',
    default => 0.95,
 );
 

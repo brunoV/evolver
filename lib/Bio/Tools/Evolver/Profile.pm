@@ -5,12 +5,6 @@ use warnings;
 use Moose::Role;
 use Moose::Util::TypeConstraints;
 
-use Bio::Seq;
-use Bio::AlignIO;
-use Bio::Tools::Run::Alignment::Clustalw;
-
-use File::Temp;
-
 =head1 NAME
 
 Bio::Tools::Evolver::Profile - A role that gives a Profile attribute which
@@ -46,70 +40,10 @@ perform an alignment and save it in a temporary file.
 
 has 'profile' => (
    is       => 'ro',
-   isa      => 'BTE.Bio.SimpleAlign',
+   isa      => 'BTE::Bio::SimpleAlign',
    required => 1,
    coerce   => 1,
 );
-
-# Coerce subtypes to BTE.Bio.SimpleAlign
-coerce 'BTE.Bio.SimpleAlign'
-    => from 'BTE.Bio.SeqIO'
-       => via { _BioSeqIO($_[0] )  }
-    => from 'BTE.Bio.Seq.ArrayRef'
-       => via { _BioSeqArrayRef( $_[0] ) }
-    => from 'BTE.Bio.AlignIO'
-       => via { _BioAlignIO($_[0] ) }
-    => from 'BTE.ProfileFile'
-       => via { _ProfileFile($_[0] ) };
-
-sub _ProfileFile {
-   my $file = shift;
-
-   my $alnI = Bio::AlignIO->new(-file => "<$file");
-   my $tmpfile = File::Temp->new(
-      TEMPLATE => 'XXXXXX',
-      SUFFIX => '.phy',
-   )->filename;
-   my $alnO = Bio::AlignIO->new(
-      -file => ">$tmpfile",
-      -format => 'phylip',
-   );
-   $alnO->write_aln($alnI->next_aln);
-   $alnI = Bio::AlignIO->new(
-      -file => "<$tmpfile",
-      -format => 'phylip',
-   );
-   
-   my $aln = $alnI->next_aln;
-   unlink $tmpfile;
-   return $aln;
-}
-
-
-sub _BioAlignIO { $_->next_aln }
-
-sub _BioSeqIO {
-   my $seqI = shift;
-
-   my %params = ( quiet => 1, output => 'phylip' );
-   my $factory = Bio::Tools::Run::Alignment::Clustalw->new( %params );
-   my $seqs;
-   while ( my $seq = $seqI->next_seq ) { push @$seqs, $seq }
-   my $aln = $factory->align($seqs);
-
-   return $aln;
-}
-
-sub _BioSeqArrayRef {
-   my $seqs = shift;
-
-   my %params = ( quiet => 1, output => 'phylip' );
-   my $factory = Bio::Tools::Run::Alignment::Clustalw->new( %params );
-
-   my $aln = $factory->align($seqs);
-
-   return $aln;
-}
 
 =head1 AUTHOR
 

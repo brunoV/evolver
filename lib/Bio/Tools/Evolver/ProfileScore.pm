@@ -4,38 +4,16 @@ use warnings;
 use Moose::Role;
 use Moose::Util::TypeConstraints;
 
-use Bio::Matrix::IO;
 use Bio::Tools::Evolver::Types;
 
-use File::Basename;
 use List::MoreUtils qw(each_array);
 
 has 'matrix' => (
    is      => 'ro',
-   isa     => 'BTE.Bio.Matrix.Scoring',
+   isa     => 'BTE::Bio::Matrix::Scoring',
    coerce  => 1,
    default => 'BLOSUM62',
 );
-
-coerce 'BTE.Bio.Matrix.Scoring'
-   => from 'BTE.MatrixFile' => via { _parse_matrixfile( $_[0] ) }
-   => from 'BTE.Bio.Matrix.IO' =>  via { return $_[0]->next_matrix }
-   => from 'BTE.MatrixName'  => via { _parse_matrixfile( _get_path( $_[0] ) ) };
-
-sub _parse_matrixfile {
-   my $file = shift;
-   my $parser = Bio::Matrix::IO->new( -file => $file )
-       or die "Couldn't open scoring matrix $file : $!";
-   return $parser->next_matrix;
-}
-
-sub _get_path {
-   my $matrix_name = shift;
-   my $full_path = __FILE__;
-   my ($module_file, $directories, $suffix) = fileparse($full_path);
-   if ($directories) { return $directories . $matrix_name };
-   return $matrix_name;
-}
 
 sub _calculate_lowest_score {
    my $self = shift;
