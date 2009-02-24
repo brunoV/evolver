@@ -118,7 +118,6 @@ sub _build__ga {
 sub BUILD {
    my $self = shift;
 
-   print $self->profile, "<--";
    # Create the fitness function, which is composed of the
    # ProfileScore function and the user function.
    my $fitness = sub {
