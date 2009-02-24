@@ -4,9 +4,9 @@ use Moose;
 use AI::Genetic::Pro;
 
 with
-   'Bio::Tools::Evolver::Types',
-   'Bio::Tools::Evolver::Profile',
-   'Bio::Tools::Evolver::ProfileScore';
+    'Bio::Tools::Evolver::Types',
+    'Bio::Tools::Evolver::Profile',
+    'Bio::Tools::Evolver::ProfileScore';
 
 my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
 
@@ -26,9 +26,7 @@ has _ga => (
    isa        => 'AI::Genetic::Pro',
    init_arg   => undef,
    lazy_build => 1,
-   handles    => [
-      qw(evolve chart getHistory getAvgFitness generation)
-   ],
+   handles    => [ qw(evolve chart getHistory getAvgFitness generation) ],
 );
 
 has cache => (
@@ -92,8 +90,8 @@ has fitness => (
 );
 
 has terminate => (
-   is      => 'rw',
-   isa     => 'CodeRef',
+   is        => 'rw',
+   isa       => 'CodeRef',
    predicate => '_has_terminate',
 );
 
@@ -120,6 +118,7 @@ sub _build__ga {
 sub BUILD {
    my $self = shift;
 
+   print $self->profile, "<--";
    # Create the fitness function, which is composed of the
    # ProfileScore function and the user function.
    my $fitness = sub {
@@ -134,17 +133,17 @@ sub BUILD {
    $self->_ga->fitness($fitness);
 
    # if defined, create the terminate function
-   if ($self->_has_terminate) {
-   my $terminate = sub {
-      my ($ga) = @_;
-      my $seq = $ga->as_string($ga->getFittest);
-      $seq =~ s/_//g;
+   if ( $self->_has_terminate ) {
+      my $terminate = sub {
+         my ($ga) = @_;
+         my $seq = $ga->as_string( $ga->getFittest );
+         $seq =~ s/_//g;
 
-      return $self->terminate->($seq);
-   };
+         return $self->terminate->($seq);
+      };
 
-   $self->_ga->terminate($terminate);
-}
+      $self->_ga->terminate($terminate);
+   }
 
 }
 
@@ -236,11 +235,11 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-    use Bio::Tools::Evolver;
+   use Bio::Tools::Evolver;
 
-    my $evolver = Bio::Tools::Evolver->new(
-      profile => 'family.aln', # Bio::SimpleAlign, Bio::SeqIO, Bio::Seq, A filename with a sequences to be aligned.
-      fitness => \&fitness_function,
+   my $evolver = Bio::Tools::Evolver->new(
+      profile   => 'family.aln', # Bio::SimpleAlign, Bio::SeqIO, Bio::Seq, A filename with a sequences to be aligned.
+      fitness   => \&fitness_function,
       terminate => \&terminate_function, #optional
    );
 
@@ -474,11 +473,14 @@ take place indefinitely or until the terminate function returns true.
     Get the $n best scoring sequences after the evolution run.
     In scalar context, returns a Bio::Seq object, corresponding
     to the best sequence. In list context, returns a list of Bio::Seq
-    objects of a size equal to the first argument given.
+    objects of a size equal to the first argument given. Sequence scores
+    are stored in the C<-id> attribute of each sequence retrieved.
 
     my $seq  = $evolver->getFittest;      # get best sequence.
     my @seqs = $evolver->getFittest(5)    # get the best 5 sequences.
     my @seqs = $evolver->getFittest(5, 1) # Assure uniqueness
+
+    my $best_score = $seq->id;            # The score is stored in the id.
 
 =cut
 
