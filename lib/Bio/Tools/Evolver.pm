@@ -5,7 +5,6 @@ use AI::Genetic::Pro;
 
 with
     'Bio::Tools::Evolver::Types',
-    'Bio::Tools::Evolver::Profile',
     'Bio::Tools::Evolver::ProfileScore';
 
 my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
@@ -27,6 +26,13 @@ has _ga => (
    init_arg   => undef,
    lazy_build => 1,
    handles    => [ qw(evolve chart getHistory getAvgFitness generation) ],
+);
+
+has 'profile' => (
+   is       => 'ro',
+   isa      => 'BTE::Bio::SimpleAlign',
+   required => 1,
+   coerce   => 1,
 );
 
 has cache => (
