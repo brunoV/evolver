@@ -37,7 +37,7 @@ subtype 'BTE.MatrixFile'
    => where { validate_mfile($_) }
    => message {"File $_ doesn't exist"};
 subtype 'BTE.Bio.Matrix.IO' => as class_type('Bio::Matrix::IO');
-subtype 'BTE.MatrixName' => 'Str' => where { validate_mname($_) };
+subtype 'BTE.MatrixName' => as 'Str' => where { validate_mname($_) };
 subtype 'BTE.Algorithm.NeedlemanWunsch'
    => as class_type('Algorithm::NeedlemanWunsch');
 
