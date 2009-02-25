@@ -227,6 +227,11 @@ sub getFittest {
    return wantarray ? @fittest_seq : $fittest_seq[0];
 }
 
+no Moose;
+__PACKAGE__->meta->make_immutable;
+1;    # End of Bio::Tools::Evolver
+__END__
+
 =head1 NAME
 
 Bio::Tools::Evolver - Profile-constrained sequence optimization using
@@ -632,7 +637,3 @@ under the same terms as Perl itself.
 
 
 =cut
-
-no Moose;
-__PACKAGE__->meta->make_immutable;
-1;    # End of Bio::Tools::Evolver
