@@ -114,7 +114,7 @@ is( $ev->cache,           0, 'changed cache' );
 is( $ev->history,         0, 'changed history' );
 is( $ev->preserve,        7, 'changed preserve' );
 is( $ev->terminate->(),   5, 'hitting terminate' );
-dies_ok { $ev->throw('Test error message') } 'Throw';
+throws_ok { $ev->throw('Test error message') } 'Bio::Root::Exception', 'Throw';
 
 # Users cannot access non-delegated methods
 dies_ok {

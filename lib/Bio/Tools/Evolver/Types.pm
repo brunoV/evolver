@@ -33,7 +33,6 @@ subtype 'BTE::Algorithm::NeedlemanWunsch'
 
 subtype 'BTE::Probability'      => as 'Str' => where { $_ < 1 and $_ > 0 };
 
-
 # Coercion coderefs. I couldn't use proper subs because it would look
 # for them in the applying module.
 my $parse_matrixfile_sub = sub {

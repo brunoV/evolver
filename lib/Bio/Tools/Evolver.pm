@@ -2,6 +2,7 @@ package Bio::Tools::Evolver;
 
 use Moose;
 use AI::Genetic::Pro;
+use Bio::Root::Root qw();
 
 with
     'Bio::Tools::Evolver::Types',
@@ -14,8 +15,8 @@ our $VERSION = '0.01';
 has _root => (
    is         => 'ro',
    isa        => 'Bio::Root::Root',
+   default    => sub { Bio::Root::Root->new },
    init_arg   => undef,
-   lazy_build => 1,
    handles    => [qw(throw)],
 );
 
