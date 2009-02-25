@@ -231,6 +231,15 @@ sub getFittest {
 no Moose;
 __PACKAGE__->meta->make_immutable;
 1;    # End of Bio::Tools::Evolver
+# TODO
+# inject consensus
+# eliminate hardcoding in the weighing of both scores.
+# design a better way to implement the profile score engine. Maybe an
+# interface ProfileScoreI than can e
+# Maybe a better charting role, using Chart::Clicker?
+# Extend for different sequence alphabets:
+#  * $proth_alph
+#  * _init
 __END__
 
 =head1 NAME
