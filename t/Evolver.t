@@ -92,6 +92,20 @@ lives_ok {
 }
 'Profile: Seq object';
 
+throws_ok { 
+   $ev = Bio::Tools::Evolver->new(
+      profile => 'inexistent-file',
+      fitness => sub { return 1 },
+   );
+} 'Bio::Root::Exception', 'Profile: inexistent file';
+
+throws_ok { 
+   $ev = Bio::Tools::Evolver->new(
+      profile => 't/bogus-seq.bogus',
+      fitness => sub { return 1 },
+   );
+} 'Bio::Root::Exception', 'Profile: empty file';
+
 # Check for default values.
 is( $ev->population, 300,  'default population' );
 is( $ev->crossover,  0.95, 'default crossover' );

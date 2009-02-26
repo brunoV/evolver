@@ -116,7 +116,7 @@ sub _filename_to_aln {
    my $file = shift;
    my $guesser = Bio::Tools::GuessSeqFormat->new( -file => $file );
    my ( $aln, $seqI );
-   if ( defined $guesser->guess && $is_alignment{ $guesser->guess } ) {
+   if ( defined $guesser->guess && defined $is_alignment{ $guesser->guess } ) {
 
       # The file is an alignment, try to open it as such.
       eval { $aln = _alnfile_to_aln($file) };
