@@ -32,7 +32,11 @@ subtype 'BTE::MatrixName' => as 'Str' => where { _validate_mname($_) };
 subtype 'BTE::Algorithm::NeedlemanWunsch' =>
     as class_type('Algorithm::NeedlemanWunsch');
 
+# Misc. types
 subtype 'BTE::Probability' => as 'Str' => where { $_ < 1 and $_ > 0 };
+subtype 'BTE::Algorithm::NeedlemanWunsch'
+   => as class_type('Algorithm::NeedlemanWunsch');
+
 
 # Coercion coderefs. I couldn't use proper subs because it would look
 # for them in the applying module, even after prepending this module's name.

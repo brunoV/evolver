@@ -1,4 +1,4 @@
-package Bio::Tools::Evolver::ProfileScore;
+package Bio::Tools::Evolver::ProfileScore::Clustalw;
 use strict;
 use warnings;
 use Moose::Role;
@@ -16,7 +16,7 @@ has _random_seq => (
    isa        => 'Str',
 );
 
-has _fitness => (
+has _my_fitness => (
    is         => 'ro',
    lazy_build => 1,
    isa        => 'CodeRef',
@@ -35,7 +35,7 @@ sub _shuffle_string {
    return join( '', shuffle @elms );
 }
 
-sub _build__fitness {
+sub _build__my_fitness {
    my $self = shift;
 
    my $factory = Bio::Tools::Run::Alignment::Clustalw->new( quiet => 1 );
