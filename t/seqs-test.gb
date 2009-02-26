@@ -1,0 +1,113 @@
+LOCUS       AAR95703                 229 aa            linear   PLN 11-OCT-2005
+DEFINITION  globulin [Triticum turgidum].
+ACCESSION   AAR95703
+VERSION     AAR95703.1  GI:40849983
+DBSOURCE    accession AY494981.1
+KEYWORDS    .
+SOURCE      Triticum turgidum
+  ORGANISM  Triticum turgidum
+            Eukaryota; Viridiplantae; Streptophyta; Embryophyta; Tracheophyta;
+            Spermatophyta; Magnoliophyta; Liliopsida; Poales; Poaceae; BEP
+            clade; Pooideae; Triticeae; Triticum.
+REFERENCE   1  (residues 1 to 229)
+  AUTHORS   Gu,Y.Q., Coleman-Derr,D., Kong,X. and Anderson,O.D.
+  TITLE     Rapid Genome Evolution Revealed by Comparative Sequence Analysis of
+            Orthologous Regions from Four Triticeae Genomes
+  JOURNAL   Plant Physiol. 135 (1), 459-470 (2004)
+   PUBMED   15122014
+REFERENCE   2  (residues 1 to 229)
+  AUTHORS   Gu,Y.Q., Coleman-Derr,D.A., Kong,X. and Anderson,O.D.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (03-DEC-2003) Genomics and Gene Discovery Unit, United
+            States Department of Agriculture, 800 Buchanan Street, Albany, CA
+            94710, USA
+COMMENT     Method: conceptual translation supplied by author.
+FEATURES             Location/Qualifiers
+     source          1..229
+                     /organism="Triticum turgidum"
+                     /db_xref="taxon:4571"
+                     /chromosome="1"
+                     /note="A genome"
+     Protein         1..229
+                     /product="globulin"
+     Region          41..121
+                     /region_name="AAI_SS"
+                     /note="AAI_SS: Alpha-Amylase Inhibitors (AAIs) and Seed
+                     Storage (SS) Protein subfamily; composed of cereal-type
+                     AAIs and SS proteins. They are mainly present in the seeds
+                     of a variety of plants. AAIs play an important role in the
+                     natural defenses of plants...; cd00261"
+                     /db_xref="CDD:72936"
+     Site            order(74,121)
+                     /site_type="other"
+                     /note="dimer interface"
+                     /db_xref="CDD:72936"
+     Site            order(85..87,94)
+                     /site_type="other"
+                     /note="alpha-amylase binding site"
+                     /db_xref="CDD:72936"
+     CDS             1..229
+                     /coded_by="AY494981.1:47272..47961"
+ORIGIN      
+        1 mgkfvffavf laalvsvsaa qgvleqsltd aqcrgevrek pllacrqile qqltgrageg
+       61 avgvplfqaq wgarerccrq lesvsrecrc aalrgmvrdy eqsmpplgeg rhgssgerqq
+      121 eqgcsgeste peqrqevqgg qygsetggsq qqqqgggyhg vtvgrggqrq gqvlchkrpq
+      181 rqqgegfsge gaqqkpqagr vrltkvrlpt acriepqecs vfsadqyyy
+//
+
+LOCUS       AAQ93632                 225 aa            linear   PLN 16-JUL-2004
+DEFINITION  globulin [Triticum turgidum].
+ACCESSION   AAQ93632
+VERSION     AAQ93632.1  GI:37575362
+DBSOURCE    accession AY368673.1
+KEYWORDS    .
+SOURCE      Triticum turgidum
+  ORGANISM  Triticum turgidum
+            Eukaryota; Viridiplantae; Streptophyta; Embryophyta; Tracheophyta;
+            Spermatophyta; Magnoliophyta; Liliopsida; Poales; Poaceae; BEP
+            clade; Pooideae; Triticeae; Triticum.
+REFERENCE   1  (residues 1 to 225)
+  AUTHORS   Kong,X.Y., Gu,Y.Q., You,F.M., Dubcovsky,J. and Anderson,O.D.
+  TITLE     Dynamics of the evolution of orthologous and paralogous portions of
+            a complex locus region in two genomes of allopolyploid wheat
+  JOURNAL   Plant Mol. Biol. 54 (1), 55-69 (2004)
+   PUBMED   15159634
+REFERENCE   2  (residues 1 to 225)
+  AUTHORS   Kong,X.-Y., Gu,Y.Q. and Anderson,O.D.
+  TITLE     Direct Submission
+  JOURNAL   Submitted (15-AUG-2003) ARS, United States Department of
+            Agriculture, 800 Buchanan Street, Albany, CA 94710, USA
+COMMENT     Method: conceptual translation supplied by author.
+FEATURES             Location/Qualifiers
+     source          1..225
+                     /organism="Triticum turgidum"
+                     /db_xref="taxon:4571"
+                     /chromosome="1"
+                     /map="1B"
+                     /clone="BAC 107M7; BAC 1126E20"
+     Protein         1..225
+                     /product="globulin"
+     Region          41..119
+                     /region_name="AAI_SS"
+                     /note="AAI_SS: Alpha-Amylase Inhibitors (AAIs) and Seed
+                     Storage (SS) Protein subfamily; composed of cereal-type
+                     AAIs and SS proteins. They are mainly present in the seeds
+                     of a variety of plants. AAIs play an important role in the
+                     natural defenses of plants...; cd00261"
+                     /db_xref="CDD:72936"
+     Site            74
+                     /site_type="other"
+                     /note="dimer interface"
+                     /db_xref="CDD:72936"
+     Site            order(85..87,94)
+                     /site_type="other"
+                     /note="alpha-amylase binding site"
+                     /db_xref="CDD:72936"
+     CDS             1..225
+                     /coded_by="AY368673.1:9958..10635"
+ORIGIN      
+        1 mgrfvffalf laalvavsaa qgvleqrlad aqcrgevrek plhacrqile qqltgrageg
+       61 avgvplfqaq sdarerccqq lesvsrecrc aalrgmvrdy eqsmpplgeg rhgssgerqp
+      121 ergcsgesta eqrqevqggq ygsetggsqq qgggyhgvtv grggqrqgqv lchkrpqrqq
+      181 gegfsgegaq qkpqagrvrl tkvrlptacr iepqecsvff adqyy
+//

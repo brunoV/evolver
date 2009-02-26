@@ -6,7 +6,8 @@ use Bio::Root::Root qw();
 
 with
     'Bio::Tools::Evolver::Types',
-    'MooseX::Object::Pluggable';
+    'Bio::Tools::Evolver::ProfileScore';
+#    'MooseX::Object::Pluggable';
 
 my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
 
@@ -38,11 +39,11 @@ has profile => (
    coerce   => 1,
 );
 
-has profile_algorithm => (
-   is => 'ro',
-   isa => 'Str',
-   default => 'Simple',
-);
+#has profile_algorithm => (
+#   is => 'ro',
+#   isa => 'Str',
+#   default => 'Simple',
+#);
 
 has cache => (
    is      => 'ro',
@@ -135,13 +136,13 @@ sub BUILD {
 
    # Load the appropiate ProfileScore role.
 
-   # We tell the plugin loader where to look for the plugin.
-   #  App namespace..
-   $self->_plugin_app_ns( ['Bio::Tools::Evolver'] );
-   #  plugin namespace...
-   $self->_plugin_ns('ProfileScore');
-   #  plugin name.
-   $self->load_plugin($self->profile_algorithm);
+#   # We tell the plugin loader where to look for the plugin.
+#   #  App namespace..
+#   $self->_plugin_app_ns( ['Bio::Tools::Evolver'] );
+#   #  plugin namespace...
+#   $self->_plugin_ns('ProfileScore');
+#   #  plugin name.
+#   $self->load_plugin($self->profile_algorithm);
 
    # Create the fitness function, which is composed of the
    # ProfileScore function and the user function.
