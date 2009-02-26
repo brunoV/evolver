@@ -3,14 +3,20 @@ package Bio::Tools::Evolver;
 use Moose;
 use AI::Genetic::Pro;
 use Bio::Root::Root qw();
+use lib qw(/home/bruno/lib/Bio-Tools-Evolver/lib);
 
 with
     'Bio::Tools::Evolver::Types',
-    'MooseX::Object::Pluggable';
+#   'Bio::Tools::Evolver::ProfileScore::Clustalw',
+    'MooseX::Traits';
 
 my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
 
 our $VERSION = '0.01';
+
+has '+_trait_namespace' => ( 
+   default => 'Bio::Tools::Evolver::ProfileScore',
+);
 
 has _root => (
    is         => 'ro',
@@ -135,13 +141,13 @@ sub BUILD {
 
    # Load the appropiate ProfileScore role.
 
-   # We tell the plugin loader where to look for the plugin.
-   #  App namespace..
-   $self->_plugin_app_ns( ['Bio::Tools::Evolver'] );
-   #  plugin namespace...
-   $self->_plugin_ns('ProfileScore');
-   #  plugin name.
-   $self->load_plugin($self->profile_algorithm);
+#   # We tell the plugin loader where to look for the plugin.
+#   #  App namespace..
+#   $self->_plugin_app_ns( ['Bio::Tools::Evolver'] );
+#   #  plugin namespace...
+#   $self->_plugin_ns('ProfileScore');
+#   #  plugin name.
+#   $self->load_plugin($self->profile_algorithm);
 
    # Create the fitness function, which is composed of the
    # ProfileScore function and the user function.

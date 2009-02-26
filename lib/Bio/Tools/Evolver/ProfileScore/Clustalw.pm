@@ -22,6 +22,22 @@ has _my_fitness => (
    isa        => 'CodeRef',
 );
 
+my $_score_f_absolute = sub {
+
+   # Given a string, calculate the alignment score against the given
+   # profile.
+   my ( $seq_string, $prof_file, $factory ) = @_;
+   my $alignment = $factory->profile_align(
+      $prof_file,
+      Bio::Seq->new(
+         -id  => 'x',
+         -seq => $seq_string,
+      )
+   );
+   return $alignment->score;
+};
+
+
 sub _build__random_seq {
    my $self       = shift;
    my $random_seq = _shuffle_string( 'ABCDEFGHIKLMNPQRSTVWXYZU' x
@@ -41,33 +57,18 @@ sub _build__my_fitness {
    my $factory = Bio::Tools::Run::Alignment::Clustalw->new( quiet => 1 );
    # Given a string, calculate the "family belongness score".
    my $max_score
-       = _score_f_absolute( $self->profile->consensus_string,
+       = $_score_f_absolute->( $self->profile->consensus_string,
        $self->profile, $factory );
-   my $min_score = _score_f_absolute( $self->_random_seq,
+   my $min_score = $_score_f_absolute->( $self->_random_seq,
    $self->profile, $factory );
 
    my $prof_file = $self->profile;
 
     return sub {
        my $string = shift;
-       my $score = _score_f_absolute( $string, $prof_file, $factory );
+       my $score = $_score_f_absolute->( $string, $prof_file, $factory );
        return ( ( $score - $min_score ) / ( $max_score - $min_score ) );
     };
-}
-
-sub _score_f_absolute {
-
-   # Given a string, calculate the alignment score against the given
-   # profile.
-   my ( $seq_string, $prof_file, $factory ) = @_;
-   my $alignment = $factory->profile_align(
-      $prof_file,
-      Bio::Seq->new(
-         -id  => 'x',
-         -seq => $seq_string,
-      )
-   );
-   return $alignment->score;
 }
 
 no Moose;
