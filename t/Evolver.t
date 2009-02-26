@@ -153,8 +153,8 @@ is( $ev->cache,           0, 'changed cache' );
 is( $ev->history,         0, 'changed history' );
 is( $ev->preserve,        7, 'changed preserve' );
 
-#SKIP : {
-#   skip "Clustalw plugin doesn't work yet";
+SKIP : {
+   skip "Clustalw plugin doesn't work yet";
    $ev = Bio::Tools::Evolver->new(
       profile    => $align_file,
       population => 5,
@@ -164,7 +164,7 @@ is( $ev->preserve,        7, 'changed preserve' );
       profile_algorithm => 'Clustalw',
    );
    lives_ok { $ev->evolve(1) } 'Short evolution run: Clustalw';
-#}
+}
 $ev = Bio::Tools::Evolver->new(
    profile    => $seqs_file,
    population => 2,

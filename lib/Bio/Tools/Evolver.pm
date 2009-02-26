@@ -130,11 +130,22 @@ sub _build__ga {
    return $ga;
 }
 
-sub BUILD {
+before evolve => sub {
    my $self = shift;
+   unless ( $self->_initialized ) { $self->_init }
+};
+
+has _initialized => (
+   is      => 'rw',
+   isa     => 'Bool',
+   default => 0,
+);
+
+sub _init {
+   my $self = shift;
+   return if ($self->_initialized);
 
    # Load the appropiate ProfileScore role.
-
    # We tell the plugin loader where to look for the plugin.
    #  App namespace..
    $self->_plugin_app_ns( ['Bio::Tools::Evolver'] );
@@ -169,22 +180,6 @@ sub BUILD {
       $self->_ga->terminate($terminate);
    }
 
-}
-
-before evolve => sub {
-   my $self = shift;
-   unless ( $self->_initialized ) { $self->_init }
-};
-
-has _initialized => (
-   is      => 'rw',
-   isa     => 'Bool',
-   default => 0,
-);
-
-sub _init {
-   my $self = shift;
-   return if ($self->_initialized);
 
    # Initialize the first generation.
    $self->_ga->init(
