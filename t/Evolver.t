@@ -118,7 +118,6 @@ is_deeply( $ev->strategy, [ 'Points', 2 ], 'default strategy' );
 is( $ev->cache,           1, 'default cache' );
 is( $ev->history,         1, 'default history' );
 is( $ev->preserve,        5, 'default preserve' );
-is( $ev->profile_algorithm, 'Simple', 'default profile algorithm' );
 
 throws_ok { $ev->throw('Test error message') } 'Bio::Root::Exception', 'Throw';
 
@@ -138,7 +137,6 @@ lives_ok {
       history         => 0,
       preserve        => 7,
       terminate       => sub { return 5 },
-      profile_algorithm => 'Clustalw',
    );
 }
 'Initialization with non-default attributes';
@@ -152,28 +150,6 @@ is_deeply( $ev->strategy, [ 'Points', 5 ], 'changed strategy' );
 is( $ev->cache,           0, 'changed cache' );
 is( $ev->history,         0, 'changed history' );
 is( $ev->preserve,        7, 'changed preserve' );
-
-#SKIP : {
-#   skip "Clustalw plugin doesn't work yet";
-   $ev = Bio::Tools::Evolver->new(
-      profile    => $align_file,
-      population => 5,
-      fitness    => \&count_hydroph,
-      preserve   => 1,
-      cache      => 0,
-      profile_algorithm => 'Clustalw',
-   );
-   lives_ok { $ev->evolve(1) } 'Short evolution run: Clustalw';
-#}
-$ev = Bio::Tools::Evolver->new(
-   profile    => $seqs_file,
-   population => 2,
-   fitness    => sub { 1 },
-   preserve   => 0,
-   cache      => 1,
-   profile_algorithm => 'Needleman',
-);
-lives_ok { $ev->evolve(1) } 'Short evolution run: Needleman';
 
 $ev = Bio::Tools::Evolver->new(
    profile    => $seqs_file,
