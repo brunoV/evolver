@@ -26,66 +26,74 @@ has _ga => (
    isa        => 'AI::Genetic::Pro',
    init_arg   => undef,
    lazy_build => 1,
-   handles    => [ qw(evolve chart getHistory getAvgFitness generation) ],
+   handles    => [ qw(evolve chart getHistory getAvgFitness generation
+   population crossover mutation parents selection strategy cache history
+   preserve) ],
 );
 
-has 'profile' => (
+has profile => (
    is       => 'ro',
    isa      => 'BTE::Bio::SimpleAlign',
    required => 1,
    coerce   => 1,
 );
 
+has profile_algorithm => (
+   is => 'ro',
+   isa => 'Str',
+   default => 'Simple',
+);
+
 has cache => (
-   is      => 'rw',
+   is      => 'ro',
    isa     => 'Bool',
    default => 1,
 );
 
 has mutation => (
-   is      => 'rw',
+   is      => 'ro',
    isa     => 'BTE::Probability',
    default => 0.01,
 );
 
 has crossover => (
-   is      => 'rw',
+   is      => 'ro',
    isa     => 'BTE::Probability',
    default => 0.95,
 );
 
 has population => (
-   is      => 'rw',
+   is      => 'ro',
    isa     => 'Num',
    default => 300,
 );
 
 has parents => (
-   is      => 'rw',
+   is      => 'ro',
    isa     => 'Num',
    default => 2,
 );
 
 has history => (
-   is      => 'rw',
+   is      => 'ro',
    isa     => 'Bool',
    default => 1,
 );
 
 has selection => (
-   is      => 'rw',
+   is      => 'ro',
    isa     => 'ArrayRef',
    default => sub { ['Roulette'] },
 );
 
 has strategy => (
-   is      => 'rw',
+   is      => 'ro',
    isa     => 'ArrayRef',
    default => sub { [ 'Points', 2 ] },
 );
 
 has preserve => (
-   is      => 'rw',
+   is      => 'ro',
    isa     => 'Num',
    default => '5',
 );
@@ -97,7 +105,7 @@ has fitness => (
 );
 
 has terminate => (
-   is        => 'rw',
+   is        => 'ro',
    isa       => 'CodeRef',
    predicate => '_has_terminate',
 );
@@ -176,6 +184,7 @@ has _initialized => (
 
 sub _init {
    my $self = shift;
+   return if ($self->_initialized);
 
    # Initialize the first generation.
    $self->_ga->init(

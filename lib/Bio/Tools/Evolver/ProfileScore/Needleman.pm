@@ -3,15 +3,11 @@ use strict;
 use warnings;
 use Moose::Role;
 
-use lib qw(/home/bruno/lib/Bio-Tools-Evolver/lib);
 use Bio::Tools::Run::Alignment::Clustalw;
 use Bio::AlignIO;
 use Bio::Tools::Evolver::Aligner;
 
-
 use List::Util qw(shuffle);
-
-use Data::Dumper;
 
 has _random_seq => (
    is         => 'ro',

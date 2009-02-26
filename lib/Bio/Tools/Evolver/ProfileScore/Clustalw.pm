@@ -7,8 +7,8 @@ use Bio::Tools::Run::Alignment::Clustalw;
 use Bio::AlignIO;
 
 use List::Util qw(shuffle);
-use Memoize;
-memoize('_score_f_absolute');
+##use Memoize;
+##memoize('_score_f_absolute');
 
 has _random_seq => (
    is         => 'ro',
