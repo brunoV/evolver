@@ -1,0 +1,144 @@
+
+NoName   MSF: 7  Type: P  Wed Feb 25 22:52:17 2009  Check: 00 ..
+
+ Name: AAA33467/1-573      Len:    608  Check:  3773  Weight:  1.00
+ Name: NP_001105887/1-573  Len:    608  Check:  3773  Weight:  1.00
+ Name: AAR95703/1-229      Len:    608  Check:  6265  Weight:  1.00
+ Name: AAQ93632/1-225      Len:    608  Check:  6023  Weight:  1.00
+ Name: AAP31050/1-224      Len:    608  Check:  4799  Weight:  1.00
+ Name: Q9XHP0/1-459        Len:    608  Check:  1796  Weight:  1.00
+ Name: P13744/1-480        Len:    608  Check:  6954  Weight:  1.00
+
+//
+
+
+                      1                                                   50
+AAA33467/1-573        MVSARIVVLL AVLLCAAAAV ASSWED.... .......DNH HHHGGHKSGR 
+NP_001105887/1-573    MVSARIVVLL AVLLCAAAAV ASSWED.... .......DNH HHHGGHKSGR 
+AAR95703/1-229        ...MGKFVFF AVFLAALVSV SAAQGV.... .......LEQ SLTDAQCRG. 
+AAQ93632/1-225        ...MGRFVFF ALFLAALVAV SAAQGV.... .......LEQ RLADAQCRG. 
+AAP31050/1-224        ...MGKFIFF AVFLTTLVTI SAAQGV.... .......LEQ SLADAQCRG. 
+Q9XHP0/1-459          MVAFKFLLAL SLSLLVSAAI AQTREP.... .......... RLTQGQQCR. 
+P13744/1-480          MARSSLFTFL CLAVFINGCL SQIEQQSPWE FQGSEVWQQH RYQSPRACR. 
+
+
+                      51                                                 100
+AAA33467/1-573        CVRRCEDRPW HQRPRCLEQC REEEREKRQE RSRHEADDRS GEGSSEDERE 
+NP_001105887/1-573    CVRRCEDRPW HQRPRCLEQC REEEREKRQE RSRHEADDRS GEGSSEDERE 
+AAR95703/1-229        .......... EVREKPLLAC RQILEQQLTG RAGEGAVGVP LFQAQWGARE 
+AAQ93632/1-225        .......... EVREKPLHAC RQILEQQLTG RAGEGAVGVP LFQAQSDARE 
+AAP31050/1-224        .......... EVQAKPLLAC RQILEHQLTG RA....VGVR PFQAQWGARD 
+Q9XHP0/1-459          .......... FQRISGAQPS LRIQSEGGTT ELWDERQEQF QCAGIVAMRS 
+P13744/1-480          .......... LENLRAQDPV RRAEAEAIFT EVWDQDNDEF QCAGVNMIRH 
+
+
+                      101                                                150
+AAA33467/1-573        REQEKEEKQK DRRPYVFDRR SFRRVVRSEQ GSLRVLRPFD EVSRLLRGIR 
+NP_001105887/1-573    REQEKEEKQK DRRPYVFDRR SFRRVVRSEQ GSLRVLRPFD EVSRLLRGIR 
+AAR95703/1-229        R......... .......... .......... ....CCRQLE SVS......R 
+AAQ93632/1-225        R......... .......... .......... ....CCQQLE SVS......R 
+AAP31050/1-224        R......... .......... .......... ....CCQQLE SVS......R 
+Q9XHP0/1-459          TIRPNGLSLP NYHPSPRLVY IERGQGLISI MVPGCAETYQ VHRSQRTMER 
+P13744/1-480          TIRPKGLLLP GFSNAPKLIF VAQGFGIRGI AIPGCAETYQ TDLRR..... 
+
+
+                      151                                                200
+AAA33467/1-573        DYRVAVLEAN PRSFVVPSHT DAHCIGYVAE GEGVVTTIEN GERRSYTIKQ 
+NP_001105887/1-573    DYRVAVLEAN PRSFVVPSHT DAHCIGYVAE GEGVVTTIEN GERRSYTIKQ 
+AAR95703/1-229        ECRCAALRG. .......... ......MVRD YEQSMPPLGE GRHG...... 
+AAQ93632/1-225        ECRCAALRG. .......... ......MVRD YEQSMPPLGE GRHG...... 
+AAP31050/1-224        GCRCSALRG. .......... ......MVRD YEQSMPPLRE GRRR...... 
+Q9XHP0/1-459          TEASEQQDR. .......... .....GSVRD LHQKVHRLRQ GDIVAIP... 
+P13744/1-480          ....SQSAG. .......... .....SAFKD QHQKIRPFRE GDLLVVP... 
+
+
+                      201                                                250
+AAA33467/1-573        GHVFVAPAGA VTYLANTDGR KKLVITKILH TISVPGEFQF FFGPGGRNPE 
+NP_001105887/1-573    GHVFVAPAGA VTYLANTDGR KKLVITKILH TISVPGEFQF FFGPGGRNPE 
+AAR95703/1-229        .......... .......... .......... .......... ..SSGERQQE 
+AAQ93632/1-225        .......... .......... .......... .......... ..SSGERQPE 
+AAP31050/1-224        .......... .......... .......... .......... ..SSGERQQE 
+Q9XHP0/1-459          .......... .......... .......... ....SGAAHW CYNDGSEDLV 
+P13744/1-480          .......... .......... .......... ....AGVSHW MYNRGQSDLV 
+
+
+                      251                                                300
+AAA33467/1-573        SFLSSFSKSI QRAAYKTSSD RLERLFGRHG QDKGIIVRAT EEQTRELRRH 
+NP_001105887/1-573    SFLSSFSKSI QRAAYKTSSD RLERLFGRHG QDKGIIVRAT EEQTRELRRH 
+AAR95703/1-229        .......... .......... .......... ......QGCS GESTEPEQRQ 
+AAQ93632/1-225        .......... .......... .......... ......RGCS GEST.AEQRQ 
+AAP31050/1-224        .......... .......... .......... ......QGCS GEST.AEQQQ 
+Q9XHP0/1-459          AVSIN..... .......... .......... ....DVNHLS NQLDQKFRAF 
+P13744/1-480          LIVFA..... .......... .......... ....DTRNVA NQIDPYLRKF 
+
+
+                      301                                                350
+AAA33467/1-573        ASEGGHGPHW PLPPFGESRG PYSLLDQRPS IANQHGQLYE ADARSFHDLA 
+NP_001105887/1-573    ASEGGHGPHW PLPPFGESRG PYSLLDQRPS IANQHGQLYE ADARSFHDLA 
+AAR95703/1-229        EVQGGQ.... ....YGSETG .......... .......... .......GSQ 
+AAQ93632/1-225        EVQGGQ.... ....YGSETG .......... .......... .......GSQ 
+AAP31050/1-224        EVQGGQ.... ....YGSETG .......... .......... .......ESQ 
+Q9XHP0/1-459          YLAGG...VP RSGEQEQQAR .......... .......... .......... 
+P13744/1-480          YLAGRPEQVE RGVEEWERSS R......... .......... ......KGSS 
+
+
+                      351                                                400
+AAA33467/1-573        EHDVSVSFAN ITAGSMSAPL YNTRSFKIAY VPNGKGYAEI VCPHRQSQGG 
+NP_001105887/1-573    EHDVSVSFAN ITAGSMSAPL YNTRSFKIAY VPNGKGYAEI VCPHRQSQGG 
+AAR95703/1-229        QQQQGGGYHG VTVG...... .......... .RGGQRQGQV LCHKRPQRQQ 
+AAQ93632/1-225        QQ..GGGYHG VTVG...... .......... .RGGQRQGQV LCHKRPQRQQ 
+AAP31050/1-224        QQQ.GGGYHG VTVG...... .......... .RGGQQQGQM LCRERPQRQQ 
+Q9XHP0/1-459          .QTFHNIFRA FDAELLSEAF NVPQETIRRM QSEEEERGLI VMARERMTFV 
+P13744/1-480          GEKSGNIFSG FADEFLEEAF QIDGGLVRKL KGEDDERDRI VQVDEDFEVL 
+
+
+                      401                                                450
+AAA33467/1-573        ESERERGKGR RSEEEEESSE EQEEVGQGYH TIRARLSPGT AFVVPAGHPF 
+NP_001105887/1-573    ESERERGKGR RSEEEEESSE EQEEVGQGYH TIRARLSPGT AFVVPAGHPF 
+AAR95703/1-229        .GEGFSGEG. ...AQQKPQA GRVRLTKVRL PTACRIEPQE CSVFSADQYY 
+AAQ93632/1-225        .GEGFSGEG. ...AQQKPQA GRVRLTKVRL PTACRIEPQE CSVFFADQYY 
+AAP31050/1-224        QGEGFSGEG. ...AQQKPKV GRVRLTKVRL PTACRIEPQE CSVFSTLPVL 
+Q9XHP0/1-459          RPDEEEGEQE .....HRGRQ LDNGLEETFC TMKFRTNVES RREADIFSRQ 
+P13744/1-480          LPEKDEEERS RGRYIESESE SENGLEETIC TLRLKQNIGR SVRADVFNPR 
+
+
+                      451                                                500
+AAA33467/1-573        VAVASRDSNL QIVCFEVHAD RNEKVFLAGA DNVLQKLDRV AKALSFASKA 
+NP_001105887/1-573    VAVASRDSNL QIVCFEVHAD RNEKVFLAGA DNVLQKLDRV AKALSFASKA 
+AAR95703/1-229        Y......... .......... .......... .......... .......... 
+AAQ93632/1-225        .......... .......... .......... .......... .......... 
+AAP31050/1-224        G......... .......... .......... .......... .......... 
+Q9XHP0/1-459          AGRVHVVDRN KLPILKYMDL SAEKGNLYSN ALVSPDWSMT GHTIVYVTRG 
+P13744/1-480          GGRISTANYH TLPILRQVRL SAERGVLYSN AMVAPHYTVN SHSVMYATRG 
+
+
+                      501                                                550
+AAA33467/1-573        EEVDEVLGSR REKGFLPGPK ESGGHEEREQ EEEEREERHG GRGERERHGR 
+NP_001105887/1-573    EEVDEVLGSR REKGFLPGPK ESGGHEEREQ EEEEREERHG GRGERERHGR 
+AAR95703/1-229        .......... .......... .......... .......... .......... 
+AAQ93632/1-225        .......... .......... .......... .......... .......... 
+AAP31050/1-224        .......... .......... .......... .......... .......... 
+Q9XHP0/1-459          DAQVQVVDHN GQALMNDRVN QGEMFVVPQY YTSTARAGNN GFEWVAFKTT 
+P13744/1-480          NARVQVVDNF GQSVFDGEVR EGQVLMIPQN FVVIKRASDR GFEWIAFKTN 
+
+
+                      551                                                600
+AAA33467/1-573        EEREKEEEER EGRHGRGRRE EVAETLLRMV TARM...... .......... 
+NP_001105887/1-573    EEREKEEEER EGRHGRGRRE EVAETLLRMV TARM...... .......... 
+AAR95703/1-229        .......... .......... .......... .......... .......... 
+AAQ93632/1-225        .......... .......... .......... .......... .......... 
+AAP31050/1-224        .......... .......... .......... .......... .......... 
+Q9XHP0/1-459          GSPMRSPLAG YTSVIRAMPL QVITNSYQIS PNQAQALKMN RGSQSFLLSP 
+P13744/1-480          DNAITNLLAG RVSQMRMLPL GVLSNMYRIS REEAQRLKYG Q.QEMRVLSP 
+
+
+                      601                                                650
+AAA33467/1-573        ........ 
+NP_001105887/1-573    ........ 
+AAR95703/1-229        ........ 
+AAQ93632/1-225        ........ 
+AAP31050/1-224        ........ 
+Q9XHP0/1-459          G...GRRS 
+P13744/1-480          GRSQGRRE 
+
+

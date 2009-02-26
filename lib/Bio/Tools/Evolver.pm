@@ -232,7 +232,6 @@ no Moose;
 __PACKAGE__->meta->make_immutable;
 1;    # End of Bio::Tools::Evolver
 # TODO
-# inject consensus
 # eliminate hardcoding in the weighing of both scores.
 # design a better way to implement the profile score engine. Maybe an
 # interface ProfileScoreI than can e
