@@ -25,10 +25,10 @@ subtype 'BTE::Bio::SimpleAlign'   => as class_type('Bio::SimpleAlign');
 # Scoring Matrix Types
 subtype 'BTE::Bio::Matrix::Scoring' =>
     as class_type('Bio::Matrix::Scoring');
-subtype 'BTE::MatrixFile' => as 'Str' => where { validate_mfile($_) } =>
+subtype 'BTE::MatrixFile' => as 'Str' => where { _validate_mfile($_) } =>
     message {"File $_ doesn't exist"};
 subtype 'BTE::Bio::Matrix::IO' => as class_type('Bio::Matrix::IO');
-subtype 'BTE::MatrixName' => as 'Str' => where { validate_mname($_) };
+subtype 'BTE::MatrixName' => as 'Str' => where { _validate_mname($_) };
 subtype 'BTE::Algorithm::NeedlemanWunsch' =>
     as class_type('Algorithm::NeedlemanWunsch');
 
@@ -163,9 +163,9 @@ coerce 'BTE::Bio::Matrix::Scoring' => from 'BTE::MatrixFile' =>
 
 # Type validations.
 
-sub validate_mfile { return 1 if -e $_[0] }
+sub _validate_mfile { return 1 if -e $_[0] }
 
-sub validate_mname {
+sub _validate_mname {
    my $name     = shift;
    my @matrixes = qw(BLOSUM62 BLOSUM80 BLOSUM90 BLOSUM45 BLOSUM50);
    return grep { $name eq $_ } @matrixes;
