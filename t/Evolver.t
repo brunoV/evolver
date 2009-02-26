@@ -9,8 +9,10 @@ use lib qw(/home/bruno/lib/Bio-Tools-Evolver/lib);
 # TODO Test Roles independently, ok? Otherwise it's going to be one
 # big-ass test file.
 
-my $align_file = 't/profile-test.phy';
-my $seqs_file  = 't/seqs-test.fasta';
+my @align_files = glob('t/profile-test.*');
+my $align_file = $align_files[0];
+my @seqs_files = glob('t/seqs-test.*');
+my $seqs_file  = $seqs_files[0];
 
 use_ok('Bio::Tools::Evolver');
 can_ok(
@@ -25,16 +27,25 @@ can_ok(
 # the profile attribute.
 my $ev;
 
-# 1. Passing an alignment file.
+# 1.  Passing filenames.
+# 1.1 Alignment files.
 lives_ok {
    $ev = Bio::Tools::Evolver->new(
-      profile => $align_file,
+      profile => $_,
       fitness => sub { return 1 },
-   );
+   ) for @align_files;
 }
-'Profile: alignment file';
+'Profile: alignment files';
 isa_ok( $ev, 'Bio::Tools::Evolver', "Constructor" );
 isa_ok( $ev->profile, 'Bio::SimpleAlign' );
+
+# 1.2 Sequence files.
+lives_ok {
+   $ev = Bio::Tools::Evolver->new(
+      profile => $seqs_file,
+      fitness => sub { return 1 },
+   );
+} 'Profile: sequence files';
 
 # 2. Passing an AlignIO object.
 my $alignI = Bio::AlignIO->new( -file => "<$align_file" );
