@@ -1,14 +1,12 @@
 package Bio::Tools::Evolver::ProfileScore::Clustalw;
-use strict;
-use warnings;
 use Moose::Role;
 
 use Bio::Tools::Run::Alignment::Clustalw;
 use Bio::AlignIO;
 
 use List::Util qw(shuffle);
-##use Memoize;
-##memoize('_score_f_absolute');
+use Memoize;
+memoize('_score_f_absolute');
 
 has _random_seq => (
    is         => 'ro',
@@ -46,11 +44,11 @@ sub _build__my_fitness {
    my $min_score = _score_f_absolute( $self->_random_seq,
    $self->profile, $factory );
 
-   my $prof_file = $self->profile;
+   my $profile = $self->profile;
 
     return sub {
        my $string = shift;
-       my $score = _score_f_absolute( $string, $prof_file, $factory );
+       my $score = _score_f_absolute( $string, $profile, $factory );
        return ( ( $score - $min_score ) / ( $max_score - $min_score ) );
     };
 }
@@ -59,9 +57,9 @@ sub _score_f_absolute {
 
    # Given a string, calculate the alignment score against the given
    # profile.
-   my ( $seq_string, $prof_file, $factory ) = @_;
+   my ( $seq_string, $profile, $factory ) = @_;
    my $alignment = $factory->profile_align(
-      $prof_file,
+      $profile,
       Bio::Seq->new(
          -id  => 'x',
          -seq => $seq_string,

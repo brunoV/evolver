@@ -6,7 +6,7 @@ use Bio::Root::Root qw();
 
 with
     'Bio::Tools::Evolver::Types',
-    'Bio::Tools::Evolver::ProfileScore::Clustalw';
+    'Bio::Tools::Evolver::ProfileScore::Clustalw2';
 
 my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
 
