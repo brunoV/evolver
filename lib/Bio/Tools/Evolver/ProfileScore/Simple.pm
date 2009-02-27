@@ -1,4 +1,4 @@
-package Bio::Tools::Evolver::ProfileScore;
+package Bio::Tools::Evolver::ProfileScore::Simple;
 use strict;
 use warnings;
 use Moose::Role;
