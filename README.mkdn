@@ -1,0 +1,57 @@
+# Bio::Tools::Evolver
+
+## Profile-constrained protein sequence optimization using evolutionary algorithms
+
+Bio::Tools::Evolver is a module that makes it easy to optimize a protein
+sequence using any arbitrary function but retaining its similarity with
+a given protein family.
+
+It uses a fast, memory efficient and highly configurable Genetic
+Algorithms engine, suitable for long sequence inputs and both high
+population and generation numbers.
+
+Similarity with the input profile/alignment is calculated using any of
+the currently available plugins. Chief among these is Hmmer, which uses
+Hidden Markov Models to describe the protein family and emit an e-value
+based score for each individual in the population. However, the user can
+also choose simpler methods, incluiding pure-perl implementations of the 
+Needleman sequence alignment algorithm.
+
+
+INSTALLATION
+
+To install this module, run the following commands:
+
+	perl Makefile.PL
+	make
+	make test
+	make install
+
+SUPPORT AND DOCUMENTATION
+
+After installing, you can find documentation for this module with the
+perldoc command.
+
+    perldoc Bio::Tools::Evolver
+
+You can also look for information at:
+
+    RT, CPAN's request tracker
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Bio-Tools-Evolver
+
+    AnnoCPAN, Annotated CPAN documentation
+        http://annocpan.org/dist/Bio-Tools-Evolver
+
+    CPAN Ratings
+        http://cpanratings.perl.org/d/Bio-Tools-Evolver
+
+    Search CPAN
+        http://search.cpan.org/dist/Bio-Tools-Evolver/
+
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2009 Bruno Vecchi
+
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
