@@ -26,7 +26,7 @@ sub _build__min_score {
 
 ## _max_score
 
-has _consensus_arrary => ( 
+has _consensus_array => ( 
    is => 'ro',
    lazy_build => 1,
    isa => 'ArrayRef',
@@ -40,7 +40,7 @@ sub _build__consensus_array {
 
 sub _build__max_score {
    my $self = shift;
-   return $self->_profile_score($self->consensus_array);
+   return $self->_profile_score($self->profile->consensus_string);
 }
 
 ## _profile_score
@@ -56,10 +56,11 @@ sub _profile_score {
 
    # Given a string, calculate the alignment score against the given
    # profile.
-   my ( $self, $seq_array, ) = @_;
+   my ( $self, $seq, ) = @_;
    my $score;
+   my @seq_array = split '', $seq;
 
-   my $pair = each_array( @$seq_array, @{$self->consensus_array} );
+   my $pair = each_array( @seq_array, @{$self->_consensus_array} );
    while ( my ($seq, $cons) = $pair->() ) {
       $score += $self->matrix->get_entry($seq, $cons);
    }

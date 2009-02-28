@@ -1,6 +1,7 @@
 package Bio::Tools::Evolver::ProfileScore::Needleman;
 use Moose::Role;
 requires '_build__my_fitness';
+with 'Bio::Tools::Evolver::RandomSeq';
 
 use Bio::Tools::Evolver::Aligner;
 
@@ -14,7 +15,7 @@ sub _build__min_score {
 
 ## _max_score
 
-has _consensus_arrary => ( 
+has _consensus_array => ( 
    is => 'ro',
    lazy_build => 1,
    isa => 'ArrayRef',
@@ -30,8 +31,8 @@ sub _build__consensus_array {
 sub _build__max_score {
    my $self = shift;
    return $self->_aligner->align(
-      $self->_consensus_string,
-      $self->_consensus_string
+      $self->_consensus_array,
+      $self->_consensus_array
    );
 }
 
