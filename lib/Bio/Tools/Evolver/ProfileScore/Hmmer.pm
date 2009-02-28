@@ -10,14 +10,14 @@ use File::Temp;
 
 sub _build__min_score {
    my $self = shift;
-   return $self->_evalue($self->_random_seq);
+   return $self->_profile_score($self->_random_seq);
 }
 
 ## _max_score
 
 sub _build__max_score {
    my $self = shift;
-   return $self->_evalue($self->profile->consensus_string);
+   return $self->_profile_score($self->profile->consensus_string);
 }
 
 ## _profile_score
