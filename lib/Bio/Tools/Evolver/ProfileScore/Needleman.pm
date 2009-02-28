@@ -1,58 +1,57 @@
 package Bio::Tools::Evolver::ProfileScore::Needleman;
-use strict;
-use warnings;
 use Moose::Role;
+requires '_build__my_fitness';
 
-use Bio::Tools::Run::Alignment::Clustalw;
-use Bio::AlignIO;
 use Bio::Tools::Evolver::Aligner;
 
-use List::Util qw(shuffle);
+## _min_score
 
-has _random_seq => (
-   is         => 'ro',
-   lazy_build => 1,
-   isa        => 'Str',
-);
-
-sub _build__random_seq {
-   my $self       = shift;
-   my $random_seq = _shuffle_string(
-      'ACDEFGHIKLMNPQRSTVWY' x int( $self->profile->length / 20 ) );
-   return $random_seq;
-}
-
-has _my_fitness => (
-   is         => 'ro',
-   lazy_build => 1,
-   isa        => 'CodeRef',
-);
-
-sub _build__my_fitness {
+sub _build__min_score {
    my $self = shift;
-
-   my $aligner = Bio::Tools::Evolver::Aligner->new; 
-   my @cons_seq = split '', $self->profile->consensus_string;
    my @rand_seq = split '', $self->_random_seq;
-
-   # Given a string, calculate the "family belongness score".
-   my $max_score = $aligner->align(\@cons_seq, \@cons_seq); 
-   my $min_score = $aligner->align(\@rand_seq, \@cons_seq);
-
-   return sub {
-      my @string = split '', shift;
-      my $string_score 
-         = $aligner->align(\@string, \@cons_seq);
-      my $score = ( ( $string_score - $min_score ) / ( $max_score - $min_score ) );
-      if ($score < 0) { $score = 0 };
-      return $score;
-   };
+   return $self->_aligner->align(\@rand_seq, $self->_consensus_array);
 }
 
-sub _shuffle_string {
-   my $string = shift;
-   my @elms = split '', $string;
-   return join( '', shuffle @elms );
+## _max_score
+
+has _consensus_arrary => ( 
+   is => 'ro',
+   lazy_build => 1,
+   isa => 'ArrayRef',
+);
+
+sub _build__consensus_array {
+   my $self = shift;
+   my @res = split '', $self->profile->consensus_string;
+   return \@res;
+}
+
+
+sub _build__max_score {
+   my $self = shift;
+   return $self->_aligner->align(
+      $self->_consensus_string,
+      $self->_consensus_string
+   );
+}
+
+## _profile_score
+
+has _aligner => (
+   is => 'ro',
+   lazy_build => 1,
+   isa => 'Bio::Tools::Evolver::Aligner',
+);
+
+sub _build__aligner {
+   my $self = shift;
+   return Bio::Tools::Evolver::Aligner->new;
+}
+
+sub _profile_score {
+   my ($self, $string) = @_;
+   my @string = split '', $string;
+   return $self->_aligner->align(\@string, $self->_consensus_array);
 }
 
 no Moose;

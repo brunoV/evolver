@@ -1,27 +1,26 @@
 package Bio::Tools::Evolver::ProfileScore::Hmmer;
 use Moose::Role;
+requires '_build__my_fitness';
+with 'Bio::Tools::Evolver::RandomSeq';
+
 use Bio::Tools::Run::Hmmer;
 use File::Temp;
-use List::Util qw(shuffle);
 
-has _random_seq => (
-   is         => 'ro',
-   lazy_build => 1,
-   isa        => 'Str',
-);
+## _min_score
 
-sub _build__random_seq {
-   my $self       = shift;
-   my $random_seq = _shuffle_string( 'ABCDEFGHIKLMNPQRSTVWXYZU' x
-          int( $self->profile->length / 20 ) );
-   return $random_seq;
+sub _build__min_score {
+   my $self = shift;
+   return $self->_evalue($self->_random_seq);
 }
 
-sub _shuffle_string {
-   my $string = shift;
-   my @elms = split '', $string;
-   return join( '', shuffle @elms );
+## _max_score
+
+sub _build__max_score {
+   my $self = shift;
+   return $self->_evalue($self->profile->consensus_string);
 }
+
+## _profile_score
 
 has calibrate_profile => (
    is      => 'rw',
@@ -38,12 +37,6 @@ has _hmmer => (
       },
 );
 
-has _my_fitness => (
-   is => 'ro',
-   lazy_build => 1,
-   isa => 'CodeRef',
-);
-
 sub _build__hmmer {
    my $self    = shift;
    my $hmmfile = File::Temp->new->filename;
@@ -54,21 +47,7 @@ sub _build__hmmer {
    return $hmmer;
 }
 
-sub _build__my_fitness {
-   my $self = shift;
-
-   my $max_score = $self->_evalue( $self->profile->consensus_string );
-   my $min_score = $self->_evalue ($self->_random_seq,);
-
-   return sub {
-      my $string = shift;
-      my $abs_score = $self->_evalue($string);
-      my $score = (( $abs_score - $min_score)/( $max_score - $min_score));
-      return $score;
-   }
-}
-
-sub _evalue {
+sub _profile_score {
    my ($self, $string) = @_;
    my $seq = Bio::Seq->new(-id => 'x', -seq => $string);
 
@@ -86,8 +65,6 @@ sub _evalue {
 
    return $log_evalue;
 }
-
-
 
 no Moose;
 1;

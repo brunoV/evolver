@@ -1,21 +1,13 @@
 package Bio::Tools::Evolver::ProfileScore::Simple;
-use strict;
-use warnings;
 use Moose::Role;
+requires '_build__my_fitness';
+
 use Moose::Util::TypeConstraints;
-
-use Bio::Tools::Evolver::Types;
-
 use List::MoreUtils qw(each_array);
 
-has 'matrix' => (
-   is      => 'ro',
-   isa     => 'BTE::Bio::Matrix::Scoring',
-   coerce  => 1,
-   default => 'BLOSUM62',
-);
+## _min_score
 
-sub _calculate_lowest_score {
+sub _build__min_score {
    my $self = shift;
    my $matrix = $self->matrix;
    my @rows = $matrix->row_names;
@@ -27,44 +19,47 @@ sub _calculate_lowest_score {
                 $matrix->get_entry($row, $col) : $min;
       }
    }
+   # Ya que estoy, lleno el atributo de Bio::Matrix::Scoring;
    $self->matrix->lowest_score($min);
+   return $min * length ($self->profile->consensus_string);
 }
 
-has _my_fitness => (
-   is         => 'ro',
+## _max_score
+
+has _consensus_arrary => ( 
+   is => 'ro',
    lazy_build => 1,
-   isa        => 'CodeRef',
+   isa => 'ArrayRef',
 );
 
-sub _build__my_fitness {
+sub _build__consensus_array {
    my $self = shift;
-
-   my $consensus = $self->profile->consensus_string;
-   # Given a string, calculate the "family belongness score".
-   my $max_score = $self->_score_f_absolute( $consensus,
-      $consensus );
-   if (!$self->matrix->lowest_score) { $self->_calculate_lowest_score };
-   my $min_score = $self->matrix->lowest_score * length $consensus;
-
-   return sub {
-      my $string = shift;
-      my $string_score 
-         = $self->_score_f_absolute( $string,  $consensus );
-      my $score = ( ( $string_score - $min_score ) / ( $max_score - $min_score ) );
-      return $score;
-   };
+   my @res = split '', $self->profile->consensus_string;
+   return \@res;
 }
 
-sub _score_f_absolute {
+sub _build__max_score {
+   my $self = shift;
+   return $self->_profile_score($self->consensus_array);
+}
+
+## _profile_score
+
+has 'matrix' => (
+   is      => 'ro',
+   isa     => 'BTE::Bio::Matrix::Scoring',
+   coerce  => 1,
+   default => 'BLOSUM62',
+);
+
+sub _profile_score {
 
    # Given a string, calculate the alignment score against the given
    # profile.
-   my ( $self, $seq_string, $cons_string ) = @_;
+   my ( $self, $seq_array, ) = @_;
    my $score;
-   my @seq_res = split '', $seq_string;
-   my @cons_res = split '', $cons_string;
 
-   my $pair = each_array( @seq_res, @cons_res );
+   my $pair = each_array( @$seq_array, @{$self->consensus_array} );
    while ( my ($seq, $cons) = $pair->() ) {
       $score += $self->matrix->get_entry($seq, $cons);
    }

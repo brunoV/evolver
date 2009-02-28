@@ -5,8 +5,9 @@ use AI::Genetic::Pro;
 use Bio::Root::Root qw();
 
 with
-    'Bio::Tools::Evolver::Types',
-    'MooseX::Object::Pluggable';
+   'Bio::Tools::Evolver::Types',
+   'Bio::Tools::Evolver::ProfileScoreI',
+   'MooseX::Object::Pluggable';
 
 my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
 
@@ -110,6 +111,12 @@ has terminate => (
    predicate => '_has_terminate',
 );
 
+has _initialized => (
+   is      => 'rw',
+   isa     => 'Bool',
+   default => 0,
+);
+
 sub _build__ga {
    my $self = shift;
 
@@ -132,14 +139,8 @@ sub _build__ga {
 
 before evolve => sub {
    my $self = shift;
-   unless ( $self->_initialized ) { $self->_init }
+   unless ( $self->_initialized ) { $self->_init };
 };
-
-has _initialized => (
-   is      => 'rw',
-   isa     => 'Bool',
-   default => 0,
-);
 
 sub _init {
    my $self = shift;
@@ -244,7 +245,7 @@ sub getFittest {
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
-1;    # End of Bio::Tools::Evolver
+1;
 # TODO
 # eliminate hardcoding in the weighing of both scores.
 # Maybe a better charting role, using Chart::Clicker?
