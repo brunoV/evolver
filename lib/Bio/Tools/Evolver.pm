@@ -325,12 +325,31 @@ Possible attributes include:
 
 This defines a I<fitness> function. It expects a reference to a subroutine.
 Mandatory.
+It is given a sequence string as an argument. It should return a numerical
+value. This function is evaluated for each individual of the population.
+Example:
+
+   sub fitness {
+      # This function tries to maximize the occurrence of residues
+      # V, I, K and P.
+      my $string = shift;
+      my $count = grep { /[VIKP]/ } split '', $string;
+      return $count/length($string);
+   }
 
 =item terminate
 
 This defines a I<terminate> function. It expects a reference to a subroutine.
-A sequence string is passed as an argument, and the current run will be
-terminated if it returns true.
+After each generation, the best individual of the population is passed to this
+function as a Bio::Seq object, in which the attribute C<-seq> contains the
+sequence, and the attribute C<-id> contains the overall score.
+Example:
+
+   sub terminate {
+      # Evolution will stop when score reaches 0.3
+      my $seq_obj = shift;
+      return 1 if ($seq_obj->id > 0.3);
+   }
 
 =item population
 
