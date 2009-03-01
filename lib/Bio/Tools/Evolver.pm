@@ -111,6 +111,12 @@ has terminate => (
    predicate => '_has_terminate',
 );
 
+has inject_consensus => (
+   is => 'ro',
+   isa => 'Bool',
+   default => 1,
+);
+
 has _initialized => (
    is      => 'rw',
    isa     => 'Bool',
@@ -181,13 +187,17 @@ sub _init {
       $self->_ga->terminate($terminate);
    }
 
-
    # Initialize the first generation.
    $self->_ga->init(
       [  map { [ split '', $prot_alph ] } ( 1 .. $self->profile->length )
       ]
    );
+
    $self->_initialized(1);
+
+   # Inject the profile consensus string.
+   if ($self->inject_consensus) { $self->_inject_consensus };
+
 }
 
 sub inject {
@@ -243,15 +253,18 @@ sub getFittest {
    return wantarray ? @fittest_seq : $fittest_seq[0];
 }
 
+sub _inject_consensus {
+   my $self = shift;
+   my $consensus_seq
+       = Bio::Seq->new( -seq => $self->profile->consensus_string, );
+   $self->inject($consensus_seq);
+   return 1;
+}
+
 no Moose;
 __PACKAGE__->meta->make_immutable;
 1;
-# TODO
-# eliminate hardcoding in the weighing of both scores.
-# Maybe a better charting role, using Chart::Clicker?
-# Extend for different sequence alphabets:
-#  * $proth_alph
-#  * _init
+
 __END__
 
 =head1 NAME
