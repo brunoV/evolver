@@ -1,9 +1,6 @@
 TODO
 =====
 
-* Hmmer.pm doesn't check before aplying logs. In some cases,
-  when the profile consensus is perfectly fitting the alignment, 
-  thie e-score is 0 and thus the program crashes.
 * eliminate hardcoding in the weighing of both scores.
 * Maybe a better charting role, using Chart::Clicker?
 * Extend for different sequence alphabets:

@@ -5,6 +5,7 @@ with 'Bio::Tools::Evolver::RandomSeq';
 
 use Bio::Tools::Run::Hmmer;
 use File::Temp;
+use List::Util qw(sum);
 
 ## _min_score
 
@@ -60,10 +61,12 @@ sub _profile_score {
 
    # The global e-value is the sum of logarithms of
    # evalues of every HSP.
-   my $log_evalue;
-   map { $log_evalue += log($_->evalue)/log(10) } @hsps;
+   my $evalue = sum(map {$_->evalue} @hsps);
 
-   return $log_evalue;
+   if ($evalue == 0) { $evalue = 10**(-300) }; # Close to perl's smallest number.
+
+   # Return the log10 fo the evalue.
+   return log($evalue)/log(10);
 }
 
 no Moose;

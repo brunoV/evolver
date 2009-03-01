@@ -6,9 +6,10 @@ use Test::Warn;
 use Bio::Tools::Evolver;
 use lib qw(/home/bruno/lib/Bio-Tools-Evolver/lib);
 use Devel::SimpleTrace;
+use File::Basename qw(dirname);
 
 my @align_files = glob('t/profile-test.*');
-my $align_file = $align_files[0];
+my $align_file = 't/profile-test.sto';
 my @seqs_files = glob('t/seqs-test.*');
 my $seqs_file  = $seqs_files[0];
 
@@ -16,7 +17,7 @@ my @plugins = qw(Simple Needleman Hmmer);
 
 foreach my $plugin (@plugins) {
 
-   test_evolve($seqs_file, $plugin);
+   test_evolve($align_file, $plugin);
 
    test_getFittest($seqs_file, $plugin);
   
@@ -72,7 +73,7 @@ sub test_injection {
    lives_ok { $ev->inject($seq) } 'Injecting after evolving';
 
    my ($fittest) = $ev->getFittest;
-   is( $fittest->seq, $string, 'Injection occured correctly' );
+   is( $fittest->seq, $string, "Injection occured correctly: $plugin" );
 
    # Doing it the other way around (inject->evolve)
    $ev = Bio::Tools::Evolver->new(
@@ -87,7 +88,7 @@ sub test_injection {
    lives_ok { $ev->inject($seq) } 'Injecting before evolving';
    lives_ok { $ev->evolve(1)    } 'Evolving after injecting';
    ($fittest) = $ev->getFittest;
-   is( $fittest->seq, $string, 'Injection occured correctly' );
+   is( $fittest->seq, $string, "Injection occured correctly: $plugin" );
 }
 
 sub test_getFittest {
