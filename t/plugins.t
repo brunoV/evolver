@@ -140,8 +140,8 @@ sub count_hydroph {
 }
 
 sub _has_F {
-      my $seq = shift;
-      my @res = (split '', $seq);
+      my $seq_obj = shift;
+      my @res = (split '', $seq_obj->seq);
       return 1 if grep { $_ eq 'F' } @res;
       return 0;
 }

@@ -179,11 +179,17 @@ sub _init {
    # if defined, create the terminate function
    if ( $self->_has_terminate ) {
       my $terminate = sub {
-         my ($ga) = @_;
-         my $seq = $ga->as_string( $ga->getFittest );
+         my ($ga)  = @_;
+         my $seq   = $ga->as_string( $ga->getFittest );
+         my $score = $ga->as_value ( $ga->getFittest );
          $seq =~ s/_//g;
 
-         return $self->terminate->($seq);
+         my $seq_obj = Bio::Seq->new(
+            -id => $score,
+            -seq => $seq,
+         );
+
+         return $self->terminate->($seq_obj);
       };
 
       $self->_ga->terminate($terminate);
