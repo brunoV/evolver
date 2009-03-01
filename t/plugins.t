@@ -4,7 +4,6 @@ use Test::More qw(no_plan);
 use Test::Exception;
 use Test::Warn;
 use Bio::Tools::Evolver;
-use Bio::AlignIO;
 use lib qw(/home/bruno/lib/Bio-Tools-Evolver/lib);
 use Devel::SimpleTrace;
 
@@ -15,38 +14,50 @@ my $seqs_file  = $seqs_files[0];
 
 my @plugins = qw(Simple Needleman Hmmer);
 
-my $ev;
-
 foreach my $plugin (@plugins) {
 
-   $ev = Bio::Tools::Evolver->new(
-      profile    => $seqs_file,
-      population => 10,
-      fitness    => sub { 1 },
+   test_evolve($seqs_file, $plugin);
+
+   test_getFittest($seqs_file, $plugin);
+  
+   test_injection($seqs_file, $plugin);
+
+   test_terminate($seqs_file, $plugin);
+
+}
+
+sub test_evolve {
+   my ($profile, $plugin) = @_;
+
+   my $ev = Bio::Tools::Evolver->new(
+      profile    => $profile,
+      population => 3,
+      fitness    => \&count_hydroph,
       preserve   => 0,
       cache      => 1,
+      inject_consensus => 0,
       profile_algorithm => $plugin,
    );
    lives_ok { $ev->evolve(1) } "Short evolution run: $plugin";
+   lives_ok { $ev->evolve(1) } "Second evolution run: $plugin";
+   is( $ev->generation, 2, "Evolved two generations: $plugin" );
+}
 
-   my @fittest = $ev->getFittest( 2, 1 );
-   is( scalar @fittest, 2, 'getFittest with arguments' );
-   isa_ok( $fittest[0], 'Bio::Seq' );
+sub test_injection {
+   my ($profile, $plugin) = @_;
 
-   my $fittest = $ev->getFittest;
-   isa_ok( $fittest, 'Bio::Seq' );
-
-   # Testing injection.
-   $ev = Bio::Tools::Evolver->new(
-      profile    => $align_file,
+   my $ev = Bio::Tools::Evolver->new(
+      profile    => $profile,
       population => 5,
       fitness    => sub { return 1 },
       cache      => 1,
+      profile_algorithm => $plugin,
+      inject_consensus => 0,
    );
-   my $alignI = Bio::AlignIO->new( -file => "<$align_file" );
-   my ($string) = $alignI->next_aln->consensus_string;
+   my ($string) = $ev->profile->consensus_string;
 
-   my $seq = Bio::Seq->new( -seq => $string, -id => 'cons' ); my $short_seq = Bio::Seq->new(
+   my $seq = Bio::Seq->new( -seq => $string, -id => 'cons' );
+   my $short_seq = Bio::Seq->new(
       -seq => 'PNYVIKPWLEP',
       -id  => 'shorty',
    );
@@ -60,14 +71,16 @@ foreach my $plugin (@plugins) {
    $ev->evolve(1);
    lives_ok { $ev->inject($seq) } 'Injecting after evolving';
 
-   ($fittest) = $ev->getFittest;
+   my ($fittest) = $ev->getFittest;
    is( $fittest->seq, $string, 'Injection occured correctly' );
 
    # Doing it the other way around (inject->evolve)
    $ev = Bio::Tools::Evolver->new(
-      profile => $align_file,
+      profile => $profile,
       population => 1,
       preserve => 1,
+      profile_algorithm => $plugin,
+      inject_consensus => 0,
       fitness => sub { shift eq $seq and return 1000; return 0 },
    );
 
@@ -75,20 +88,49 @@ foreach my $plugin (@plugins) {
    lives_ok { $ev->evolve(1)    } 'Evolving after injecting';
    ($fittest) = $ev->getFittest;
    is( $fittest->seq, $string, 'Injection occured correctly' );
+}
 
-   # Test terminate function
-   $ev = Bio::Tools::Evolver->new(
-      profile => $align_file,
+sub test_getFittest {
+   my ($profile, $plugin) = @_;
+
+   my $ev = Bio::Tools::Evolver->new(
+      profile => $profile,
       population => 5,
-      fitness => sub { return 1 },
-      terminate => \&_has_F,
+      fitness => sub {1},
+      profile_algorithm => $plugin,
    );
 
-   $ev->inject($seq);
-   $ev->evolve();
-   is( $ev->generation, 0, 'Terminate function worked' );
+   $ev->evolve(1);
 
+   my @fittest = $ev->getFittest( 1, 1 );
+   is( scalar @fittest, 1, 'getFittest with arguments' );
+   isa_ok( $fittest[0], 'Bio::Seq' );
+
+   my $fittest = $ev->getFittest;
+   isa_ok( $fittest, 'Bio::Seq' );
 }
+
+   sub test_terminate {
+      my ($profile, $plugin) = @_;
+
+      # Test terminate function: here the terminate function is
+      # looking for a sequence that has an 'F'. Since the input
+      # profile already has several, asking to evolve indefinately
+      # (calling evolve without an argument) should stop before
+      # doing a single generation, since the starting sequences already
+      # satisfy the terminate function.
+
+      my $ev = Bio::Tools::Evolver->new(
+         profile => $profile,
+         population => 5,
+         fitness => sub { return 1 },
+         inject_consensus => 1,
+         terminate => \&_has_F,
+      );
+
+      $ev->evolve();
+      is( $ev->generation, 0, 'Terminate function worked' );
+   }
 
 sub count_hydroph {
    my $string = shift;
