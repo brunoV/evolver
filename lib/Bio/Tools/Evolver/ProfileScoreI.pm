@@ -37,7 +37,7 @@ sub _build__my_fitness {
       my $string_score = $self->_profile_score($string);
       my $score        = ( $string_score - $self->_min_score )
           / ( $self->_max_score - $self->_min_score );
-      if ( $score < 0 ) { $score = 0 }
+#      if ( $score < 0 ) { $score = 0 }
       return $score;
    };
 }

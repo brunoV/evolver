@@ -4,21 +4,19 @@ use Moose;
 use AI::Genetic::Pro;
 use Bio::Root::Root qw();
 
-with
-   'Bio::Tools::Evolver::Types',
-   'Bio::Tools::Evolver::ProfileScoreI',
-   'MooseX::Object::Pluggable';
+with 'Bio::Tools::Evolver::Types', 'Bio::Tools::Evolver::ProfileScoreI',
+    'MooseX::Object::Pluggable';
 
 my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
 
 our $VERSION = '0.01';
 
 has _root => (
-   is         => 'ro',
-   isa        => 'Bio::Root::Root',
-   default    => sub { Bio::Root::Root->new },
-   init_arg   => undef,
-   handles    => [qw(throw)],
+   is       => 'ro',
+   isa      => 'Bio::Root::Root',
+   default  => sub { Bio::Root::Root->new },
+   init_arg => undef,
+   handles  => [qw(throw)],
 );
 
 has _ga => (
@@ -27,9 +25,11 @@ has _ga => (
    isa        => 'AI::Genetic::Pro',
    init_arg   => undef,
    lazy_build => 1,
-   handles    => [ qw(evolve chart getHistory getAvgFitness generation
-   population crossover mutation parents selection strategy cache history
-   preserve) ],
+   handles    => [
+      qw(evolve chart getHistory getAvgFitness generation
+          population crossover mutation parents selection strategy cache history
+          preserve)
+   ],
 );
 
 has profile => (
@@ -40,8 +40,8 @@ has profile => (
 );
 
 has profile_algorithm => (
-   is => 'ro',
-   isa => 'Str',
+   is      => 'ro',
+   isa     => 'Str',
    default => 'Simple',
 );
 
@@ -145,21 +145,23 @@ sub _build__ga {
 
 before evolve => sub {
    my $self = shift;
-   unless ( $self->_initialized ) { $self->_init };
+   unless ( $self->_initialized ) { $self->_init }
 };
 
 sub _init {
    my $self = shift;
-   return if ($self->_initialized);
+   return if ( $self->_initialized );
 
    # Load the appropiate ProfileScore role.
    # We tell the plugin loader where to look for the plugin.
    #  App namespace..
    $self->_plugin_app_ns( ['Bio::Tools::Evolver'] );
+
    #  plugin namespace...
    $self->_plugin_ns('ProfileScore');
+
    #  plugin name.
-   $self->load_plugin($self->profile_algorithm);
+   $self->load_plugin( $self->profile_algorithm );
 
    # Create the fitness function, which is composed of the
    # ProfileScore function and the user function.
