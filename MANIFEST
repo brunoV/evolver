@@ -3,10 +3,14 @@ MANIFEST
 Makefile.PL
 README
 lib/Bio/Tools/Evolver.pm
-lib/Bio/Tools/Evolver/Profile.pm
-lib/Bio/Tools/Evolver/ProfileScore.pm
+lib/Bio/Tools/Evolver/ProfileScoreI.pm
+lib/Bio/Tools/Evolver/ProfileScore/Simple.pm
+lib/Bio/Tools/Evolver/ProfileScore/Hmmer.pm
+lib/Bio/Tools/Evolver/ProfileScore/Needleman.pm
 lib/Bio/Tools/Evolver/Types.pm
-t/Evolver.t
+t/profiles.t
+t/interface.t
+t/plugins.t
 t/00-load.t
 t/pod-coverage.t
 t/pod.t
