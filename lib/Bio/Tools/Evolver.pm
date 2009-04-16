@@ -5,7 +5,7 @@ use AI::Genetic::Pro;
 use Bio::Root::Root qw();
 
 with 'Bio::Tools::Evolver::Types', 'Bio::Tools::Evolver::ProfileScoreI',
-    'MooseX::Object::Pluggable';
+    'MooseX::Object::Pluggable', 'Bio::Tools::Evolver::Chart::Gnuplot';
 
 my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
 
@@ -26,7 +26,7 @@ has _ga => (
    init_arg   => undef,
    lazy_build => 1,
    handles    => [
-      qw(evolve chart getHistory getAvgFitness generation
+      qw(evolve getHistory getAvgFitness generation
           population crossover mutation parents selection strategy cache history
           preserve)
    ],
