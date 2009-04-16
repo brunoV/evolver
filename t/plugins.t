@@ -4,8 +4,6 @@ use Test::More qw(no_plan);
 use Test::Exception;
 use Test::Warn;
 use Bio::Tools::Evolver;
-use lib qw(/home/bruno/lib/Bio-Tools-Evolver/lib);
-use Devel::SimpleTrace;
 use File::Basename qw(dirname);
 
 my @align_files = glob('t/profile-test.*');

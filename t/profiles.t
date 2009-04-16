@@ -5,8 +5,6 @@ use Test::Exception;
 use Test::Warn;
 use Bio::Tools::Evolver;
 use Bio::AlignIO;
-use lib qw(/home/bruno/lib/Bio-Tools-Evolver/lib);
-use Devel::SimpleTrace;
 
 my @align_files = glob('t/profile-test.*');
 my $align_file = $align_files[0];
