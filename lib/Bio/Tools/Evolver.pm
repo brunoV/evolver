@@ -5,7 +5,7 @@ use AI::Genetic::Pro;
 use Bio::Root::Root qw();
 
 with 'Bio::Tools::Evolver::Types', 'Bio::Tools::Evolver::ProfileScoreI',
-    'MooseX::Object::Pluggable', 'Bio::Tools::Evolver::Chart::Gnuplot';
+     'MooseX::Object::Pluggable',  'Bio::Tools::Evolver::Chart::Gnuplot';
 
 my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
 
@@ -123,92 +123,14 @@ has _initialized => (
    default => 0,
 );
 
-sub _build__ga {
-   my $self = shift;
-
-   # Initialize the Genetic Algorithm engine with sane defaults.
-   my $ga = AI::Genetic::Pro->new(
-      -type            => 'listvector',         # type of chromosomes
-      -population      => $self->population,    # population size
-      -mutation        => $self->mutation,      # mutation rate
-      -crossover       => $self->crossover,     # crossover rate
-      -parents         => $self->parents,       # number  of parents
-      -selection       => $self->selection,     # selection strategy
-      -strategy        => $self->strategy,      # crossover strategy
-      -cache           => $self->cache,         # cache results
-      -history         => $self->history,       # remember best results
-      -preserve        => $self->preserve,      # remember the bests
-      -variable_length => 0,                    # fixed length
-   );
-   return $ga;
-}
-
 before evolve => sub {
    my $self = shift;
    unless ( $self->_initialized ) { $self->_init }
 };
 
-sub _init {
-   my $self = shift;
-   return if ( $self->_initialized );
-
-   # Load the appropiate ProfileScore role.
-   # We tell the plugin loader where to look for the plugin.
-   #  App namespace..
-   $self->_plugin_app_ns( ['Bio::Tools::Evolver'] );
-
-   #  plugin namespace...
-   $self->_plugin_ns('ProfileScore');
-
-   #  plugin name.
-   $self->load_plugin( $self->profile_algorithm );
-
-   # Create the fitness function, which is composed of the
-   # ProfileScore function and the user function.
-   my $fitness = sub {
-      my ( $ga, $chromosome ) = @_;
-      my $seq = $ga->as_string($chromosome);
-      $seq =~ s/_//g;
-      my $profile_score = $self->_my_fitness->($seq);
-      my $custom_score  = $self->fitness->($seq);
-      my $final_score   = ( ( $profile_score**2 ) * ($custom_score) );
-      return $final_score;
-   };
-   $self->_ga->fitness($fitness);
-
-   # if defined, create the terminate function
-   if ( $self->_has_terminate ) {
-      my $terminate = sub {
-         my ($ga)  = @_;
-         my $seq   = $ga->as_string( $ga->getFittest );
-         my $score = $ga->as_value ( $ga->getFittest );
-         $seq =~ s/_//g;
-
-         my $seq_obj = Bio::Seq->new(
-            -id => $score,
-            -seq => $seq,
-         );
-
-         return $self->terminate->($seq_obj);
-      };
-
-      $self->_ga->terminate($terminate);
-   }
-
-   # Initialize the first generation.
-   $self->_ga->init(
-      [  map { [ split '', $prot_alph ] } ( 1 .. $self->profile->length )
-      ]
-   );
-
-   $self->_initialized(1);
-
-   # Inject the profile consensus string.
-   if ($self->inject_consensus) { $self->_inject_consensus };
-
-}
-
 sub inject {
+    # Inject sequence objects in the current population.
+
    my ( $self, @seq_objs ) = @_;
    unless (@seq_objs) {
       warn "No arguments given, didn't inject anything";
@@ -259,6 +181,112 @@ sub getFittest {
    }
 
    return wantarray ? @fittest_seq : $fittest_seq[0];
+}
+
+sub _init {
+   my $self = shift;
+   return if ( $self->_initialized );
+
+   # Load the chosen profile score algorithm.
+   $self->_load_profile_score_plugin;
+
+   # Compose the fitting function from the user and the profile
+   # functions.
+   $self->_assemble_fitness_function;
+
+   # if defined, create the terminate function.
+   if ( $self->_has_terminate ) { $self->_assemble_terminate_function }
+
+   # Initialize the first generation.
+   $self->_ga->init(
+      [  map { [ split '', $prot_alph ] } ( 1 .. $self->profile->length )
+      ]
+   );
+   $self->_initialized(1);
+
+   # Inject the profile consensus string.
+   if ($self->inject_consensus) { $self->_inject_consensus };
+
+}
+
+sub _load_profile_score_plugin {
+    # Load the appropiate ProfileScore role.
+
+    my $self = shift;
+
+   # We tell the plugin loader where to look for the plugin.
+   #  App namespace..
+   $self->_plugin_app_ns( ['Bio::Tools::Evolver'] );
+
+   #  plugin namespace...
+   $self->_plugin_ns('ProfileScore');
+
+   #  plugin name.
+   $self->load_plugin( $self->profile_algorithm );
+
+   return 1;
+}
+
+sub _assemble_fitness_function {
+    my $self = shift;
+
+   # Create the fitness function, which is composed of the
+   # ProfileScore function and the user function.
+   my $fitness = sub {
+      my ( $ga, $chromosome ) = @_;
+      my $seq = $ga->as_string($chromosome);
+      $seq =~ s/_//g;
+      my $profile_score = $self->_my_fitness->($seq);
+      my $custom_score  = $self->fitness->($seq);
+      my $final_score   = ( ( $profile_score**2 ) * ($custom_score) );
+      return $final_score;
+   };
+   $self->_ga->fitness($fitness);
+}
+
+sub _assemble_terminate_function {
+
+   # The user must provide a code reference that should accept a
+   # Bio::Seq object and return true or false whether he thinks that
+   # evolution should stop.
+
+    my $self = shift;
+
+    my $terminate = sub {
+        my ($ga)  = @_;
+        my $seq   = $ga->as_string( $ga->getFittest );
+        my $score = $ga->as_value ( $ga->getFittest );
+        $seq =~ s/_//g;
+
+        my $seq_obj = Bio::Seq->new(
+        -id  => $score,
+        -seq => $seq,
+        );
+
+        return $self->terminate->($seq_obj);
+    };
+
+    $self->_ga->terminate($terminate);
+}
+
+sub _build__ga {
+   my $self = shift;
+
+   # Initialize the Genetic Algorithm engine with sane defaults.
+   my $ga = AI::Genetic::Pro->new(
+      -type            => 'listvector',         # type of chromosomes
+      -population      => $self->population,    # population size
+      -mutation        => $self->mutation,      # mutation rate
+      -crossover       => $self->crossover,     # crossover rate
+      -parents         => $self->parents,       # number  of parents
+      -selection       => $self->selection,     # selection strategy
+      -strategy        => $self->strategy,      # crossover strategy
+      -cache           => $self->cache,         # cache results
+      -history         => $self->history,       # remember best results
+      -preserve        => $self->preserve,      # remember the bests
+      -variable_length => 0,                    # fixed length
+   );
+   return $ga;
 }
 
 sub _inject_consensus {
