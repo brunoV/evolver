@@ -296,7 +296,7 @@ Version 0.01
       terminate => \&terminate_function, #optional
    );
 
-   $evolver->evolver(10)           # Evolve for ten generations.
+   $evolver->evolve(10)           # Evolve for ten generations.
    $evolver->chart('output.png')   # Plot a chart with the progress.
 
    my $seq = $evolver->getFittest. # Get a Bio::Seq object with the best fit.
