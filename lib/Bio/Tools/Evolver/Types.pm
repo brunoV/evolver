@@ -1,43 +1,46 @@
 package Bio::Tools::Evolver::Types;
-use strict;
-use warnings;
-use Moose::Role;
-use Moose::Util::TypeConstraints;
 
-use Bio::Seq;
-use Bio::AlignIO;
-use Bio::Matrix::IO;
-use Bio::Tools::Run::Alignment::Clustalw;
-use Bio::Tools::GuessSeqFormat;
+use MooseX::Types -declare => [qw( ProfileFile BioSeqIO BioSeq
+    ArrayRefofBioSeq BioMatrixScoring MatrixFile BioMatrixIO
+    AlgorithmNeedlemanWunsch Probability BioAlignIO BioSimpleAlign
+    MatrixName Hmmer Aligner
+)];
 
-use File::Basename;
-use File::Temp;
+use MooseX::Types::Moose qw(ArrayRef Str);
+
+use Class::Autouse qw(Bio::Seq Bio::SeqIO Bio::AlignIO Bio::Matrix::IO
+Bio::Tools::Run::Alignment::Clustalw Bio::Tools::GuessSeqFormat
+File::Temp);
+
+use File::Basename qw(fileparse);
 use Carp qw(croak);
 use namespace::autoclean;
 
 # Alignment types.
-subtype 'BTE::ProfileFile' => as 'Str';
-subtype 'BTE::Bio::SeqIO'         => as class_type('Bio::SeqIO');
-subtype 'BTE::Bio::Seq'           => as class_type('Bio::Seq');
-subtype 'BTE::Bio::Seq::ArrayRef' => as 'ArrayRef[BTE::Bio::Seq]';
-subtype 'BTE::Bio::AlignIO'       => as class_type('Bio::AlignIO');
-subtype 'BTE::Bio::SimpleAlign'   => as class_type('Bio::SimpleAlign');
+class_type BioSeqIO,       { class => 'Bio::SeqIO'       };
+class_type BioSeq,         { class => 'Bio::Seq'         };
+class_type BioAlignIO,     { class => 'Bio::AlignIO'     };
+class_type BioSimpleAlign, { class => 'Bio::SimpleAlign' };
+
+subtype ProfileFile,      as Str;
+subtype ArrayRefofBioSeq, as ArrayRef[BioSeq];
 
 # Scoring Matrix Types
-subtype 'BTE::Bio::Matrix::Scoring' =>
-    as class_type('Bio::Matrix::Scoring');
-subtype 'BTE::MatrixFile' => as 'Str' => where { _validate_mfile($_) } =>
+class_type BioMatrixScoring, { class => 'Bio::Matrix::Scoring' };
+class_type BioMatrixIO,      { class => 'Bio::Matrix::IO'      };
+class_type AlgorithmNeedlemanWunsch, 
+    { class => 'Algorithm::NeedlemanWunsch' };
+
+subtype MatrixName, as Str, where { _validate_mname($_) };
+subtype MatrixFile,
+    as Str,
+    where { _validate_mfile($_) },
     message {"File $_ doesn't exist"};
-subtype 'BTE::Bio::Matrix::IO' => as class_type('Bio::Matrix::IO');
-subtype 'BTE::MatrixName' => as 'Str' => where { _validate_mname($_) };
-subtype 'BTE::Algorithm::NeedlemanWunsch' =>
-    as class_type('Algorithm::NeedlemanWunsch');
 
 # Misc. types
-subtype 'BTE::Probability' => as 'Str' => where { $_ < 1 and $_ > 0 };
-subtype 'BTE::Algorithm::NeedlemanWunsch'
-   => as class_type('Algorithm::NeedlemanWunsch');
-
+subtype Probability, as Str, where { $_ < 1 and $_ > 0 };
+class_type Hmmer,   { class => 'Bio::Tools::Run::Hmmer' };
+class_type Aligner, { class => 'Bio::Tools::Evolver::Aligner' };
 
 # Coercion coderefs. I couldn't use proper subs because it would look
 # for them in the applying module, even after prepending this module's name.
@@ -154,20 +157,19 @@ sub _getpath {
 # Type Coercions
 
 # Coerce subtypes to BTE.Bio.SimpleAlign
-coerce 'BTE::Bio::SimpleAlign' => from 'BTE::Bio::SeqIO' =>
-    via { _seqarrayref_to_aln( _seqI_to_seqarrayref($_) ) } => from
-    'BTE::Bio::Seq::ArrayRef' => via { _seqarrayref_to_aln($_) } => from
-    'BTE::Bio::AlignIO'       => via { $_->next_aln }           => from
-    'BTE::ProfileFile'        => via { _filename_to_aln($_) };
+coerce BioSimpleAlign,
+    from BioSeqIO,         via { _seqarrayref_to_aln( _seqI_to_seqarrayref($_) ) },
+    from ArrayRefofBioSeq, via { _seqarrayref_to_aln($_) },
+    from BioAlignIO,       via { $_->next_aln },
+    from ProfileFile,      via { _filename_to_aln($_) };
 
 # Coerce to Matrix scoring.
-coerce 'BTE::Bio::Matrix::Scoring' => from 'BTE::MatrixFile' =>
-    via { parse_matrixfile( $_[0] ) } => from 'BTE::Bio::Matrix::IO' =>
-    via { return $_[0]->next_matrix } => from 'BTE::MatrixName' =>
-    via { parse_matrixfile( _getpath( $_[0] ) ) };
+coerce BioMatrixScoring,
+    from MatrixFile,  via { parse_matrixfile( $_[0] ) },
+    from BioMatrixIO, via { return $_[0]->next_matrix },
+    from MatrixName,  via { parse_matrixfile( _getpath( $_[0] ) ) };
 
 # Type validations.
-
 sub _validate_mfile { return 1 if -e $_[0] }
 
 sub _validate_mname {
@@ -176,4 +178,5 @@ sub _validate_mname {
    return grep { $name eq $_ } @matrixes;
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

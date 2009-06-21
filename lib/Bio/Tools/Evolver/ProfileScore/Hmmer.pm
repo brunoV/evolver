@@ -3,6 +3,9 @@ use Moose::Role;
 requires '_build__my_fitness';
 with 'Bio::Tools::Evolver::RandomSeq';
 
+use MooseX::Types::Moose qw(Bool);
+use Bio::Tools::Evolver::Types qw(Hmmer);
+
 use Bio::Tools::Run::Hmmer;
 use File::Temp;
 use List::Util qw(sum);
@@ -26,13 +29,13 @@ sub _build__max_score {
 
 has calibrate_profile => (
    is      => 'rw',
-   isa     => 'Bool',
+   isa     => Bool,
    default => 0,
 );
 
 has _hmmer => (
    is         => 'ro',
-   isa        => 'Bio::Tools::Run::Hmmer',
+   isa        => Hmmer,
    lazy_build => 1,
    handles    => {
       _hmmsearch => 'hmmsearch'

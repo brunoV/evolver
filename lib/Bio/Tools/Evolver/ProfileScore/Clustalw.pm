@@ -1,26 +1,25 @@
 package Bio::Tools::Evolver::ProfileScore::Clustalw;
-use strict;
-use warnings;
 use Moose::Role;
-use namespace::autoclean;
+use MooseX::Types::Moose qw(Str CodeRef);
 
 use Bio::Tools::Run::Alignment::Clustalw;
 use Bio::AlignIO;
 
 use List::Util qw(shuffle);
+use namespace::autoclean;
 ##use Memoize;
 ##memoize('_score_f_absolute');
 
 has _random_seq => (
    is         => 'ro',
    lazy_build => 1,
-   isa        => 'Str',
+   isa        => Str,
 );
 
 has _my_fitness => (
    is         => 'ro',
    lazy_build => 1,
-   isa        => 'CodeRef',
+   isa        => CodeRef,
 );
 
 sub _build__random_seq {

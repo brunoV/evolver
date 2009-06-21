@@ -3,6 +3,8 @@ use Moose::Role;
 requires '_build__my_fitness';
 with 'Bio::Tools::Evolver::RandomSeq';
 
+use Bio::Tools::Evolver::Types qw(Aligner);
+use MooseX::Types::Moose qw(ArrayRef);
 use Bio::Tools::Evolver::Aligner;
 use namespace::autoclean;
 
@@ -17,9 +19,9 @@ sub _build__min_score {
 ## _max_score
 
 has _consensus_array => ( 
-   is => 'ro',
+   is  => 'ro',
+   isa => ArrayRef,
    lazy_build => 1,
-   isa => 'ArrayRef',
 );
 
 sub _build__consensus_array {
@@ -27,7 +29,6 @@ sub _build__consensus_array {
    my @res = split '', $self->profile->consensus_string;
    return \@res;
 }
-
 
 sub _build__max_score {
    my $self = shift;
@@ -40,9 +41,9 @@ sub _build__max_score {
 ## _profile_score
 
 has _aligner => (
-   is => 'ro',
+   is  => 'ro',
+   isa => Aligner,
    lazy_build => 1,
-   isa => 'Bio::Tools::Evolver::Aligner',
 );
 
 sub _build__aligner {

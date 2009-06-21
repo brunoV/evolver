@@ -1,12 +1,13 @@
 package Bio::Tools::Evolver::RandomSeq;
 use Moose::Role;
+use MooseX::Types::Moose qw(Str);
 use List::Util qw(shuffle);
 use namespace::autoclean;
 
 has _random_seq => (
    is         => 'ro',
    lazy_build => 1,
-   isa        => 'Str',
+   isa        => Str,
 );
 
 sub _build__random_seq {

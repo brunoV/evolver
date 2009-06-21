@@ -1,5 +1,6 @@
 package Bio::Tools::Evolver::ProfileScoreI;
 use Moose::Role;
+use MooseX::Types::Moose qw(CodeRef Num);
 use namespace::autoclean;
 
 # Interface for Profile Score calculating engines.
@@ -15,18 +16,18 @@ use namespace::autoclean;
 has _my_fitness => (
    is         => 'ro',
    lazy_build => 1,
-   isa        => 'CodeRef',
+   isa        => CodeRef,
 );
 
 has _min_score => (
    is         => 'ro',
-   isa        => 'Num',
+   isa        => Num,
    lazy_build => 1,
 );
 
 has _max_score => (
    is         => 'ro',
-   isa        => 'Num',
+   isa        => Num,
    lazy_build => 1,
 );
 

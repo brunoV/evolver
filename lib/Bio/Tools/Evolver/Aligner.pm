@@ -1,16 +1,17 @@
 package Bio::Tools::Evolver::Aligner;
 use Moose;
-use Moose::Util::TypeConstraints;
-use namespace::autoclean;
 
-use Bio::Tools::Evolver::Types;
+use Bio::Tools::Evolver::Types qw(
+    AlgorithmNeedlemanWunsch BioMatrixScoring
+);
 
 use Algorithm::NeedlemanWunsch;
 use Memoize;
+use namespace::autoclean;
 
 has '_aligner' => (
    is         => 'ro',
-   isa        => 'BTE::Algorithm::NeedlemanWunsch',
+   isa        => AlgorithmNeedlemanWunsch,
    lazy_build => 1,
    handles    => [qw(align)],
 );
@@ -29,7 +30,7 @@ sub _build__aligner {
 
 has 'matrix' => (
    is      => 'ro',
-   isa     => 'BTE::Bio::Matrix::Scoring',
+   isa     => BioMatrixScoring,
    coerce  => 1,
    default => 'BLOSUM62',
    handles => { score_for => 'get_entry' },

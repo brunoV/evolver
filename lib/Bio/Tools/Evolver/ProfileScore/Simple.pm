@@ -2,7 +2,8 @@ package Bio::Tools::Evolver::ProfileScore::Simple;
 use Moose::Role;
 requires '_build__my_fitness';
 
-use Moose::Util::TypeConstraints;
+use MooseX::Types::Moose qw(ArrayRef);
+use Bio::Tools::Evolver::Types qw(BioMatrixScoring);
 use List::MoreUtils qw(each_array);
 use namespace::autoclean;
 
@@ -30,7 +31,7 @@ sub _build__min_score {
 has _consensus_array => ( 
    is => 'ro',
    lazy_build => 1,
-   isa => 'ArrayRef',
+   isa => ArrayRef,
 );
 
 sub _build__consensus_array {
@@ -48,7 +49,7 @@ sub _build__max_score {
 
 has 'matrix' => (
    is      => 'ro',
-   isa     => 'BTE::Bio::Matrix::Scoring',
+   isa     => BioMatrixScoring,
    coerce  => 1,
    default => 'BLOSUM62',
 );

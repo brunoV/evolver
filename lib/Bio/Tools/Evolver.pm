@@ -1,11 +1,12 @@
 package Bio::Tools::Evolver;
-
 use Moose;
 use AI::Genetic::Pro;
 use Bio::Root::Root qw();
 use namespace::autoclean;
+use MooseX::Types::Moose qw(Str Bool Num ArrayRef CodeRef);
+use Bio::Tools::Evolver::Types qw(BioSimpleAlign Probability);
 
-with 'Bio::Tools::Evolver::Types', 'Bio::Tools::Evolver::ProfileScoreI',
+with 'Bio::Tools::Evolver::ProfileScoreI',
      'MooseX::Object::Pluggable',  'Bio::Tools::Evolver::Chart::Gnuplot';
 
 my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
@@ -35,92 +36,92 @@ has _ga => (
 
 has profile => (
    is       => 'ro',
-   isa      => 'BTE::Bio::SimpleAlign',
+   isa      => BioSimpleAlign,
    required => 1,
    coerce   => 1,
 );
 
 has profile_algorithm => (
    is      => 'ro',
-   isa     => 'Str',
+   isa     => Str,
    default => 'Simple',
 );
 
 has cache => (
    is      => 'ro',
-   isa     => 'Bool',
+   isa     => Bool,
    default => 1,
 );
 
 has mutation => (
    is      => 'ro',
-   isa     => 'BTE::Probability',
+   isa     => Probability,
    default => 0.01,
 );
 
 has crossover => (
    is      => 'ro',
-   isa     => 'BTE::Probability',
+   isa     => Probability,
    default => 0.95,
 );
 
 has population => (
    is      => 'ro',
-   isa     => 'Num',
+   isa     => Num,
    default => 300,
 );
 
 has parents => (
    is      => 'ro',
-   isa     => 'Num',
+   isa     => Num,
    default => 2,
 );
 
 has history => (
    is      => 'ro',
-   isa     => 'Bool',
+   isa     => Bool,
    default => 1,
 );
 
 has selection => (
    is      => 'ro',
-   isa     => 'ArrayRef',
+   isa     => ArrayRef,
    default => sub { ['Roulette'] },
 );
 
 has strategy => (
    is      => 'ro',
-   isa     => 'ArrayRef',
+   isa     => ArrayRef,
    default => sub { [ 'Points', 2 ] },
 );
 
 has preserve => (
    is      => 'ro',
-   isa     => 'Num',
+   isa     => Num,
    default => '5',
 );
 
 has fitness => (
    is       => 'ro',
-   isa      => 'CodeRef',
+   isa      => CodeRef,
    required => 1,
 );
 
 has terminate => (
    is        => 'ro',
-   isa       => 'CodeRef',
+   isa       => CodeRef,
    predicate => '_has_terminate',
 );
 
 has inject_consensus => (
    is => 'ro',
-   isa => 'Bool',
+   isa => Bool,
    default => 1,
 );
 
 has _initialized => (
    is      => 'rw',
-   isa     => 'Bool',
+   isa     => Bool,
    default => 0,
 );
 
