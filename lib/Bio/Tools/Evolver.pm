@@ -3,6 +3,7 @@ package Bio::Tools::Evolver;
 use Moose;
 use AI::Genetic::Pro;
 use Bio::Root::Root qw();
+use namespace::autoclean;
 
 with 'Bio::Tools::Evolver::Types', 'Bio::Tools::Evolver::ProfileScoreI',
      'MooseX::Object::Pluggable',  'Bio::Tools::Evolver::Chart::Gnuplot';
@@ -297,7 +298,6 @@ sub _inject_consensus {
    return 1;
 }
 
-no Moose;
 __PACKAGE__->meta->make_immutable;
 1;
 
@@ -338,8 +338,6 @@ Bio::Tools::Evolver is an evolver...
 =cut
 
 =head1 Methods
-
-=cut
 
 =head2 Bio::Tools::Evolver->new(%args)
 

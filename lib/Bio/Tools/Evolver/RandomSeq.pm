@@ -1,6 +1,7 @@
 package Bio::Tools::Evolver::RandomSeq;
 use Moose::Role;
 use List::Util qw(shuffle);
+use namespace::autoclean;
 
 has _random_seq => (
    is         => 'ro',
@@ -21,5 +22,4 @@ sub _shuffle_string {
    return join( '', shuffle @elms );
 }
 
-no Moose;
 1;

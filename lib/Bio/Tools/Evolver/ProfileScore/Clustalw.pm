@@ -2,6 +2,7 @@ package Bio::Tools::Evolver::ProfileScore::Clustalw;
 use strict;
 use warnings;
 use Moose::Role;
+use namespace::autoclean;
 
 use Bio::Tools::Run::Alignment::Clustalw;
 use Bio::AlignIO;
@@ -70,5 +71,4 @@ sub _score_f_absolute {
    return $alignment->score;
 }
 
-no Moose;
 1;

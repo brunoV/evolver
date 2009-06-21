@@ -4,6 +4,7 @@ requires '_build__my_fitness';
 
 use Moose::Util::TypeConstraints;
 use List::MoreUtils qw(each_array);
+use namespace::autoclean;
 
 ## _min_score
 
@@ -67,5 +68,4 @@ sub _profile_score {
    return $score;
 }
 
-no Moose;
 1;

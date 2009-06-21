@@ -4,6 +4,7 @@ requires '_build__my_fitness';
 with 'Bio::Tools::Evolver::RandomSeq';
 
 use Bio::Tools::Evolver::Aligner;
+use namespace::autoclean;
 
 ## _min_score
 
@@ -55,5 +56,4 @@ sub _profile_score {
    return $self->_aligner->align(\@string, $self->_consensus_array);
 }
 
-no Moose;
 1;

@@ -1,5 +1,6 @@
 package Bio::Tools::Evolver::ProfileScoreI;
 use Moose::Role;
+use namespace::autoclean;
 
 # Interface for Profile Score calculating engines.
 
@@ -42,5 +43,4 @@ sub _build__my_fitness {
    };
 }
 
-no Moose;
 1;

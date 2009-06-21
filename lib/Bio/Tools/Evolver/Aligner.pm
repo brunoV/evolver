@@ -1,7 +1,7 @@
 package Bio::Tools::Evolver::Aligner;
-use lib qw(/home/bruno/lib/Bio-Tools-Evolver/lib/);
 use Moose;
 use Moose::Util::TypeConstraints;
+use namespace::autoclean;
 
 use Bio::Tools::Evolver::Types;
 
@@ -35,5 +35,4 @@ has 'matrix' => (
    handles => { score_for => 'get_entry' },
 );
 
-no Moose;
 __PACKAGE__->meta->make_immutable;

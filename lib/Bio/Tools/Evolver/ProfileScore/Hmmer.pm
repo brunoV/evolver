@@ -6,6 +6,7 @@ with 'Bio::Tools::Evolver::RandomSeq';
 use Bio::Tools::Run::Hmmer;
 use File::Temp;
 use List::Util qw(sum);
+use namespace::autoclean;
 
 ## _min_score
 
@@ -69,5 +70,4 @@ sub _profile_score {
    return log($evalue)/log(10);
 }
 
-no Moose;
 1;

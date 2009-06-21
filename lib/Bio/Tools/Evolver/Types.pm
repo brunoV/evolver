@@ -13,6 +13,7 @@ use Bio::Tools::GuessSeqFormat;
 use File::Basename;
 use File::Temp;
 use Carp qw(croak);
+use namespace::autoclean;
 
 # Alignment types.
 subtype 'BTE::ProfileFile' => as 'Str';
@@ -175,5 +176,4 @@ sub _validate_mname {
    return grep { $name eq $_ } @matrixes;
 }
 
-no Moose;
 1;
