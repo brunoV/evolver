@@ -4,17 +4,17 @@ use Chart::Gnuplot;
 use namespace::autoclean;
 
 sub chart {
-    my ($self, $args) = @_;
+    my ($self, %args) = @_;
 
     my $generations = scalar @{$self->getHistory->[0]};
     my $max_scores = \@{$self->getHistory->[0]};
     my $min_scores = \@{$self->getHistory->[1]};
 
     my $chart = Chart::Gnuplot->new(
-        output => $args->{output} // "plot.eps",
-        title  => $args->{title}  // "Evolution",
-        xlabel => $args->{xlabel} // "Generations",
-        ylabel => $args->{ylabel} // "Fitness Score"
+        output => $args{output} // "plot.eps",
+        title  => $args{title}  // "Evolution",
+        xlabel => $args{xlabel} // "Generations",
+        ylabel => $args{ylabel} // "Fitness Score"
     );
 
     # Create dataset object and specify the properties of the dataset

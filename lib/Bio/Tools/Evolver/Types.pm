@@ -156,7 +156,7 @@ sub _getpath {
 
 # Type Coercions
 
-# Coerce subtypes to BTE.Bio.SimpleAlign
+# Coerce subtypes to BioSimpleAlign
 coerce BioSimpleAlign,
     from BioSeqIO,         via { _seqarrayref_to_aln( _seqI_to_seqarrayref($_) ) },
     from ArrayRefofBioSeq, via { _seqarrayref_to_aln($_) },

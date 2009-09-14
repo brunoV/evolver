@@ -7,7 +7,7 @@ use MooseX::Types::Moose qw(Str Bool Num ArrayRef CodeRef);
 use Bio::Tools::Evolver::Types qw(BioSimpleAlign Probability);
 
 with 'Bio::Tools::Evolver::ProfileScoreI',
-     'MooseX::Object::Pluggable',  'Bio::Tools::Evolver::Chart::Gnuplot';
+     'MooseX::Object::Pluggable', 'Bio::Tools::Evolver::Chart::Gnuplot';
 
 my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
 
@@ -27,11 +27,7 @@ has _ga => (
    isa        => 'AI::Genetic::Pro',
    init_arg   => undef,
    lazy_build => 1,
-   handles    => [
-      qw(evolve getHistory getAvgFitness generation
-          population crossover mutation parents selection strategy cache history
-          preserve)
-   ],
+   handles    => [ qw(evolve getHistory getAvgFitness generation) ],
 );
 
 has profile => (
@@ -256,13 +252,15 @@ sub _assemble_terminate_function {
 
     my $terminate = sub {
         my ($ga)  = @_;
-        my $seq   = $ga->as_string( $ga->getFittest );
-        my $score = $ga->as_value ( $ga->getFittest );
+
+        my $fittest = $ga->getFittest;
+        my $seq     = $ga->as_string( $fittest );
+        my $score   = $ga->as_value ( $fittest );
         $seq =~ s/_//g;
 
         my $seq_obj = Bio::Seq->new(
-        -id  => $score,
-        -seq => $seq,
+            -id  => $score,
+            -seq => $seq,
         );
 
         return $self->terminate->($seq_obj);

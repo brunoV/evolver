@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use ExtUtils::MakeMaker;
 
-my $v = 1.006900;
+my $v = 1.006000;
 eval "use Bio::Root::Build $v";
 if ($@) {
     # using die so wrappers can catch the error message    
@@ -27,9 +27,12 @@ WriteMakefile(
     PREREQ_PM => {
         'AI::Genetic::Pro'           => 0,
         'Algorithm::NeedlemanWunsch' => 0,
+        'Chart::Gnuplot'             => 0,
+        'Class::Autouse'             => 0,
         'Moose'                      => 0.72,
         'MooseX::Object::Pluggable'  => 0,
         'Memoize'                    => 0,
+        'namespace::autoclean'       => 0,
         'File::Basename'             => 0,
         'List::MoreUtils'            => 0,
         'File::Temp'                 => 0,
