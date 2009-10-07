@@ -1,4 +1,4 @@
-package Bio::Tools::Evolver::Types;
+package Evolver::Types;
 
 use MooseX::Types -declare => [qw( ProfileFile BioSeqIO BioSeq
     ArrayRefofBioSeq BioMatrixScoring MatrixFile BioMatrixIO
@@ -40,7 +40,7 @@ subtype MatrixFile,
 # Misc. types
 subtype Probability, as Str, where { $_ < 1 and $_ > 0 };
 class_type Hmmer,   { class => 'Bio::Tools::Run::Hmmer' };
-class_type Aligner, { class => 'Bio::Tools::Evolver::Aligner' };
+class_type Aligner, { class => 'Evolver::Aligner' };
 
 # Coercion coderefs. I couldn't use proper subs because it would look
 # for them in the applying module, even after prepending this module's name.

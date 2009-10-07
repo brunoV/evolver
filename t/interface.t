@@ -1,26 +1,24 @@
 use strict;
 use warnings;
-use Test::More qw(no_plan);
+use Test::More;
 use Test::Exception;
 use Test::Warn;
 use Bio::AlignIO;
-use lib qw(/home/bruno/lib/Bio-Tools-Evolver/lib);
 
 my @align_files = glob('t/profile-test.*');
 my $align_file = $align_files[0];
 my @seqs_files = glob('t/seqs-test.*');
 my $seqs_file  = $seqs_files[0];
 
-use_ok('Bio::Tools::Evolver');
+use_ok('Evolver');
 can_ok(
-   'Bio::Tools::Evolver',
+   'Evolver',
    qw(terminate population crossover mutation parents selection
-       strategy cache history preserve throw
-       evolve chart getFittest getHistory getAvgFitness
-       generation inject)
+       strategy cache history preserve evolve chart getFittest
+       getHistory getAvgFitness generation inject)
 );
 
-my $ev = Bio::Tools::Evolver->new(
+my $ev = Evolver->new(
    profile => $seqs_file,
    fitness => sub {1},
 );
@@ -34,14 +32,12 @@ is_deeply( $ev->strategy, [ 'Points', 2 ], 'default strategy' );
 is( $ev->cache,           1, 'default cache' );
 is( $ev->history,         1, 'default history' );
 is( $ev->preserve,        5, 'default preserve' );
-is( $ev->profile_algorithm, 'Simple', 'default profile algorithm' );
-
-throws_ok { $ev->throw('Test error message') } 'Bio::Root::Exception', 'Throw';
+is( $ev->profile_algorithm, 'Hmmer', 'default profile algorithm' );
 
 # Initialize an object assigning attributes in the declaration.
 undef $ev;
 lives_ok {
-   $ev = Bio::Tools::Evolver->new(
+   $ev = Evolver->new(
       profile         => $align_file,
       fitness         => sub { return 1 },
       population      => 1000,

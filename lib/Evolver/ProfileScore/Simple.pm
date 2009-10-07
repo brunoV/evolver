@@ -1,9 +1,9 @@
-package Bio::Tools::Evolver::ProfileScore::Simple;
+package Evolver::ProfileScore::Simple;
 use Moose::Role;
 requires '_build__my_fitness';
 
 use MooseX::Types::Moose qw(ArrayRef);
-use Bio::Tools::Evolver::Types qw(BioMatrixScoring);
+use Evolver::Types qw(BioMatrixScoring);
 use List::MoreUtils qw(each_array);
 use namespace::autoclean;
 

@@ -3,17 +3,21 @@ use warnings;
 use Test::More qw(no_plan);
 use Test::Exception;
 use Test::Warn;
-use Bio::Tools::Evolver;
+use Evolver;
 use File::Basename qw(dirname);
+use Try::Tiny;
 
 my @align_files = glob('t/profile-test.*');
 my $align_file = 't/profile-test.sto';
 my @seqs_files = glob('t/seqs-test.*');
 my $seqs_file  = $seqs_files[0];
 
-my @plugins = qw(Simple Needleman Hmmer);
+#my @plugins = qw(Simple Needleman Hmmer);
+my @plugins = qw(Hmmer);
 
 foreach my $plugin (@plugins) {
+    diag("Testing plugin $plugin\n");
+    try {
 
    test_evolve($align_file, $plugin);
 
@@ -22,13 +26,14 @@ foreach my $plugin (@plugins) {
    test_injection($seqs_file, $plugin);
 
    test_terminate($seqs_file, $plugin);
+   }
 
 }
 
 sub test_evolve {
    my ($profile, $plugin) = @_;
 
-   my $ev = Bio::Tools::Evolver->new(
+   my $ev = Evolver->new(
       profile    => $profile,
       population => 3,
       fitness    => \&count_hydroph,
@@ -45,7 +50,7 @@ sub test_evolve {
 sub test_injection {
    my ($profile, $plugin) = @_;
 
-   my $ev = Bio::Tools::Evolver->new(
+   my $ev = Evolver->new(
       profile    => $profile,
       population => 5,
       fitness    => sub { return 1 },
@@ -74,7 +79,7 @@ sub test_injection {
    is( $fittest->seq, $string, "Injection occured correctly: $plugin" );
 
    # Doing it the other way around (inject->evolve)
-   $ev = Bio::Tools::Evolver->new(
+   $ev = Evolver->new(
       profile => $profile,
       population => 1,
       preserve => 1,
@@ -92,7 +97,7 @@ sub test_injection {
 sub test_getFittest {
    my ($profile, $plugin) = @_;
 
-   my $ev = Bio::Tools::Evolver->new(
+   my $ev = Evolver->new(
       profile => $profile,
       population => 5,
       fitness => sub {1},
@@ -119,7 +124,7 @@ sub test_getFittest {
       # doing a single generation, since the starting sequences already
       # satisfy the terminate function.
 
-      my $ev = Bio::Tools::Evolver->new(
+      my $ev = Evolver->new(
          profile => $profile,
          population => 5,
          fitness => sub { return 1 },

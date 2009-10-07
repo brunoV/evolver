@@ -1,4 +1,4 @@
-package Bio::Tools::Evolver::RandomSeq;
+package Evolver::RandomSeq;
 use Moose::Role;
 use MooseX::Types::Moose qw(Str);
 use List::Util qw(shuffle);

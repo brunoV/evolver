@@ -1,8 +1,8 @@
-package Bio::Tools::Evolver::ProfileScore::Clustalw;
+package Evolver::ProfileScore::Clustalw;
 use Moose::Role;
 use MooseX::Types::Moose qw(Str CodeRef);
 
-use Bio::Tools::Run::Alignment::Clustalw;
+use Run::Alignment::Clustalw;
 use Bio::AlignIO;
 
 use List::Util qw(shuffle);
@@ -38,7 +38,7 @@ sub _shuffle_string {
 sub _build__my_fitness {
    my $self = shift;
 
-   my $factory = Bio::Tools::Run::Alignment::Clustalw->new( quiet => 1 );
+   my $factory = Run::Alignment::Clustalw->new( quiet => 1 );
    # Given a string, calculate the "family belongness score".
    my $max_score
        = _score_f_absolute( $self->profile->consensus_string,

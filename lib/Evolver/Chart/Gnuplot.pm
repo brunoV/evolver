@@ -1,4 +1,4 @@
-package Bio::Tools::Evolver::Chart::Gnuplot;
+package Evolver::Chart::Gnuplot;
 use Moose::Role;
 use Chart::Gnuplot;
 use namespace::autoclean;

@@ -1,10 +1,10 @@
-package Bio::Tools::Evolver::ProfileScore::Hmmer;
+package Evolver::ProfileScore::Hmmer;
 use Moose::Role;
 requires '_build__my_fitness';
-with 'Bio::Tools::Evolver::RandomSeq';
+with 'Evolver::RandomSeq';
 
 use MooseX::Types::Moose qw(Bool);
-use Bio::Tools::Evolver::Types qw(Hmmer);
+use Evolver::Types qw(Hmmer);
 
 use Bio::Tools::Run::Hmmer;
 use File::Temp;

@@ -1,7 +1,7 @@
-package Bio::Tools::Evolver::Aligner;
+package Evolver::Aligner;
 use Moose;
 
-use Bio::Tools::Evolver::Types qw(
+use Evolver::Types qw(
     AlgorithmNeedlemanWunsch BioMatrixScoring
 );
 

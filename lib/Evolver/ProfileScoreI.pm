@@ -1,4 +1,4 @@
-package Bio::Tools::Evolver::ProfileScoreI;
+package Evolver::ProfileScoreI;
 use Moose::Role;
 use MooseX::Types::Moose qw(CodeRef Num);
 use namespace::autoclean;

@@ -1,25 +1,16 @@
-package Bio::Tools::Evolver;
+package Evolver;
 use Moose;
 use AI::Genetic::Pro;
-use Bio::Root::Root qw();
 use namespace::autoclean;
 use MooseX::Types::Moose qw(Str Bool Num ArrayRef CodeRef);
-use Bio::Tools::Evolver::Types qw(BioSimpleAlign Probability);
+use Evolver::Types qw(BioSimpleAlign Probability);
 
-with 'Bio::Tools::Evolver::ProfileScoreI',
-     'MooseX::Object::Pluggable', 'Bio::Tools::Evolver::Chart::Gnuplot';
+with 'Evolver::ProfileScoreI',
+     'MooseX::Object::Pluggable', 'Evolver::Chart::Gnuplot';
 
 my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
 
 our $VERSION = '0.01';
-
-has _root => (
-   is       => 'ro',
-   isa      => 'Bio::Root::Root',
-   default  => sub { Bio::Root::Root->new },
-   init_arg => undef,
-   handles  => [qw(throw)],
-);
 
 has _ga => (
    is         => 'ro',
@@ -40,7 +31,7 @@ has profile => (
 has profile_algorithm => (
    is      => 'ro',
    isa     => Str,
-   default => 'Simple',
+   default => 'Hmmer',
 );
 
 has cache => (
@@ -214,7 +205,7 @@ sub _load_profile_score_plugin {
 
    # We tell the plugin loader where to look for the plugin.
    #  App namespace..
-   $self->_plugin_app_ns( ['Bio::Tools::Evolver'] );
+   $self->_plugin_app_ns( ['Evolver'] );
 
    #  plugin namespace...
    $self->_plugin_ns('ProfileScore');
@@ -284,7 +275,7 @@ sub _build__ga {
       -cache           => $self->cache,         # cache results
       -history         => $self->history,       # remember best results
       -preserve        => $self->preserve,      # remember the bests
-      -variable_length => 0,                    # fixed length
+      -variable_length => 1,                    # fixed length
    );
    return $ga;
 }
@@ -304,7 +295,7 @@ __END__
 
 =head1 NAME
 
-Bio::Tools::Evolver - Profile-constrained sequence optimization using
+Evolver - Profile-constrained sequence optimization using
 evolutionary algorithms.
 
 =head1 VERSION
@@ -315,9 +306,9 @@ Version 0.01
 
 =head1 SYNOPSIS
 
-   use Bio::Tools::Evolver;
+   use Evolver;
 
-   my $evolver = Bio::Tools::Evolver->new(
+   my $evolver = Evolver->new(
       profile   => 'family.aln', # Bio::SimpleAlign, Bio::SeqIO, Bio::Seq, A filename with a sequences to be aligned.
       fitness   => \&fitness_function,
       terminate => \&terminate_function, #optional
@@ -332,19 +323,19 @@ Version 0.01
 
 =head1 DESCRIPTION
 
-Bio::Tools::Evolver is an evolver...
+Evolver is an evolver...
 
 =cut
 
 =head1 Methods
 
-=head2 Bio::Tools::Evolver->new(%args)
+=head2 Evolver->new(%args)
 
-Constructor. Returns a Bio::Tools::Evolver object.
+Constructor. Returns a Evolver object.
 Accepts a hash with arguments, of which the fitness function
 is the only mandatory.
 
-    my $evolver = Bio::Tools::Evolver->new(
+    my $evolver = Evolver->new(
        fitness => \&fitness_function,
     );
 
@@ -686,7 +677,7 @@ automatically be notified of progress on your bug as I make changes.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Bio::Tools::Evolver
+    perldoc Evolver
 
 
 You can also look for information at:

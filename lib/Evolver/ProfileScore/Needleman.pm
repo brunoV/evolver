@@ -1,11 +1,11 @@
-package Bio::Tools::Evolver::ProfileScore::Needleman;
+package Evolver::ProfileScore::Needleman;
 use Moose::Role;
 requires '_build__my_fitness';
-with 'Bio::Tools::Evolver::RandomSeq';
+with 'Evolver::RandomSeq';
 
-use Bio::Tools::Evolver::Types qw(Aligner);
+use Evolver::Types qw(Aligner);
 use MooseX::Types::Moose qw(ArrayRef);
-use Bio::Tools::Evolver::Aligner;
+use Evolver::Aligner;
 use namespace::autoclean;
 
 ## _min_score
@@ -48,7 +48,7 @@ has _aligner => (
 
 sub _build__aligner {
    my $self = shift;
-   return Bio::Tools::Evolver::Aligner->new;
+   return Evolver::Aligner->new;
 }
 
 sub _profile_score {
