@@ -70,13 +70,4 @@ is( $ev->profile_algorithm, 'Hmmer', 'changed profile_algorithm' );
 
 # TODO Write *the* test: a protein actually evolves.
 
-# ok( count_hydroph($fittest) > count_hydroph($seqs[0]->seq) );
-## ok( count_hydroph($fittest) > count_hydroph($seqs[1]->seq) );
-#my $history = $ev->getHistory;
-#$ev->chart(-width => 1042, -height => 768, -filename => 'evolution.png');
-#print $ev->as_value($ev->_ga->getFittest), "<--\n";
-#print $fittest->seq, "\n";
-#print "fittest: ", count_hydroph($fittest->seq), "\n";
-#print $seqs[1]->seq, "\n";
-#print "normal: ", count_hydroph($seqs[1]->seq), "\n";
-
+done_testing();
