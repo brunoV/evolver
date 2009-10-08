@@ -1,6 +1,6 @@
 package Evolver::ProfileScore::Hmmer;
 use Moose::Role;
-requires '_build__my_fitness';
+requires '_build__profile_score';
 with 'Evolver::RandomSeq';
 
 use MooseX::Types::Moose qw(Bool);
@@ -15,17 +15,17 @@ use namespace::autoclean;
 
 sub _build__min_score {
    my $self = shift;
-   return $self->_profile_score($self->_random_seq);
+   return $self->_score($self->_random_seq);
 }
 
 ## _max_score
 
 sub _build__max_score {
    my $self = shift;
-   return $self->_profile_score($self->profile->consensus_string);
+   return $self->_score($self->profile->consensus_string);
 }
 
-## _profile_score
+## _score
 
 has calibrate_profile => (
    is      => 'rw',
@@ -39,7 +39,7 @@ has _hmmer => (
    lazy_build => 1,
    handles    => {
       _hmmsearch => 'hmmsearch'
-      },
+   },
 );
 
 sub _build__hmmer {
@@ -52,7 +52,7 @@ sub _build__hmmer {
    return $hmmer;
 }
 
-sub _profile_score {
+sub _score {
    my ($self, $string) = @_;
    my $seq = Bio::Seq->new(-id => 'x', -seq => $string);
 
@@ -67,7 +67,8 @@ sub _profile_score {
    # evalues of every HSP.
    my $evalue = sum(map {$_->evalue} @hsps);
 
-   if ($evalue == 0) { $evalue = 10**(-300) }; # Close to perl's smallest number.
+   if ($evalue == 0) { $evalue = 10**(-300) };
+   # Close to perl's smallest number.
 
    # Return the log10 fo the evalue.
    return log($evalue)/log(10);

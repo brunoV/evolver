@@ -4,11 +4,4 @@ TODO
 * Extend for different sequence alphabets:
    * $proth_alph
    * _init
-
-* Migrate to MooseX::Types.
-* Eliminate the Bio::Root::Root crap
-* Change name to Bio::Evolver or just Evolver. What are the chances that
-this thing is going to be added to Bioperl? It uses Moose
-AI::Genetic::Pro, so it won't be added to the *current* BioPerl. And the
-BioMoose one, not until I can have all the BioPerl dependencies ported
-to BioMoose, so not by a long shot.
+* Make the alignment plugins Simple, Needleman and Clustalw work

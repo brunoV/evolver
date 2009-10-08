@@ -88,7 +88,7 @@ throws_ok {
    );
 } 'Bio::Root::Exception', 'Profile: inexistent file';
 
-throws_ok { 
+throws_ok {
    $ev = Evolver->new(
       profile => 't/bogus-seq.bogus',
       fitness => sub { return 1 },

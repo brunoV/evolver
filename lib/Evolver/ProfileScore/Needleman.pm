@@ -1,6 +1,6 @@
 package Evolver::ProfileScore::Needleman;
 use Moose::Role;
-requires '_build__my_fitness';
+requires '_build__profile_score';
 with 'Evolver::RandomSeq';
 
 use Evolver::Types qw(Aligner);
@@ -18,7 +18,7 @@ sub _build__min_score {
 
 ## _max_score
 
-has _consensus_array => ( 
+has _consensus_array => (
    is  => 'ro',
    isa => ArrayRef,
    lazy_build => 1,
@@ -38,7 +38,7 @@ sub _build__max_score {
    );
 }
 
-## _profile_score
+## _score
 
 has _aligner => (
    is  => 'ro',
@@ -51,7 +51,7 @@ sub _build__aligner {
    return Evolver::Aligner->new;
 }
 
-sub _profile_score {
+sub _score {
    my ($self, $string) = @_;
    my @string = split '', $string;
    return $self->_aligner->align(\@string, $self->_consensus_array);

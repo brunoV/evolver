@@ -1,24 +1,23 @@
 package Evolver;
 use Moose;
-use AI::Genetic::Pro;
-use namespace::autoclean;
 use MooseX::Types::Moose qw(Str Bool Num ArrayRef CodeRef);
 use Evolver::Types qw(BioSimpleAlign Probability);
+use AI::Genetic::Pro::Macromolecule;
+use namespace::autoclean;
 
 with 'Evolver::ProfileScoreI',
      'MooseX::Object::Pluggable', 'Evolver::Chart::Gnuplot';
 
-my $prot_alph = 'ACDEFGHIKLMNPQRSTVWY';
+has fitness => (
+    is  => 'ro',
+    isa => CodeRef,
+    required => 1,
+);
 
-our $VERSION = '0.01';
-
-has _ga => (
-   is         => 'ro',
-   writer     => '_set_ga',
-   isa        => 'AI::Genetic::Pro',
-   init_arg   => undef,
-   lazy_build => 1,
-   handles    => [ qw(evolve getHistory getAvgFitness generation) ],
+has _actual_fitness => (
+    is => 'ro',
+    isa => CodeRef,
+    lazy_build => 1,
 );
 
 has profile => (
@@ -34,168 +33,71 @@ has profile_algorithm => (
    default => 'Hmmer',
 );
 
-has cache => (
-   is      => 'ro',
-   isa     => Bool,
-   default => 1,
-);
-
-has mutation => (
-   is      => 'ro',
-   isa     => Probability,
-   default => 0.01,
-);
-
-has crossover => (
-   is      => 'ro',
-   isa     => Probability,
-   default => 0.95,
-);
-
-has population => (
-   is      => 'ro',
-   isa     => Num,
-   default => 300,
-);
-
-has parents => (
-   is      => 'ro',
-   isa     => Num,
-   default => 2,
-);
-
-has history => (
-   is      => 'ro',
-   isa     => Bool,
-   default => 1,
-);
-
-has selection => (
-   is      => 'ro',
-   isa     => ArrayRef,
-   default => sub { ['Roulette'] },
-);
-
-has strategy => (
-   is      => 'ro',
-   isa     => ArrayRef,
-   default => sub { [ 'Points', 2 ] },
-);
-
-has preserve => (
-   is      => 'ro',
-   isa     => Num,
-   default => '5',
-);
-
-has fitness => (
-   is       => 'ro',
-   isa      => CodeRef,
-   required => 1,
-);
-
-has terminate => (
-   is        => 'ro',
-   isa       => CodeRef,
-   predicate => '_has_terminate',
-);
-
 has inject_consensus => (
    is => 'ro',
    isa => Bool,
    default => 1,
 );
 
-has _initialized => (
-   is      => 'rw',
-   isa     => Bool,
-   default => 0,
+sub _build__actual_fitness {
+    my $self = shift;
+
+    return sub {
+        my $seq = shift;
+        my $profile_score = $self->_profile_score->($seq);
+        my $custom_score  = $self->fitness->($seq);
+        my $final_score   = ( ( $profile_score**2 ) * ($custom_score) );
+
+        return $final_score;
+    }
+
+}
+
+my @params = qw(mutation crossover strategy parents selection cache
+             preserve population_size terminate);
+
+# I want to use the parameters above as attrs just like in AI::G::P::M, but
+# without having to set them all over again, with the same default values.
+# I'll delegate the getters and make new private attrs with the original
+# name at build time (init_arg).
+
+has '_' . $_ => (
+    is => 'ro',
+    init_arg  => $_,
+) for @params;
+
+has '_gm' => (
+    is  => 'ro',
+    isa => 'AI::Genetic::Pro::Macromolecule',
+    lazy_build => 1,
+    handles    => [qw(evolve fittest generation history population_size
+                   current_stats current_population), @params],
 );
 
-before evolve => sub {
-   my $self = shift;
-   unless ( $self->_initialized ) { $self->_init }
-};
+sub _build__gm {
+    my $self = shift;
 
-sub inject {
-    # Inject sequence objects in the current population.
+    my @mod_attrs  = grep { my $a = '_' . $_; defined $self->$a } @params;
+    my %extra_args = map  { my $m = '_' . $_; $_ => $self->$m }   @mod_attrs;
 
-   my ( $self, @seq_objs ) = @_;
-   unless (@seq_objs) {
-      warn "No arguments given, didn't inject anything";
-   }
+    if ($self->inject_consensus) {
+        $extra_args{initial_population} = [ $self->profile->consensus_string ];
+    }
 
-   if ( grep { !$_->can('seq') } @seq_objs ) {
-      $self->throw("Can only inject Bio::Seq objects");
-   }
+    my $m = AI::Genetic::Pro::Macromolecule->new(
+        type    => 'protein',
+        fitness => $self->_actual_fitness,
+        length  => length( $self->profile->consensus_string ),
+        %extra_args,
+    );
 
-   if (
-      grep { length $_ != $self->profile->length }
-      map  { $_->seq } @seq_objs
-       )
-   {
-      $self->throw(
-         "Injected sequences must have
-        the length of the alignment"
-      );
-   }
-
-   $self->_init unless ( $self->_initialized );
-
-   my @seqs = map { [ split '', $_->seq ] } @seq_objs;
-   $self->_ga->inject( \@seqs );
-
+    return $m;
 }
 
-sub getFittest {
-   my ( $self, $amount, $is_unique ) = @_;
-   $amount ||= 1;
-   my @fittest_ind = $self->_ga->getFittest( $amount, $is_unique );
-   my @strings = map { $self->_ga->as_string($_) } @fittest_ind;
-   my @scores  = map { $self->_ga->as_value($_) } @fittest_ind;
+sub BUILD {
+    my $self = shift;
 
-   my @fittest_seq;
-   foreach my $i ( 0 .. $#strings ) {
-
-      # Get the fittest sequence as string, removing the artifacts that
-      # it comes with.
-      $strings[$i] =~ s/_//g;
-
-      # Return a Bio::Seq object object with the optimized sequence.
-      my $fittest = Bio::Seq->new(
-         -id  => $scores[$i],
-         -seq => $strings[$i],
-      );
-      push @fittest_seq, $fittest;
-   }
-
-   return wantarray ? @fittest_seq : $fittest_seq[0];
-}
-
-sub _init {
-   my $self = shift;
-   return if ( $self->_initialized );
-
-   # Load the chosen profile score algorithm.
-   $self->_load_profile_score_plugin;
-
-   # Compose the fitting function from the user and the profile
-   # functions.
-   $self->_assemble_fitness_function;
-
-   # if defined, create the terminate function.
-   if ( $self->_has_terminate ) { $self->_assemble_terminate_function }
-
-   # Initialize the first generation.
-   $self->_ga->init(
-      [  map { [ split '', $prot_alph ] } ( 1 .. $self->profile->length )
-      ]
-   );
-   $self->_initialized(1);
-
-   # Inject the profile consensus string.
-   if ($self->inject_consensus) { $self->_inject_consensus };
-
+    $self->_load_profile_score_plugin;
 }
 
 sub _load_profile_score_plugin {
@@ -216,80 +118,7 @@ sub _load_profile_score_plugin {
    return 1;
 }
 
-sub _assemble_fitness_function {
-    my $self = shift;
-
-   # Create the fitness function, which is composed of the
-   # ProfileScore function and the user function.
-   my $fitness = sub {
-      my ( $ga, $chromosome ) = @_;
-      my $seq = $ga->as_string($chromosome);
-      $seq =~ s/_//g;
-      my $profile_score = $self->_my_fitness->($seq);
-      my $custom_score  = $self->fitness->($seq);
-      my $final_score   = ( ( $profile_score**2 ) * ($custom_score) );
-      return $final_score;
-   };
-   $self->_ga->fitness($fitness);
-}
-
-sub _assemble_terminate_function {
-
-   # The user must provide a code reference that should accept a
-   # Bio::Seq object and return true or false whether he thinks that
-   # evolution should stop.
-
-    my $self = shift;
-
-    my $terminate = sub {
-        my ($ga)  = @_;
-
-        my $fittest = $ga->getFittest;
-        my $seq     = $ga->as_string( $fittest );
-        my $score   = $ga->as_value ( $fittest );
-        $seq =~ s/_//g;
-
-        my $seq_obj = Bio::Seq->new(
-            -id  => $score,
-            -seq => $seq,
-        );
-
-        return $self->terminate->($seq_obj);
-    };
-
-    $self->_ga->terminate($terminate);
-}
-
-sub _build__ga {
-   my $self = shift;
-
-   # Initialize the Genetic Algorithm engine with sane defaults.
-   my $ga = AI::Genetic::Pro->new(
-      -type            => 'listvector',         # type of chromosomes
-      -population      => $self->population,    # population size
-      -mutation        => $self->mutation,      # mutation rate
-      -crossover       => $self->crossover,     # crossover rate
-      -parents         => $self->parents,       # number  of parents
-      -selection       => $self->selection,     # selection strategy
-      -strategy        => $self->strategy,      # crossover strategy
-      -cache           => $self->cache,         # cache results
-      -history         => $self->history,       # remember best results
-      -preserve        => $self->preserve,      # remember the bests
-      -variable_length => 1,                    # fixed length
-   );
-   return $ga;
-}
-
-sub _inject_consensus {
-   my $self = shift;
-   my $consensus_seq
-       = Bio::Seq->new( -seq => $self->profile->consensus_string, );
-   $self->inject($consensus_seq);
-   return 1;
-}
-
 __PACKAGE__->meta->make_immutable;
-1;
 
 __END__
 

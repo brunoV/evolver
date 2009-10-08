@@ -1,6 +1,6 @@
 package Evolver::ProfileScore::Simple;
 use Moose::Role;
-requires '_build__my_fitness';
+requires '_build__profile_score';
 
 use MooseX::Types::Moose qw(ArrayRef);
 use Evolver::Types qw(BioMatrixScoring);
@@ -45,7 +45,7 @@ sub _build__max_score {
    return $self->_profile_score($self->profile->consensus_string);
 }
 
-## _profile_score
+## _score
 
 has 'matrix' => (
    is      => 'ro',
@@ -54,7 +54,7 @@ has 'matrix' => (
    default => 'BLOSUM62',
 );
 
-sub _profile_score {
+sub _score {
 
    # Given a string, calculate the alignment score against the given
    # profile.

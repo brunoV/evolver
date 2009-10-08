@@ -16,7 +16,7 @@ has _random_seq => (
    isa        => Str,
 );
 
-has _my_fitness => (
+has _profile_fitness => (
    is         => 'ro',
    lazy_build => 1,
    isa        => CodeRef,
@@ -35,7 +35,7 @@ sub _shuffle_string {
    return join( '', shuffle @elms );
 }
 
-sub _build__my_fitness {
+sub _build__profile_fitness {
    my $self = shift;
 
    my $factory = Run::Alignment::Clustalw->new( quiet => 1 );
