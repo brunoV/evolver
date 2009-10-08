@@ -1,12 +1,12 @@
-Bio::Tools::Evolver
-===================
+Evolver
+=======
 
 Profile-constrained protein sequence optimization using evolutionary algorithms
 -------------------------------------------------------------------------------
 
 ### Introduction
 
-Bio::Tools::Evolver is a module that makes it easy to optimize protein
+Evolver is a module that makes it easy to optimize protein
 sequences using any arbitrary function but retaining its similarity with
 a given protein family.
 
