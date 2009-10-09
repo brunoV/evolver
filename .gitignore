@@ -1,6 +1,9 @@
 *.swp
 *.tmp
 *.bak
-./blib/
-Makefile
-pm_to_blib
+*.eps
+*.aln
+*.fasta
+*.dnd
+config.yaml
+*.pl
