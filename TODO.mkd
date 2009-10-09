@@ -5,3 +5,4 @@ TODO
    * $proth_alph
    * _init
 * Make the alignment plugins Simple, Needleman and Clustalw work
+* Write tests for ::Cmd

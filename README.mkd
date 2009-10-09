@@ -35,9 +35,9 @@ This module is dependency-heavy. The most important, and their uses, are:
    installed standalone [Clustalw][4] and [Hmmer][3], both of which can
    be obtained freely from their respective websites.
 
-- **AI::Genetic::Pro**
+- **AI::Genetic::Pro::Macromolecule**
   
-   The stochastic optimization is done using Lukaz's [AI::Genetic::Pro][5].
+   The GA engine, based on Lukaz's [AI::Genetic::Pro][5].
 
 - **Moose and friends**
 
@@ -59,22 +59,7 @@ SUPPORT AND DOCUMENTATION
 After installing, you can find documentation for this module with the
 perldoc command.
 
-    perldoc Bio::Tools::Evolver
-
-You can also look for information at:
-
-    RT, CPAN's request tracker
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Bio-Tools-Evolver
-
-    AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/Bio-Tools-Evolver
-
-    CPAN Ratings
-        http://cpanratings.perl.org/d/Bio-Tools-Evolver
-
-    Search CPAN
-        http://search.cpan.org/dist/Bio-Tools-Evolver/
-
+    perldoc Evolver
 
 COPYRIGHT AND LICENCE
 
