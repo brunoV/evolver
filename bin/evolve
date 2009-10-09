@@ -1,0 +1,4 @@
+#!/usr/bin/env perl
+use lib qw(/home/brunov/lib/evolver/lib);
+use Evolver::Cmd;
+Evolver::Cmd->run;
