@@ -39,6 +39,56 @@ has inject_consensus => (
    default => 1,
 );
 
+sub fittest_seq {
+    my ($self, $n) = @_;
+    $n //= 1;
+
+    my @fittest = map { $_->{seq} } $self->_gm->fittest($n);
+
+    return ( $n == 1 ) ? $fittest[0] : @fittest;
+}
+
+sub fittest_score {
+    my ($self, $n) = @_;
+    $n //= 1;
+
+    my @fittest;
+
+    foreach my $seq_ref ($self->_gm->fittest($n)) {
+
+        my $seq = $seq_ref->{seq};
+
+        push @fittest, {
+            total  => $seq_ref->{score},
+            custom => $self->fitness->($seq),
+        };
+    }
+
+    return ( $n == 1 ) ? $fittest[0] : @fittest;
+}
+
+sub fittest {
+    my ($self, $n) = @_;
+    $n //= 1;
+
+    my @fittest;
+
+    foreach my $seq_ref ($self->_gm->fittest($n)) {
+
+        my $seq = $seq_ref->{seq};
+
+        push @fittest, {
+            seq   => $seq,
+            score => {
+                total  => $seq_ref->{score},
+                custom => $self->fitness->($seq),
+            }
+        };
+    }
+
+    return ( $n == 1 ) ? $fittest[0] : @fittest;
+}
+
 sub _build__actual_fitness {
     my $self = shift;
 
@@ -70,8 +120,8 @@ has '_gm' => (
     is  => 'ro',
     isa => 'AI::Genetic::Pro::Macromolecule',
     lazy_build => 1,
-    handles    => [qw(evolve fittest generation history population_size
-                   current_stats current_population), @params],
+    handles    => [qw(evolve generation history population_size
+                   current_population current_stats), @params],
 );
 
 sub _build__gm {

@@ -56,7 +56,7 @@ sub test_evolve {
    );
 
    is(
-       $ev->fittest->{seq},
+       $ev->fittest_seq,
        $ev->profile->consensus_string,
        "Injecting consensus works"
    );
@@ -83,6 +83,9 @@ sub test_fittest {
 
    my $fittest = $ev->fittest;
    ok( defined $fittest->{seq} );
+   is( ref $fittest->{score}, 'HASH' );
+   ok( defined $fittest->{score}->{custom}   );
+   ok( defined $fittest->{score}->{total}    );
 }
 
 sub test_terminate {
