@@ -1,12 +1,13 @@
 package Evolver;
 use Moose;
-use MooseX::Types::Moose qw(Str Bool Num ArrayRef CodeRef);
+use MooseX::Types::Moose qw(Str Bool Num ArrayRef HashRef CodeRef);
 use Evolver::Types qw(BioSimpleAlign Probability);
 use AI::Genetic::Pro::Macromolecule;
 use namespace::autoclean;
 
 with 'Evolver::ProfileScoreI',
-     'MooseX::Object::Pluggable', 'Evolver::Chart::Gnuplot';
+     'MooseX::Object::Pluggable',
+     'Evolver::Chart::Gnuplot';
 
 has fitness => (
     is  => 'ro',

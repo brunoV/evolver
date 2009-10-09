@@ -42,8 +42,6 @@ subtype Probability, as Str, where { $_ < 1 and $_ > 0 };
 class_type Hmmer,   { class => 'Bio::Tools::Run::Hmmer' };
 class_type Aligner, { class => 'Evolver::Aligner' };
 
-# Coercion coderefs. I couldn't use proper subs because it would look
-# for them in the applying module, even after prepending this module's name.
 sub parse_matrixfile {
 
    #my $parse_matrixfile_sub = sub {
@@ -179,4 +177,3 @@ sub _validate_mname {
 }
 
 __PACKAGE__->meta->make_immutable;
-1;
