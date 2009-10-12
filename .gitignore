@@ -7,3 +7,4 @@
 *.dnd
 config.yaml
 *.pl
+.prove
