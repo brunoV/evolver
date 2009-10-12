@@ -13,8 +13,9 @@ use_ok('Evolver');
 can_ok(
    'Evolver',
    qw(terminate population_size crossover mutation parents selection
-       strategy cache history preserve evolve chart fittest
-       current_stats current_population generation)
+       strategy history preserve evolve chart fittest
+       current_stats current_population generation
+       history_custom history_profile history_total)
 );
 
 my $ev = Evolver->new(
@@ -29,7 +30,7 @@ is( $ev->mutation,   0.05, 'default mutation rate' );
 is( $ev->parents,    2,    'default parents' );
 is_deeply( $ev->selection, ['Roulette'], 'default selection' );
 is_deeply( $ev->strategy, [ 'Points', 2 ], 'default strategy' );
-is( $ev->cache,           1, 'default cache' );
+# is( $ev->cache,           1, 'default cache' );
 is( $ev->preserve,        5, 'default preserve' );
 is( $ev->profile_algorithm, 'Hmmer', 'default profile algorithm' );
 is( $ev->inject_consensus, 1, 'default inject_consensus' );
@@ -46,7 +47,7 @@ lives_ok {
       parents           => 3,
       selection         => ['RouletteBasic'],
       strategy          => [ 'Points', 5 ],
-      cache             => '0',
+#     cache             => '0',
       preserve          => 7,
       terminate         => sub { return 5 },
       profile_algorithm => 'Simple',
@@ -61,7 +62,7 @@ is( $ev->mutation,        0.01, 'changed mutation'   );
 is( $ev->parents,         3,    'changed parents'    );
 is_deeply( $ev->selection, ['RouletteBasic'], 'changed selection' );
 is_deeply( $ev->strategy, [ 'Points', 5 ], 'changed strategy' );
-is( $ev->cache,             0,        'changed cache'             );
+# is( $ev->cache,             0,        'changed cache'             );
 is( $ev->preserve,          7,        'changed preserve'          );
 is( $ev->profile_algorithm, 'Simple', 'changed profile_algorithm' );
 is( $ev->inject_consensus,  0,        'changed inject_consensus'  );

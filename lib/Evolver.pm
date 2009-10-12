@@ -46,7 +46,7 @@ has inject_consensus => (
    default => 1,
 );
 
-has '_history_' . $_ => (
+has 'history_' . $_ => (
     is  => 'ro',
     isa => HashRef,
     traits => [qw(Hash)],
@@ -109,6 +109,7 @@ sub fittest {
 
 sub _build__actual_fitness {
     my $self = shift;
+    my $counter = 0;
     my $generation = 0;
     my @custom_scores;
     my @profile_scores;
@@ -120,26 +121,36 @@ sub _build__actual_fitness {
         my $custom_score  = $self->fitness->($seq);
         my $final_score   = ( ( $profile_score**2 ) * ($custom_score) );
 
-#        if ( $generation < $self->generation ) {
-#            $generation++;
-#
-#            # Calculate statistics
-#            push @{$self->_history_custom->{min}},  min(@custom_scores);
-#            push @{$self->_history_custom->{max}},  max(@custom_scores);
-#            push @{$self->_history_custom->{mean}}, mean(@custom_scores);
-#            undef @custom_scores;
-#
-#            push @{$self->_history_profile->{min}},  min(@profile_scores);
-#            push @{$self->_history_profile->{max}},  max(@profile_scores);
-#            push @{$self->_history_profile->{mean}}, mean(@profile_scores);
-#            undef @profile_scores;
-#
-#            push @{$self->_history_total->{min}},  min(@total_scores);
-#            push @{$self->_history_total->{max}},  max(@total_scores);
-#            push @{$self->_history_total->{mean}}, mean(@total_scores);
-#            undef @total_scores;
-#        }
-#
+        # This is to avoid calling '->generation' when the GA object is
+        # not properly initialized. Doing so causes an infinite
+        # recursion, since it needs to compute the fitness with this sub
+        # for the initial objects to initialize.
+        unless ($counter > 2 * $self->population_size) {
+            $counter++ and return $final_score
+        }
+
+        # When the generation number changes, calculate the stats and do
+        # a cleanup of the gatherer arrays.
+        if ( $generation < $self->generation ) {
+            $generation++;
+
+            # Calculate statistics
+            push @{$self->history_custom->{min}},  min(@custom_scores);
+            push @{$self->history_custom->{max}},  max(@custom_scores);
+            push @{$self->history_custom->{mean}}, mean(@custom_scores);
+            undef @custom_scores;
+
+            push @{$self->history_profile->{min}},  min(@profile_scores);
+            push @{$self->history_profile->{max}},  max(@profile_scores);
+            push @{$self->history_profile->{mean}}, mean(@profile_scores);
+            undef @profile_scores;
+
+            push @{$self->history_total->{min}},  min(@total_scores);
+            push @{$self->history_total->{max}},  max(@total_scores);
+            push @{$self->history_total->{mean}}, mean(@total_scores);
+            undef @total_scores;
+        }
+
         push @custom_scores,  $custom_score;
         push @profile_scores, $profile_score;
         push @total_scores,   $final_score;
@@ -149,7 +160,7 @@ sub _build__actual_fitness {
 
 }
 
-my @params = qw(mutation crossover strategy parents selection cache
+my @params = qw(mutation crossover strategy parents selection
              preserve population_size terminate);
 
 # I want to use the parameters above as attrs just like in AI::G::P::M, but
@@ -183,6 +194,7 @@ sub _build__gm {
     my $m = AI::Genetic::Pro::Macromolecule->new(
         type    => 'protein',
         fitness => $self->_actual_fitness,
+        cache   => 1,
         length  => length( $self->profile->consensus_string ),
         %extra_args,
     );
