@@ -43,6 +43,13 @@ __PACKAGE__->add_columns(
     is_nullable => 0,
     size => undef,
   },
+  "generation",
+  {
+    data_type => "INTEGER",
+    default_value => undef,
+    is_nullable => 0,
+    size => undef,
+  },
   "seq",
   {
     data_type => "varchar",
@@ -63,8 +70,8 @@ __PACKAGE__->add_unique_constraint("seq_unique", ["seq"]);
 __PACKAGE__->belongs_to("run_id", "Evolver::DB::Run", { id => "run_id" });
 
 
-# Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-10-11 15:00:30
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:0GlxWSgaFSJuidNJQ0Sn7A
+# Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-10-12 16:42:20
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:6L/NQa17A0dxfUIHvRqwVA
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration

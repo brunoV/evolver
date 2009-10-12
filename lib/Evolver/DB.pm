@@ -8,8 +8,8 @@ use base 'DBIx::Class::Schema';
 __PACKAGE__->load_classes;
 
 
-# Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-10-12 01:33:32
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:Db0ey5EnQyBYgF5kPdNRmQ
+# Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-10-12 16:42:20
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:/vYo+X4HpV1SX2s1fYNmAA
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration
@@ -146,6 +146,7 @@ sub optimized_seqs {
                 seq          => $seq_ref->{seq},
                 custom_score => $seq_ref->{score}->{custom},
                 total_score  => $seq_ref->{score}->{total},
+                generation   => $e->generation,
                 type         => 'protein',
             };
     }
