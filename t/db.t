@@ -1,7 +1,11 @@
 use Test::More;
 use Test::Exception;
 use Evolver;
+use autodie;
 #use File::Temp;
+
+`sqlite3 t/db < t/schema.sql`;
+
 use_ok( 'Evolver::DB' );
 
 my $e = Evolver->new(
@@ -32,4 +36,5 @@ is( scalar @profile_seqs, scalar @{$e->profile->each_seq} );
 
 my $run = $db->insert_evolver($e);
 
+unlink 't/db';
 done_testing();
