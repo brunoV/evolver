@@ -8,3 +8,7 @@
 config.yaml
 *.pl
 .prove
+db
+*.sql
+*.svg
+bin/
