@@ -74,30 +74,33 @@ sub _alnfile_to_aln {
    # Best results if I convert all alignments
    # to phylip format, that plays nicely
    # with sequence gaps.
+   # UPDATE: Unfortunately, it also shrinked the id of each sequence
+   # aggresively. Since commenting out the conversion code didn't make
+   # any test fail, I'll leave it like this for now.
    my $alnI = Bio::AlignIO->new( -file => "<$file" );
-   my $tmpfile = File::Temp->new(
-      TEMPLATE => 'XXXXXX',
-      SUFFIX   => '.phy',
-   )->filename;
-   my $alnO = Bio::AlignIO->new(
-      -file   => ">$tmpfile",
-      -format => 'phylip',
-   );
-   $alnO->write_aln( $alnI->next_aln );
-   $alnI = Bio::AlignIO->new(
-      -file   => "<$tmpfile",
-      -format => 'phylip',
-   );
-
+#   my $tmpfile = File::Temp->new(
+#      TEMPLATE => 'XXXXXX',
+#      SUFFIX   => '.phy',
+#   )->filename;
+#   my $alnO = Bio::AlignIO->new(
+#      -file   => ">$tmpfile",
+#      -format => 'phylip',
+#   );
+#   $alnO->write_aln( $alnI->next_aln );
+#   $alnI = Bio::AlignIO->new(
+#      -file   => "<$tmpfile",
+#      -format => 'phylip',
+#   );
+#
    my $aln = $alnI->next_aln;
-   unlink $tmpfile;
+#   unlink $tmpfile;
    return $aln;
 }
 
 sub _seqarrayref_to_aln {
    my $seqs = shift;
 
-   my %params = ( quiet => 1, output => 'phylip' );
+   my %params = ( quiet => 1, output => 'clustalw' );
    my $factory = Bio::Tools::Run::Alignment::Clustalw->new(%params);
 
    my $aln = $factory->align($seqs);
