@@ -15,6 +15,11 @@ has fitness => (
     required => 1,
 );
 
+has fitness_name => (
+    is => 'ro',
+    isa => Str,
+);
+
 has _actual_fitness => (
     is => 'ro',
     isa => CodeRef,

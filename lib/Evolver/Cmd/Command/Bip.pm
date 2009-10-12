@@ -21,6 +21,7 @@ sub _build_evolver {
     my $ev = Evolver->new(
         profile => $self->infile,
         fitness => \&f,
+        fitness_name => 'bip',
     );
 
     return $ev;

@@ -10,8 +10,9 @@ sub _build_evolver {
     my $self = shift;
 
     my $ev = Evolver->new(
-        profile => $self->infile,
-        fitness => \&f,
+        profile      => $self->infile,
+        fitness      => \&f,
+        fitness_name => 'hydroph',
     );
 
     return $ev;
