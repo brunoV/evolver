@@ -2,9 +2,7 @@ use Test::More;
 use Test::Exception;
 use Evolver;
 use autodie;
-#use File::Temp;
-
-`sqlite3 t/db < t/schema.sql`;
+use File::Temp;
 
 use_ok( 'Evolver::DB' );
 
@@ -17,9 +15,10 @@ my $e = Evolver->new(
 
 $e->evolve(1);
 
-# my $tmpfile = File::Temp->new->filename;
+my $tmpfile = File::Temp->new->filename;
 my $tmpfile = 't/db';
 my $db = Evolver::DB->connect("dbi:SQLite:dbname=$tmpfile");
+$db->deploy;
 
 isa_ok($db, 'Evolver::DB');
 
@@ -36,5 +35,5 @@ is( scalar @profile_seqs, scalar @{$e->profile->each_seq} );
 
 my $run = $db->insert_evolver($e);
 
-unlink 't/db';
+unlink $tmpfile;
 done_testing();
