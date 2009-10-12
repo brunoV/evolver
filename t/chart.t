@@ -10,7 +10,7 @@ my $e = Evolver->new(
     fitness => sub { 1 }
 );
 
-$e->evolve(2);
+$e->evolve(1);
 
 my $tmpfile = File::Temp->new->filename;
 
