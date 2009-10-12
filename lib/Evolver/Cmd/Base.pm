@@ -32,7 +32,7 @@ has evolver => (
     handles    => [qw(evolve history fittest generation chart)],
 );
 
-sub run  {
+sub run {
     my ( $self, $opts, $args ) = @_;
 
     my $t  = -time();
