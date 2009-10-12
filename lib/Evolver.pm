@@ -125,7 +125,7 @@ sub _build__actual_fitness {
         # not properly initialized. Doing so causes an infinite
         # recursion, since it needs to compute the fitness with this sub
         # for the initial objects to initialize.
-        unless ($counter > 2 * $self->population_size) {
+        unless ($counter > 1.4 * $self->population_size) {
             $counter++ and return $final_score
         }
 
