@@ -4,6 +4,7 @@ use MooseX::Types::Moose qw(Str Bool Num ArrayRef HashRef CodeRef);
 use Evolver::Types qw(BioSimpleAlign Probability);
 use AI::Genetic::Pro::Macromolecule;
 use namespace::autoclean;
+use List::Util qw(sum max min);
 
 with 'Evolver::ProfileScoreI',
      'MooseX::Object::Pluggable',
@@ -44,6 +45,17 @@ has inject_consensus => (
    isa => Bool,
    default => 1,
 );
+
+has '_history_' . $_ => (
+    is  => 'ro',
+    isa => HashRef,
+    traits => [qw(Hash)],
+    default => sub { {} },
+    handles => {
+        '_add_history' . $_   => 'set',
+        '_clear_history' . $_ => 'clear',
+    },
+) for qw(custom profile total);
 
 sub fittest_seq {
     my ($self, $n) = @_;
@@ -97,12 +109,40 @@ sub fittest {
 
 sub _build__actual_fitness {
     my $self = shift;
+    my $generation = 0;
+    my @custom_scores;
+    my @profile_scores;
+    my @total_scores;;
 
     return sub {
         my $seq = shift;
         my $profile_score = $self->_profile_score->($seq);
         my $custom_score  = $self->fitness->($seq);
         my $final_score   = ( ( $profile_score**2 ) * ($custom_score) );
+
+#        if ( $generation < $self->generation ) {
+#            $generation++;
+#
+#            # Calculate statistics
+#            push @{$self->_history_custom->{min}},  min(@custom_scores);
+#            push @{$self->_history_custom->{max}},  max(@custom_scores);
+#            push @{$self->_history_custom->{mean}}, mean(@custom_scores);
+#            undef @custom_scores;
+#
+#            push @{$self->_history_profile->{min}},  min(@profile_scores);
+#            push @{$self->_history_profile->{max}},  max(@profile_scores);
+#            push @{$self->_history_profile->{mean}}, mean(@profile_scores);
+#            undef @profile_scores;
+#
+#            push @{$self->_history_total->{min}},  min(@total_scores);
+#            push @{$self->_history_total->{max}},  max(@total_scores);
+#            push @{$self->_history_total->{mean}}, mean(@total_scores);
+#            undef @total_scores;
+#        }
+#
+        push @custom_scores,  $custom_score;
+        push @profile_scores, $profile_score;
+        push @total_scores,   $final_score;
 
         return $final_score;
     }
@@ -173,6 +213,8 @@ sub _load_profile_score_plugin {
 
    return 1;
 }
+
+sub mean { return sum(@_)/@_; }
 
 __PACKAGE__->meta->make_immutable;
 

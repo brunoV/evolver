@@ -5,7 +5,6 @@ use namespace::autoclean;
 
 sub chart {
     my ($self, %args) = @_;
-    use Data::Dumper;
 
     my $generations = $self->generation;
     my $max_scores  = $self->history->{max};
@@ -35,6 +34,25 @@ sub chart {
 
     # Plot the data sets on the chart
     $chart->plot2d($max, $min);
+}
+
+#sub _create_history_dataset {
+#    my ($self, $dataset_name) = @_;
+#
+#    my $dataset = $self->{history}->{$dataset_name};
+#
+#    my $ds = Chart::Gnuplot::DataSet->new(
+#        xdata => [ 1 .. $self->generation ],
+#        ydata => $max_scores,
+#        title => titlecase($dataset_name),
+#        style => "linespoints",
+#    );
+#}
+
+sub titlecase {
+    my $string = shift;
+    $string =~ s/\b(\w)/\U$1/g;
+    return $string;
 }
 
 1;
