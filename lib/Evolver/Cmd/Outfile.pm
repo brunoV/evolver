@@ -39,7 +39,11 @@ sub write {
 
     my ($seq, $score) = ($seq_ref->{seq}, $seq_ref->{score});
 
-    my $seq_obj = Bio::Seq->new(-id => $score, -seq => $seq);
+    my $id = sprintf(
+        "Total: %2.4f Custom: %2.4f", $score->{total}, $score->{custom}
+    );
+
+    my $seq_obj = Bio::Seq->new(-id => $id, -seq => $seq);
 
     $self->seqO->write_seq($seq_obj);
 }
