@@ -9,8 +9,8 @@ use Evolver::Types qw(BioSeqIO);
 has outfile => (
     is  => 'ro',
     isa => Str,
-    traits   => [qw(Getopt)],
-    default  => 'outfile.fasta',
+    traits    => [qw(Getopt)],
+    predicate => 'has_outfile',
 );
 
 has seqO => (
@@ -33,6 +33,8 @@ sub _build_seqO {
 
 sub write {
     my ($self, $seq_ref) = @_;
+    return unless $self->has_outfile;
+
     my ($seq, $score) = ($seq_ref->{seq}, $seq_ref->{score});
 
     my $seq_obj = Bio::Seq->new(-id => $score, -seq => $seq);

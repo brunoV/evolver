@@ -1,16 +1,17 @@
-package Evolver::Cmd::History;
+package Evolver::Cmd::ScoreStats;
 use Moose::Role;
 use namespace::autoclean;
 use MooseX::Types::Path::Class qw(File);
 
 use MooseX::Types::Moose qw(Str Undef);
 
-has historyfile => (
+has scorefile => (
     is  => 'ro',
     isa => File,
     traits    => [qw(Getopt)],
     predicate => 'wants_history',
     coerce    => 1,
+    documentation => 'File to write the score stats for each generation to',
 );
 
 after run => sub {
