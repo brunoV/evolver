@@ -52,9 +52,9 @@ sub run {
 
         $self->evolve_once;
 
-        $self->s( $self->fittest->{score}, "\t", $self->generation );
-
-        $self->write( $self->fittest );
+        $self->pf("%.3f\t%i\n",
+            $self->fittest->{score}->{total}, $self->generation
+        );
     }
 
     $self->e("Done.\n");
