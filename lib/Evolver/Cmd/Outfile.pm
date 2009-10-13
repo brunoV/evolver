@@ -9,8 +9,10 @@ use Evolver::Types qw(BioSeqIO);
 has outfile => (
     is  => 'ro',
     isa => Str,
-    traits    => [qw(Getopt)],
-    predicate => 'has_outfile',
+    traits        => [qw(Getopt)],
+    predicate     => 'has_outfile',
+    cmd_aliases   => 'o',
+    documentation => 'Filename to which to output the fittest sequence of each generation',
 );
 
 has seqO => (

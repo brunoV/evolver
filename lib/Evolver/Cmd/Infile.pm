@@ -7,10 +7,10 @@ use namespace::autoclean;
 has infile => (
     is  => 'ro',
     isa => Str,
-    traits   => [qw(Getopt)],
-    required => 1,
-    documentation => "Filename of with the family sequences or alignment",
+    traits        => [qw(Getopt)],
+    required      => 1,
+    cmd_aliases   => 'i',
+    documentation => "Filename with the family sequences or alignment",
 );
 
 1;
-__END__

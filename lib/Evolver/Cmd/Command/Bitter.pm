@@ -36,3 +36,11 @@ sub f_modified {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+=pod
+
+=head1 NAME
+
+Evolver::Cmd::Command::Bitter - Reduce the amount of encrypted bitter peptides
+
+=cut

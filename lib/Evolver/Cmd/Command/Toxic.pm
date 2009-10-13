@@ -37,3 +37,11 @@ sub f_modified {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+=pod
+
+=head1 NAME
+
+Evolver::Cmd::Command::Toxic - Reduce the amount of encrypted toxic peptides
+
+=cut

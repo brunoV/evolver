@@ -10,18 +10,26 @@ extends qw(MooseX::App::Cmd::Command);
 
 with qw(
     MooseX::SimpleConfig
+    Evolver::Cmd::DB
+    Evolver::Cmd::Chart
     Evolver::Cmd::Silent
     Evolver::Cmd::Infile
     Evolver::Cmd::Outfile
-    Evolver::Cmd::Chart
-    Evolver::Cmd::History
+    Evolver::Cmd::ScoreStats
 );
+
+has '+configfile' => (
+    documentation => 'Configuration file',
+);
+
 
 has generations => (
     is  => 'ro',
     isa => Num,
     required => 1,
     traits   => [qw(Getopt)],
+    cmd_aliases   => 'n',
+    documentation => 'Number of generations to run (required)',
 );
 
 has evolver => (

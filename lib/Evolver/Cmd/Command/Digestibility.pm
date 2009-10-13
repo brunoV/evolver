@@ -45,3 +45,11 @@ sub f {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+=pod
+
+=head1 NAME
+
+Evolver::Cmd::Command::Digestibility - Increase the digestibility
+
+=cut

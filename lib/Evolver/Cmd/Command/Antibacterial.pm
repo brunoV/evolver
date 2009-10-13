@@ -13,3 +13,11 @@ use MooseX::Types::Path::Class qw(File);
 has '+activity' => ( default => 'antibacterial' );
 
 __PACKAGE__->meta->make_immutable;
+
+=pod
+
+=head1 NAME
+
+Evolver::Cmd::Command::Antibacterial - Increase the amount of encrypted antibacterial peptides
+
+=cut

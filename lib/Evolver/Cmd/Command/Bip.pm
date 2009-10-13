@@ -94,6 +94,15 @@ sub _score_boundries {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+=pod
+
+=head1 NAME
+
+Evolver::Cmd::Command::Bip - Increase the overall BiP binding probability
+
+=cut
+
 __DATA__
 ---
 A:
