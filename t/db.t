@@ -16,7 +16,6 @@ my $e = Evolver->new(
 $e->evolve(1);
 
 my $tmpfile = File::Temp->new->filename;
-my $tmpfile = 't/db';
 my $db = Evolver::DB->connect("dbi:SQLite:dbname=$tmpfile");
 $db->deploy;
 
@@ -27,13 +26,13 @@ my $fitness_rs = $db->insert_function($e);
 
 isa_ok($fitness_rs, 'Evolver::DB::Fitness');
 
-# Inserting ProfileSeq
-my $profile_seqs = $db->insert_profile_seqs($e);
-
-isa_ok( $_, 'Evolver::DB::ProfileSeq' ) for @$profile_seqs;
-is( scalar @profile_seqs, scalar @{$e->profile->each_seq} );
-
 my $run = $db->insert_evolver($e);
+
+isa_ok($run, 'Evolver::DB::Run');
+
+my $optimized_seq_rs = $db->add_optimized_seqs_to_run($e, $run, 1);
+
+isa_ok( $optimized_seq_rs, 'Evolver::DB::OptimizedSeq' );
 
 unlink $tmpfile;
 done_testing();
