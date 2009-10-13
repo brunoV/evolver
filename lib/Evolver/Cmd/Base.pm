@@ -37,7 +37,7 @@ has evolver => (
     isa => 'Evolver',
     traits     => [qw(NoGetopt)],
     lazy_build => 1,
-    handles    => [qw(evolve history fittest generation chart)],
+    handles    => [qw(history fittest generation chart)],
 );
 
 sub run {
@@ -50,7 +50,7 @@ sub run {
 
     for (1 .. $self->generations) {
 
-        $self->evolve(1);
+        $self->evolve_once;
 
         $self->s( $self->fittest->{score}, "\t", $self->generation );
 
@@ -64,6 +64,15 @@ sub run {
 
     $self->e(sprintf "completed in %.2fs (%.2fs cpu)\n", $t, $tc);
 
+}
+
+sub evolve_once {
+    # I don't use delegation here, to be able to get method modifiers
+    # on evolve for stuff that has to be done by the roles after each
+    # evolution step
+
+    my $self = shift;
+    $self->evolver->evolve(1);
 }
 
 __PACKAGE__->meta->make_immutable;

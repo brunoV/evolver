@@ -44,5 +44,11 @@ sub write {
     $self->seqO->write_seq($seq_obj);
 }
 
+after evolve_once => sub {
+    my $self = shift;
+
+    $self->write( $self->fittest );
+};
+
 1;
 __END__
