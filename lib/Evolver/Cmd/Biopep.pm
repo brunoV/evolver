@@ -19,7 +19,7 @@ my $db;
 sub BUILD {
     my $self = shift;
 
-    $db = $self->db;
+    $db = $self->biopep_db;
 }
 
 sub _build_evolver {
@@ -41,9 +41,10 @@ has _dbfile => (
    default => __DIR__ . '/biopep_db',
 );
 
-has db => (
+has biopep_db => (
    is  => 'ro',
    isa => HashRef,
+   traits => [qw(NoGetopt)],
    lazy_build => 1,
 );
 
@@ -51,9 +52,10 @@ has activity => (
     is  => 'ro',
     isa => Str,
     required => 1,
+    documentation => 'Biopeptide activity to increase/decrease',
 );
 
-sub _build_db {
+sub _build_biopep_db {
     my $self = shift;
 
     my $db = parse_database( $self->_dbfile );
