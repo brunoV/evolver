@@ -1,9 +1,10 @@
 TODO
 =====
 
+* Write tests for ::Cmd that
+* Make the alignment plugins Simple, Needleman and Clustalw work
 * Extend for different sequence alphabets:
    * $proth_alph
    * _init
-* Make the alignment plugins Simple, Needleman and Clustalw work
-* Write tests for ::Cmd
-* Integrate DB stuff with Cmd stuff
+* Add support for arguments to digestibility: any arbitrary amount of
+proteases should be able to be passed as argument
