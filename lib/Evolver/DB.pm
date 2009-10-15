@@ -29,7 +29,11 @@ sub insert_evolver {
 
             strategy     => Dump($e->strategy),
             selection    => Dump($e->selection),
-            history      => Dump($e->history),
+            history      => Dump({
+                custom  => $e->history_custom,
+                profile => $e->history_profile,
+                total   => $e->history_total,
+            }),
 
             profile_algorithm => $e->profile_algorithm,
             inject_consensus  => $e->inject_consensus,
