@@ -18,7 +18,7 @@ has plot => (
 has chartfile => (
    is  => 'ro',
    isa => File,
-   default       => "outchart.eps",
+   predicate     => 'wants_chart',
    coerce        => 1,
    traits        => [qw(Getopt)],
    documentation => "Filename of the output chart",
@@ -27,6 +27,7 @@ has chartfile => (
 after run => sub {
 
     my $self = shift;
+    return unless $self->wants_chart;
 
     $self->chart( output => $self->chartfile );
     $self->e("Chart written at " . $self->chartfile . "\n");
