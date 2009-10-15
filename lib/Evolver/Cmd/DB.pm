@@ -57,8 +57,8 @@ sub _save_to_db {
 
     # Then add the optimized seqs collected in the evolution to the
     # added Run
-    $run->add_to_optimized_seqs($_) for @{$self->_fittest_for_db}
-
+    $self->_db->add_optimized_seq_to_run($run, $_)
+        for @{$self->_fittest_for_db};
 }
 
 after evolve_once => sub {

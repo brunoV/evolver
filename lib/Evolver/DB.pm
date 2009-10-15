@@ -55,31 +55,24 @@ sub insert_evolver {
     });
 }
 
-sub add_optimized_seqs_to_run {
-    my ($self, $e, $run, $n) = @_;
-    $n //= 1;
+sub add_optimized_seq_to_run {
+    my ($self, $run, $opt_seq) = @_;
 
     unless (
-        $self->isa('Evolver::DB') &&
-        $e   ->isa('Evolver')     &&
-        $run ->isa('Evolver::DB::Run')
+        $self->isa('Evolver::DB')      &&
+        $run ->isa('Evolver::DB::Run') &&
+        ref $opt_seq eq 'HASH'
     ) { die "need proper arguments\n" }
 
-    my @optimized_seq_rs;
-    foreach my $opt_seq ($self->optimized_seqs($e, $n)) {
-        my $seq = delete $opt_seq->{seq};
+    my $seq = delete $opt_seq->{seq};
 
-        my $seq_rs = $self->resultset('ResultSeq')->find_or_create(
-            { seq => $seq, type => 'protein' }, { key => 'seq_unique' }
-        );
+    my $seq_rs = $self->resultset('ResultSeq')->find_or_create(
+        { seq => $seq, type => 'protein' }, { key => 'seq_unique' }
+    );
 
-        push @optimized_seq_rs,
-            $seq_rs->add_to_optimized_seqs({
-                %$opt_seq, run_id => $run->id
-            });
-    }
-
-    return ($n == 1) ? $optimized_seq_rs[0] : @optimized_seq_rs;
+    return $seq_rs->add_to_optimized_seqs({
+        %$opt_seq, run_id => $run->id
+    });
 
 }
 
