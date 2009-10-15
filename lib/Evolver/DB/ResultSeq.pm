@@ -1,4 +1,4 @@
-package Evolver::DB::ProfileSeqRun;
+package Evolver::DB::ResultSeq;
 
 use strict;
 use warnings;
@@ -6,7 +6,7 @@ use warnings;
 use base 'DBIx::Class';
 
 __PACKAGE__->load_components("Core");
-__PACKAGE__->table("profile_seq_run");
+__PACKAGE__->table("result_seq");
 __PACKAGE__->add_columns(
   "id",
   {
@@ -15,33 +15,34 @@ __PACKAGE__->add_columns(
     is_nullable => 0,
     size => undef,
   },
-  "profile_seq_id",
+  "seq",
   {
     data_type => "varchar",
     default_value => undef,
     is_nullable => 0,
     size => undef,
   },
-  "run_id",
+  "type",
   {
-    data_type => "INTEGER",
+    data_type => "varchar",
     default_value => undef,
     is_nullable => 0,
     size => undef,
   },
 );
 __PACKAGE__->set_primary_key("id");
-__PACKAGE__->belongs_to(
-  "profile_seq_id",
-  "Evolver::DB::ProfileSeq",
-  { id => "profile_seq_id" },
+__PACKAGE__->has_many(
+  "optimized_seqs",
+  "Evolver::DB::OptimizedSeq",
+  { "foreign.seq_id" => "self.id" },
 );
-__PACKAGE__->belongs_to("run_id", "Evolver::DB::Run", { id => "run_id" });
 
 
 # Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-10-15 17:25:53
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:iqVCAkWnARbF0FbN5guJCg
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:ugoA82wf06nkj+6eptq1mw
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration
+
+__PACKAGE__->add_unique_constraint('seq_unique', [ 'seq' ]);
 1;

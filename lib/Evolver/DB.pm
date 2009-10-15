@@ -8,8 +8,8 @@ use base 'DBIx::Class::Schema';
 __PACKAGE__->load_classes;
 
 
-# Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-10-12 22:39:49
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:JEgXTemYG6H1qXdLSJ+g3g
+# Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-10-15 16:56:40
+# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:RVuaFIggNclOIizt5h/TKw
 
 
 # You can replace this text with custom content, and it will be preserved on regeneration
@@ -65,11 +65,19 @@ sub add_optimized_seqs_to_run {
         $run ->isa('Evolver::DB::Run')
     ) { die "need proper arguments\n" }
 
-    my @optimized_seqs = $self->optimized_seqs($e, $n);
-
     my @optimized_seq_rs;
-    push @optimized_seq_rs,
-        $run->add_to_optimized_seqs($_) for @optimized_seqs;
+    foreach my $opt_seq ($self->optimized_seqs($e, $n)) {
+        my $seq = delete $opt_seq->{seq};
+
+        my $seq_rs = $self->resultset('ResultSeq')->find_or_create(
+            { seq => $seq, type => 'protein' }, { key => 'seq_unique' }
+        );
+
+        push @optimized_seq_rs,
+            $seq_rs->add_to_optimized_seqs({
+                %$opt_seq, run_id => $run->id
+            });
+    }
 
     return ($n == 1) ? $optimized_seq_rs[0] : @optimized_seq_rs;
 
@@ -144,7 +152,6 @@ sub optimized_seqs {
                 custom_score => $seq_ref->{score}->{custom},
                 total_score  => $seq_ref->{score}->{total},
                 generation   => $e->generation,
-                type         => 'protein',
             };
     }
 
