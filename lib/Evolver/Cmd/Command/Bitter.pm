@@ -32,7 +32,7 @@ sub f_modified {
     my $seq_obj = Evolver::Cmd::Biopep::annotate_seq(\$seq);
 
     # Count all the useful peptides (this is a naïve approach).
-    my $biopep_count = Evolver::Cmd::Biopep::get_biopep_features($seq_obj);
+    my $biopep_count = Evolver::Cmd::Biopep::get_encrypted_biopeps($seq_obj);
 
     return ( 1 - $biopep_count / length $seq );
 }
