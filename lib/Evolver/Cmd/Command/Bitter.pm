@@ -16,8 +16,10 @@ sub _build_evolver {
     my $self = shift;
 
     my $ev = Evolver->new(
-        profile => $self->infile,
-        fitness => \&f_modified,
+        %{$self->_evolver_extra_init_args},
+        profile      => $self->infile,
+        fitness      => \&f_modified,
+        fitness_name => $self->activity,
     );
 
     return $ev;

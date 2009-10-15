@@ -26,6 +26,7 @@ sub _build_evolver {
     my $self = shift;
 
     my $ev = Evolver->new(
+        %{$self->_evolver_extra_init_args},
         profile      => $self->infile,
         fitness      => \&f,
         fitness_name => $self->activity,

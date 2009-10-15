@@ -4,7 +4,8 @@ BEGIN { local $@; eval "use Time::HiRes qw(time)" };
 
 use Moose;
 use namespace::autoclean;
-use MooseX::Types::Moose qw(Num CodeRef);
+use MooseX::Types::Moose qw(Num Str ArrayRef HashRef CodeRef);
+use Modern::Perl;
 
 extends qw(MooseX::App::Cmd::Command);
 
@@ -22,12 +23,11 @@ has '+configfile' => (
     documentation => 'Configuration file',
 );
 
-
 has generations => (
     is  => 'ro',
     isa => Num,
     required => 1,
-    traits   => [qw(Getopt)],
+    traits   => ['Getopt'],
     cmd_aliases   => 'n',
     documentation => 'Number of generations to run (required)',
 );
@@ -35,7 +35,7 @@ has generations => (
 has evolver => (
     is  => 'ro',
     isa => 'Evolver',
-    traits     => [qw(NoGetopt)],
+    traits     => ['NoGetopt'],
     lazy_build => 1,
     handles    => [qw(history fittest generation chart)],
 );
@@ -73,6 +73,50 @@ sub evolve_once {
 
     my $self = shift;
     $self->evolver->evolve(1);
+}
+
+my @params = qw(mutation crossover strategy parents selection
+             preserve population_size profile_algorithm
+             inject_consensus);
+
+has $_ => (
+    is => 'ro',
+    isa => Num,
+    traits    => ['Getopt'],
+    predicate => 'has_' . $_,
+) for qw(mutation crossover parents inject_consensus preserve population_size);
+
+has $_ => (
+    is  => 'ro',
+    isa => ArrayRef,
+    predicate => 'has_' . $_,
+    traits    => ['Getopt'],
+) for qw(strategy selection);
+
+has 'profile_algorithm' => (
+    is  => 'ro',
+    isa => Str,
+    traits    => ['Getopt'],
+    predicate => 'has_profile_algorithm',
+);
+
+has _evolver_extra_init_args => (
+    is  => 'ro',
+    isa => HashRef,
+    traits     => ['NoGetopt'],
+    lazy_build => 1,
+);
+
+sub _build__evolver_extra_init_args {
+    my $self = shift;
+
+    my @mod_attrs  = grep { my $a = 'has_' . $_; $self->$a } @params;
+    my %extra_args = map  { my $m = $_; $m => $self->$m    } @mod_attrs;
+
+    use YAML;
+    print Dump(\%extra_args);
+
+    return \%extra_args;
 }
 
 __PACKAGE__->meta->make_immutable;
