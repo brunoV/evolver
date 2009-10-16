@@ -11,7 +11,7 @@ my $align_file  = 't/profile-test.sto';
 my @seqs_files  = glob('t/seqs-test.*');
 my $seqs_file   = $seqs_files[0];
 
-my @plugins = qw(Hmmer);
+my @plugins = qw(Hmmer None);
 
 foreach my $plugin (@plugins) {
     diag("Testing plugin $plugin\n");
