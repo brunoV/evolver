@@ -31,10 +31,4 @@ __PACKAGE__->has_many(
   { "foreign.fitness_id" => "self.id" },
 );
 
-
-# Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-10-15 17:25:53
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:yayEupo4dDGP8mZK0cmFdg
-
-
-# You can replace this text with custom content, and it will be preserved on regeneration
 1;
