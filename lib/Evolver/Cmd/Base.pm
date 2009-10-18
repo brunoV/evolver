@@ -111,6 +111,7 @@ has inject_profile_seqs => (
     is      => 'ro',
     default => 1,
     traits  => ['Getopt'],
+    predicate => 'has_inject_profile_seqs',
     documentation => 'Inject every sequence from the alignment',
 );
 
