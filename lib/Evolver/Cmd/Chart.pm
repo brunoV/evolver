@@ -7,14 +7,6 @@ use namespace::autoclean;
 use MooseX::Types::Moose qw(Bool);
 use MooseX::Types::Path::Class qw(File);
 
-has plot => (
-    is  => 'ro',
-    isa => Bool,
-    traits        => [qw(Getopt)],
-    default       => 1,
-    documentation => "Plot fitness evolution",
-);
-
 has chartfile => (
    is  => 'ro',
    isa => File,
