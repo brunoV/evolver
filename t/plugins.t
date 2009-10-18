@@ -50,7 +50,6 @@ sub test_evolve {
       population_size => 3,
       fitness    => sub { 1 },
       preserve   => 0,
-      cache      => 1,
       inject_consensus => 1,
       profile_algorithm => $plugin,
    );

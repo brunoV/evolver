@@ -30,28 +30,28 @@ is( $ev->mutation,   0.05, 'default mutation rate' );
 is( $ev->parents,    2,    'default parents' );
 is_deeply( $ev->selection, ['Roulette'], 'default selection' );
 is_deeply( $ev->strategy, [ 'Points', 2 ], 'default strategy' );
-# is( $ev->cache,           1, 'default cache' );
 is( $ev->preserve,        5, 'default preserve' );
 is( $ev->profile_algorithm, 'Hmmer', 'default profile algorithm' );
 is( $ev->inject_consensus, 1, 'default inject_consensus' );
+is( $ev->inject_profile_seqs, 0, 'default inject_profile_seqs' );
 
 # Initialize an object assigning attributes in the declaration.
 undef $ev;
 lives_ok {
    $ev = Evolver->new(
-      profile           => $seqs_file,
-      fitness           => sub { return 1 },
-      population_size   => 10,
-      crossover         => 0.9,
-      mutation          => 0.01,
-      parents           => 3,
-      selection         => ['RouletteBasic'],
-      strategy          => [ 'Points', 5 ],
-#     cache             => '0',
-      preserve          => 7,
-      terminate         => sub { return 5 },
-      profile_algorithm => 'Simple',
-      inject_consensus  => 0,
+      profile             => $seqs_file,
+      fitness             => sub { return 1 },
+      population_size     => 10,
+      crossover           => 0.9,
+      mutation            => 0.01,
+      parents             => 3,
+      selection           => ['RouletteBasic'],
+      strategy            => [ 'Points', 5 ],
+      preserve            => 7,
+      terminate           => sub { return 5 },
+      profile_algorithm   => 'Simple',
+      inject_consensus    => 0,
+      inject_profile_seqs => 1,
    );
 }
 'Initialization with non-default attributes';
@@ -62,9 +62,9 @@ is( $ev->mutation,        0.01, 'changed mutation'   );
 is( $ev->parents,         3,    'changed parents'    );
 is_deeply( $ev->selection, ['RouletteBasic'], 'changed selection' );
 is_deeply( $ev->strategy, [ 'Points', 5 ], 'changed strategy' );
-# is( $ev->cache,             0,        'changed cache'             );
 is( $ev->preserve,          7,        'changed preserve'          );
 is( $ev->profile_algorithm, 'Simple', 'changed profile_algorithm' );
 is( $ev->inject_consensus,  0,        'changed inject_consensus'  );
+is( $ev->inject_profile_seqs, 1,      'changed inject_profile_seqs');
 
 done_testing();

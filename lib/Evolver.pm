@@ -40,10 +40,21 @@ has profile_algorithm => (
    default => 'Hmmer',
 );
 
+has inject => (
+    is => 'ro',
+    isa => ArrayRef[Str],
+);
+
 has inject_consensus => (
    is => 'ro',
    isa => Bool,
    default => 1,
+);
+
+has inject_profile_seqs => (
+    is      => 'ro',
+    isa     => Bool,
+    default => 0,
 );
 
 has 'history_' . $_ => (
@@ -188,7 +199,11 @@ sub _build__gm {
     my %extra_args = map  { my $m = '_' . $_; $_ => $self->$m }   @mod_attrs;
 
     if ($self->inject_consensus) {
-        $extra_args{initial_population} = [ $self->profile->consensus_string ];
+        push @{$extra_args{initial_population}}, $self->profile->consensus_string;
+    }
+
+    if ($self->inject_profile_seqs) {
+        push @{$extra_args{initial_population}}, $self->_get_profile_seqs;
     }
 
     my $m = AI::Genetic::Pro::Macromolecule->new(
@@ -227,6 +242,15 @@ sub _load_profile_score_plugin {
 }
 
 sub mean { return sum(@_)/@_; }
+
+sub _get_profile_seqs {
+    my $self = shift;
+    my @seqs = map { $_->seq } $self->profile->each_seq;
+
+    s/[-.]//g for @seqs;
+
+    return @seqs;
+}
 
 __PACKAGE__->meta->make_immutable;
 

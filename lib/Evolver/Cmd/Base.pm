@@ -77,7 +77,7 @@ sub evolve_once {
 
 my @params = qw(mutation crossover strategy parents selection
              preserve population_size profile_algorithm
-             inject_consensus);
+             inject_consensus inject_profile_seqs);
 
 has $_ => (
     is => 'ro',
@@ -107,14 +107,18 @@ has _evolver_extra_init_args => (
     lazy_build => 1,
 );
 
+has inject_profile_seqs => (
+    is      => 'ro',
+    default => 1,
+    traits  => ['Getopt'],
+    documentation => 'Inject every sequence from the alignment',
+);
+
 sub _build__evolver_extra_init_args {
     my $self = shift;
 
     my @mod_attrs  = grep { my $a = 'has_' . $_; $self->$a } @params;
     my %extra_args = map  { my $m = $_; $m => $self->$m    } @mod_attrs;
-
-    use YAML;
-    print Dump(\%extra_args);
 
     return \%extra_args;
 }
