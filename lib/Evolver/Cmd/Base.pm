@@ -118,8 +118,12 @@ has inject_profile_seqs => (
 sub _build__evolver_extra_init_args {
     my $self = shift;
 
+    use YAML;
+
     my @mod_attrs  = grep { my $a = 'has_' . $_; $self->$a } @params;
     my %extra_args = map  { my $m = $_; $m => $self->$m    } @mod_attrs;
+
+    print Dump(\%extra_args);
 
     return \%extra_args;
 }
