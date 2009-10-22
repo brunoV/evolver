@@ -166,4 +166,6 @@ CLASS->add_columns(
   },
 );
 
+CLASS->resultset_class('Evolver::DB::ResultSet::Result');
+
 1;
