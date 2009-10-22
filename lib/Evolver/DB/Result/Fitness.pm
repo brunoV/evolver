@@ -1,13 +1,13 @@
-package Evolver::DB::Fitness;
+package Evolver::DB::Result::Fitness;
 
 use strict;
 use warnings;
+use CLASS;
 
-use base 'DBIx::Class';
+use base 'Evolver::DB::Result';
 
-__PACKAGE__->load_components("Core");
-__PACKAGE__->table("fitness");
-__PACKAGE__->add_columns(
+CLASS->table("fitness");
+CLASS->add_columns(
   "id",
   {
     data_type => "INTEGER",
@@ -23,11 +23,11 @@ __PACKAGE__->add_columns(
     size => 20,
   },
 );
-__PACKAGE__->set_primary_key("id");
-__PACKAGE__->add_unique_constraint("name_unique", ["name"]);
-__PACKAGE__->has_many(
+CLASS->set_primary_key("id");
+CLASS->add_unique_constraint("name_unique", ["name"]);
+CLASS->has_many(
   "runs",
-  "Evolver::DB::Run",
+  "Evolver::DB::Result::Run",
   { "foreign.fitness_id" => "self.id" },
 );
 

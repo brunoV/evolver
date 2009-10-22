@@ -3,6 +3,7 @@ use Test::Exception;
 use Evolver;
 use autodie;
 use File::Temp;
+use Devel::SimpleTrace;
 use strict;
 use warnings;
 
@@ -26,11 +27,11 @@ isa_ok($db, 'Evolver::DB');
 # Inserting Fitness
 my $fitness_rs = $db->insert_function($e);
 
-isa_ok($fitness_rs, 'Evolver::DB::Fitness');
+isa_ok($fitness_rs, 'Evolver::DB::Result::Fitness');
 
 my $run = $db->insert_evolver($e);
 
-isa_ok($run, 'Evolver::DB::Run');
+isa_ok($run, 'Evolver::DB::Result::Run');
 
 my @optimized_seqs = $db->optimized_seqs($e, 2);
 
@@ -40,12 +41,12 @@ ok( defined $optimized_seqs[0]->{$_} ) for qw(seq custom_score total_score gener
 
 my $optimized_seq_rs = $db->add_optimized_seq_to_run($run, $optimized_seqs[0]);
 
-isa_ok( $optimized_seq_rs, 'Evolver::DB::OptimizedSeq' );
+isa_ok( $optimized_seq_rs, 'Evolver::DB::Result::OptimizedSeq' );
 
 my $view = $db->resultset('Result');
 
 isa_ok( $view, 'DBIx::Class::ResultSet' );
-isa_ok( $view->first, 'Evolver::DB::Result' );
+isa_ok( $view->first, 'Evolver::DB::Result::Result' );
 
 unlink $tmpfile;
 done_testing();

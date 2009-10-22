@@ -1,13 +1,13 @@
-package Evolver::DB::OptimizedSeq;
+package Evolver::DB::Result::OptimizedSeq;
 
 use strict;
 use warnings;
+use CLASS;
 
-use base 'DBIx::Class';
+use base 'Evolver::DB::Result';
 
-__PACKAGE__->load_components("Core");
-__PACKAGE__->table("optimized_seq");
-__PACKAGE__->add_columns(
+CLASS->table("optimized_seq");
+CLASS->add_columns(
   "id",
   {
     data_type => "INTEGER",
@@ -58,9 +58,9 @@ __PACKAGE__->add_columns(
     size => undef,
   },
 );
-__PACKAGE__->set_primary_key("id");
-__PACKAGE__->belongs_to("run", "Evolver::DB::Run", { id => "run_id" });
-__PACKAGE__->belongs_to("seq", "Evolver::DB::ResultSeq", { id => "seq_id" });
+CLASS->set_primary_key("id");
+CLASS->belongs_to("run", "Evolver::DB::Result::Run", { id => "run_id" });
+CLASS->belongs_to("seq", "Evolver::DB::Result::ResultSeq", { id => "seq_id" });
 
 
 1;

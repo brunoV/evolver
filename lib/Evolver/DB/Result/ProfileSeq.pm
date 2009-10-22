@@ -1,11 +1,10 @@
-package Evolver::DB::ProfileSeq;
+package Evolver::DB::Result::ProfileSeq;
 
 use strict;
 use warnings;
 
-use base 'DBIx::Class';
+use base 'Evolver::DB::Result';
 
-__PACKAGE__->load_components("Core");
 __PACKAGE__->table("profile_seq");
 __PACKAGE__->add_columns(
   "id",
@@ -34,7 +33,7 @@ __PACKAGE__->set_primary_key("id");
 __PACKAGE__->add_unique_constraint("seq_unique", ["seq"]);
 __PACKAGE__->has_many(
   "profile_seq_runs",
-  "Evolver::DB::ProfileSeqRun",
+  "Evolver::DB::Result::ProfileSeqRun",
   { "foreign.profile_seq_id" => "self.id" },
 );
 

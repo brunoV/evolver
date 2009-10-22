@@ -1,13 +1,13 @@
-package Evolver::DB::Run;
+package Evolver::DB::Result::Run;
 
 use strict;
 use warnings;
+use CLASS;
 
-use base 'DBIx::Class';
+use base 'Evolver::DB::Result';
 
-__PACKAGE__->load_components("Core");
-__PACKAGE__->table("run");
-__PACKAGE__->add_columns(
+CLASS->table("run");
+CLASS->add_columns(
   "id",
   {
     data_type => "INTEGER",
@@ -107,20 +107,20 @@ __PACKAGE__->add_columns(
     size => undef,
   },
 );
-__PACKAGE__->set_primary_key("id");
-__PACKAGE__->belongs_to("fitness", "Evolver::DB::Fitness", { id => "fitness_id" });
-__PACKAGE__->has_many(
+CLASS->set_primary_key("id");
+CLASS->belongs_to("fitness", "Evolver::DB::Result::Fitness", { id => "fitness_id" });
+CLASS->has_many(
   "profile_seq_runs",
-  "Evolver::DB::ProfileSeqRun",
+  "Evolver::DB::Result::ProfileSeqRun",
   { "foreign.run_id" => "self.id" },
 );
-__PACKAGE__->has_many(
+CLASS->has_many(
   "optimized_seqs",
-  "Evolver::DB::OptimizedSeq",
+  "Evolver::DB::Result::OptimizedSeq",
   { "foreign.run_id" => "self.id" },
 );
 
 
-__PACKAGE__->many_to_many('profile_seqs', 'profile_seq_runs', 'profile_seq');
+CLASS->many_to_many('profile_seqs', 'profile_seq_runs', 'profile_seq');
 
 1;

@@ -2,19 +2,16 @@ package Evolver::DB;
 
 use strict;
 use warnings;
+use CLASS;
+use YAML;
 
 use base 'DBIx::Class::Schema';
 
-__PACKAGE__->load_classes;
 
+CLASS->load_namespaces(
+    default_resultset_class => 'ResultSet',
+);
 
-# Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-10-15 16:56:40
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:RVuaFIggNclOIizt5h/TKw
-
-
-# You can replace this text with custom content, and it will be preserved on regeneration
-
-use YAML;
 
 sub insert_evolver {
     my ( $self, $e ) = @_;
@@ -59,8 +56,8 @@ sub add_optimized_seq_to_run {
     my ($self, $run, $opt_seq) = @_;
 
     unless (
-        $self->isa('Evolver::DB')      &&
-        $run ->isa('Evolver::DB::Run') &&
+        $self->isa('Evolver::DB')              &&
+        $run ->isa('Evolver::DB::Result::Run') &&
         ref $opt_seq eq 'HASH'
     ) { die "need proper arguments\n" }
 
@@ -95,7 +92,7 @@ sub add_profile_seqs_to_run {
     unless (
         $self->isa('Evolver::DB') &&
         $e   ->isa('Evolver')     &&
-        $run ->isa('Evolver::DB::Run')
+        $run ->isa('Evolver::DB::Result::Run')
     ) { die "need proper arguments\n" }
 
     # Here I use update_or_create: it searches using primary key or
