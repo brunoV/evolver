@@ -124,7 +124,10 @@ sub _build__actual_fitness {
     my $generation = 0;
     my @custom_scores;
     my @profile_scores;
-    my @total_scores;;
+    my @total_scores;
+
+    my $ok_go = 1.4 * $self->population_size;
+    $ok_go   += $self->inject_profile_seqs ? 1.4 * $self->profile->num_sequences : 0;
 
     return sub {
         my $seq = shift;
@@ -136,7 +139,7 @@ sub _build__actual_fitness {
         # not properly initialized. Doing so causes an infinite
         # recursion, since it needs to compute the fitness with this sub
         # for the initial objects to initialize.
-        unless ($counter > 1.4 * $self->population_size) {
+        unless ($counter > $ok_go) {
             $counter++ and return $final_score
         }
 
@@ -172,7 +175,7 @@ sub _build__actual_fitness {
 }
 
 my @params = qw(mutation crossover strategy parents selection
-             preserve population_size terminate);
+             preserve terminate);
 
 # I want to use the parameters above as attrs just like in AI::G::P::M, but
 # without having to set them all over again, with the same default values.
@@ -188,8 +191,13 @@ has '_gm' => (
     is  => 'ro',
     isa => 'AI::Genetic::Pro::Macromolecule',
     lazy_build => 1,
-    handles    => [qw(evolve generation history population_size
+    handles    => [qw(evolve generation history 
                    current_population current_stats), @params],
+);
+
+has population_size => (
+    is      => 'ro',
+    default => 300,
 );
 
 sub _build__gm {
@@ -211,6 +219,7 @@ sub _build__gm {
         fitness => $self->_actual_fitness,
         cache   => 1,
         length  => length( $self->profile->consensus_string ),
+        population_size => $self->population_size,
         %extra_args,
     );
 
