@@ -45,7 +45,7 @@ isa_ok( $optimized_seq_rs, 'Evolver::DB::OptimizedSeq' );
 my $view = $db->resultset('Result');
 
 isa_ok( $view, 'DBIx::Class::ResultSet' );
-isa_ok( $view->first, 'Evolver::DB::Resulm' );
+isa_ok( $view->first, 'Evolver::DB::Result' );
 
 unlink $tmpfile;
 done_testing();
