@@ -108,7 +108,7 @@ __PACKAGE__->add_columns(
   },
 );
 __PACKAGE__->set_primary_key("id");
-__PACKAGE__->belongs_to("fitness_id", "Evolver::DB::Fitness", { id => "fitness_id" });
+__PACKAGE__->belongs_to("fitness", "Evolver::DB::Fitness", { id => "fitness_id" });
 __PACKAGE__->has_many(
   "profile_seq_runs",
   "Evolver::DB::ProfileSeqRun",
@@ -121,12 +121,6 @@ __PACKAGE__->has_many(
 );
 
 
-# Created by DBIx::Class::Schema::Loader v0.04006 @ 2009-10-15 17:25:53
-# DO NOT MODIFY THIS OR ANYTHING ABOVE! md5sum:5PE1aOMbUXcd0p4+E7IFjQ
-
-
-# You can replace this text with custom content, and it will be preserved on regeneration
-
-__PACKAGE__->many_to_many('profile_seqs', 'profile_seq_runs', 'profile_seq_id');
+__PACKAGE__->many_to_many('profile_seqs', 'profile_seq_runs', 'profile_seq');
 
 1;
