@@ -27,3 +27,11 @@ sub f {
 }
 
 __PACKAGE__->meta->make_immutable;
+
+=pod
+
+=head1 NAME
+
+Evolver::Cmd::Command::Hydroph - A dummy function for testing purposes
+
+=cut
