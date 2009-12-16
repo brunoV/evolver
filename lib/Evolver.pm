@@ -27,6 +27,12 @@ has _actual_fitness => (
     lazy_build => 1,
 );
 
+has assembling_function => (
+    is => 'ro',
+    isa => CodeRef,
+    default => sub { sub { ($_[0]**2) * ($_[1]) } },
+);
+
 has profile => (
    is       => 'ro',
    isa      => BioSimpleAlign,
@@ -131,7 +137,7 @@ sub _build__actual_fitness {
         my $seq = shift;
         my $profile_score = $self->_profile_score->($seq);
         my $custom_score  = $self->fitness->($seq);
-        my $final_score   = ($profile_score**2) * ($custom_score);
+        my $final_score   = $self->assembling_function->($profile_score, $custom_score);
 
         # This is to avoid calling '->generation' when the GA object is
         # not properly initialized. Doing so causes an infinite
