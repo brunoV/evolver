@@ -122,9 +122,7 @@ sub _build__actual_fitness {
     my $self = shift;
     my $counter = 0;
     my $generation = 0;
-    my @custom_scores;
-    my @profile_scores;
-    my @total_scores;
+    my %scores;
 
     my $ok_go = 1.4 * $self->population_size;
     $ok_go   += $self->inject_profile_seqs ? 1.4 * $self->profile->num_sequences : 0;
@@ -133,7 +131,7 @@ sub _build__actual_fitness {
         my $seq = shift;
         my $profile_score = $self->_profile_score->($seq);
         my $custom_score  = $self->fitness->($seq);
-        my $final_score   = ( ( $profile_score**2 ) * ($custom_score) );
+        my $final_score   = ($profile_score**2) * ($custom_score);
 
         # This is to avoid calling '->generation' when the GA object is
         # not properly initialized. Doing so causes an infinite
@@ -148,26 +146,21 @@ sub _build__actual_fitness {
         if ( $generation < $self->generation ) {
             $generation++;
 
-            # Calculate statistics
-            push @{$self->history_custom->{min}},  min(@custom_scores);
-            push @{$self->history_custom->{max}},  max(@custom_scores);
-            push @{$self->history_custom->{mean}}, mean(@custom_scores);
-            undef @custom_scores;
+            for my $type (qw(custom profile total)) {
 
-            push @{$self->history_profile->{min}},  min(@profile_scores);
-            push @{$self->history_profile->{max}},  max(@profile_scores);
-            push @{$self->history_profile->{mean}}, mean(@profile_scores);
-            undef @profile_scores;
+                # Calculate statistics
+                my $history = 'history_' . $type;
+                push @{$self->$history->{min}},  min(@{$scores{$type}});
+                push @{$self->$history->{max}},  max(@{$scores{$type}});
+                push @{$self->$history->{mean}}, mean(@{$scores{$type}});
+                undef @{$scores{$type}};
 
-            push @{$self->history_total->{min}},  min(@total_scores);
-            push @{$self->history_total->{max}},  max(@total_scores);
-            push @{$self->history_total->{mean}}, mean(@total_scores);
-            undef @total_scores;
+            }
         }
 
-        push @custom_scores,  $custom_score;
-        push @profile_scores, $profile_score;
-        push @total_scores,   $final_score;
+        push @{$scores{custom}},  $custom_score;
+        push @{$scores{profile}}, $profile_score;
+        push @{$scores{total}},   $final_score;
 
         return $final_score;
     }
@@ -191,7 +184,7 @@ has '_gm' => (
     is  => 'ro',
     isa => 'AI::Genetic::Pro::Macromolecule',
     lazy_build => 1,
-    handles    => [qw(evolve generation history 
+    handles    => [qw(evolve generation history
                    current_population current_stats), @params],
 );
 
