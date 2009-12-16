@@ -137,9 +137,11 @@ sub _build__actual_fitness {
 
     return sub {
         my $seq = shift;
-        my $profile_score = $self->_profile_score->($seq);
-        my $custom_score  = $self->fitness->($seq);
-        my $final_score   = ($profile_score ** $p) * ($custom_score ** $c);
+
+        my $profile_score = $p ? $self->_profile_score->($seq) : 1;
+        my $custom_score  = $c ? $self->fitness->($seq)        : 1;
+
+        my $final_score = ($profile_score ** $p) * ($custom_score ** $c);
 
         # This is to avoid calling '->generation' when the GA object is
         # not properly initialized. Doing so causes an infinite
