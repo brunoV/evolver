@@ -22,6 +22,13 @@ CLASS->add_columns(
     is_nullable => 0,
     size => undef,
   },
+  "assembly_function_id",
+  {
+    data_type => "INTEGER",
+    default_value => undef,
+    is_nullable => 0,
+    size => undef,
+  },
   "profile_algorithm",
   {
     data_type => "varchar",
@@ -109,6 +116,7 @@ CLASS->add_columns(
 );
 CLASS->set_primary_key("id");
 CLASS->belongs_to("fitness", "Evolver::DB::Result::Fitness", { id => "fitness_id" });
+CLASS->belongs_to("assembly_function", "Evolver::DB::Result::AssemblyFunction", { id => "assembly_function_id" });
 CLASS->has_many(
   "profile_seq_runs",
   "Evolver::DB::Result::ProfileSeqRun",

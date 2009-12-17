@@ -20,7 +20,8 @@ sub insert_evolver {
 
      $self->txn_do(sub { # Data integrity is good m'kay?
 
-        my $fitness        = $self->insert_function($e);
+        my $fitness        = $self->insert_fitness_function ($e);
+        my $assembly       = $self->insert_assembly_function($e);
 
         my $run = $self->resultset('Run')->update_or_create({
 
@@ -41,7 +42,8 @@ sub insert_evolver {
             population_size   => $e->population_size,
             generation        => $e->generation,
 
-            fitness_id     => $fitness->id,
+            fitness_id           => $fitness->id,
+            assembly_function_id => $assembly->id,
 
         });
 
@@ -73,7 +75,7 @@ sub add_optimized_seq_to_run {
 
 }
 
-sub insert_function {
+sub insert_fitness_function {
     my ($self, $e) = @_;
 
     # Since fitness.name is a unique constraint, and we are not adding
@@ -84,6 +86,19 @@ sub insert_function {
     );
 
     return $fitness_rs;
+}
+
+sub insert_assembly_function {
+    my ($self, $e) = @_;
+
+    # Since assembly_function.name is a unique constraint, and we are not adding
+    # any extra information, we use 'find_or_create', since 'find'
+    # searches by primary key or unique constraint only.
+    my $assembly_rs = $self->resultset('AssemblyFunction')->find_or_create(
+        { name => $e->assembly_function->name }
+    );
+
+    return $assembly_rs;
 }
 
 sub add_profile_seqs_to_run {

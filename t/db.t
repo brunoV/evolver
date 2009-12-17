@@ -31,9 +31,13 @@ Basic: {
 
 Inserting: {
 # Inserting Fitness
-    my $fitness_rs = $db->insert_function($e);
+    my $fitness_rs = $db->insert_fitness_function($e);
 
     isa_ok($fitness_rs, 'Evolver::DB::Result::Fitness');
+
+    my $assembly_rs = $db->insert_assembly_function($e);
+
+    isa_ok($assembly_rs, 'Evolver::DB::Result::AssemblyFunction');
 
     my $run = $db->insert_evolver($e);
 
