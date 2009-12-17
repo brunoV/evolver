@@ -10,11 +10,13 @@ is $product->profile, 1;
 is $product->custom,  1;
 
 is $product->evaluate(2, 3), 6;
+is $product->name, 'product[1,1]';
 
 ok $product = Evolver::AssemblyFunction::Product->new(profile => 2, custom => 1);
 
 is $product->profile, 2;
 is $product->custom,  1;
+is $product->name, 'product[2,1]';
 
 is $product->evaluate(2, 3), 12;
 is $product->evaluate(3, 2), 18;

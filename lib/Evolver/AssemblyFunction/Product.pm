@@ -18,4 +18,10 @@ sub evaluate {
     return ( $profile_score ** $p ) * ( $custom_score ** $c );
 }
 
+sub name {
+    my $self = shift;
+
+    return 'product[' . $self->profile . ',' . $self->custom . ']';
+}
+
 __PACKAGE__->meta->make_immutable;
