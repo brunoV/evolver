@@ -47,7 +47,7 @@ has profile_algorithm => (
 );
 
 has inject => (
-    is => 'ro',
+    is  => 'ro',
     isa => ArrayRef[Str],
 );
 
@@ -138,6 +138,7 @@ sub _build__actual_fitness {
     return sub {
         my $seq = shift;
 
+        # Calculate score unless the exponent is == 0
         my $profile_score = $p ? $self->_profile_score->($seq) : 1;
         my $custom_score  = $c ? $self->fitness->($seq)        : 1;
 
