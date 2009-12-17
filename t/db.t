@@ -4,7 +4,6 @@ use Test::More;
 use Test::Exception;
 use Evolver;
 use autodie;
-use File::Temp;
 
 use_ok( 'Evolver::DB' );
 
@@ -17,14 +16,12 @@ my $e = Evolver->new(
 
 $e->evolve(2);
 
-my $tmpfile = File::Temp->new->filename;
-
 my $db;
 
 Basic: {
 
     lives_ok {
-        $db = Evolver::DB->connect("dbi:SQLite:dbname=$tmpfile");
+        $db = Evolver::DB->connect("dbi:SQLite::memory:");
         $db->deploy;
     } 'Lived through database connection and deployment';
 
@@ -76,5 +73,4 @@ ResultSet: {
     }
 }
 
-unlink $tmpfile;
 done_testing();
