@@ -144,10 +144,10 @@ sub _build__actual_fitness {
     return sub {
         my $seq = shift;
 
-        my $profile_score = $self->_profile_score->($seq);
-        my $custom_score  = $self->fitness->($seq);
+        my $profile = $self->_profile_score->($seq);
+        my $custom  = $self->fitness->($seq);
 
-        my $final_score = $self->assemble_scores($profile_score, $custom_score);
+        my $final_score = $self->assemble_scores($profile, $custom);
 
         # This is to avoid calling '->generation' when the GA object is
         # not properly initialized. Doing so causes an infinite
@@ -174,8 +174,8 @@ sub _build__actual_fitness {
             }
         }
 
-        push @{$scores{custom}},  $custom_score;
-        push @{$scores{profile}}, $profile_score;
+        push @{$scores{custom}},  $custom;
+        push @{$scores{profile}}, $profile;
         push @{$scores{total}},   $final_score;
 
         return $final_score;
