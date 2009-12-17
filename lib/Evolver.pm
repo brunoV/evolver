@@ -27,10 +27,18 @@ has _actual_fitness => (
     lazy_build => 1,
 );
 
-has exponents => (
-    is      => 'ro',
-    isa     => ArrayRef,
-    default => sub { [2, 1] },
+has assembly_function => (
+    is   => 'ro',
+    does => 'Evolver::AssemblyFunctionI',
+    default => sub {
+        require Evolver::AssemblyFunction::Product;
+        Evolver::AssemblyFunction::Product->new(
+            profile => 2, custom => 1
+        );
+    },
+    handles => {
+        assemble_scores => 'evaluate',
+    },
 );
 
 has profile => (
@@ -133,16 +141,13 @@ sub _build__actual_fitness {
     my $ok_go = 1.4 * $self->population_size;
     $ok_go   += $self->inject_profile_seqs ? 1.4 * $self->profile->num_sequences : 0;
 
-    my ($p, $c) = @{$self->exponents};
-
     return sub {
         my $seq = shift;
 
-        # Calculate score unless the exponent is == 0
-        my $profile_score = $p ? $self->_profile_score->($seq) : 1;
-        my $custom_score  = $c ? $self->fitness->($seq)        : 1;
+        my $profile_score = $self->_profile_score->($seq);
+        my $custom_score  = $self->fitness->($seq);
 
-        my $final_score = ($profile_score ** $p) * ($custom_score ** $c);
+        my $final_score = $self->assemble_scores($profile_score, $custom_score);
 
         # This is to avoid calling '->generation' when the GA object is
         # not properly initialized. Doing so causes an infinite
